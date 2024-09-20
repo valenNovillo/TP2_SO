@@ -11,9 +11,9 @@
 *.o
 
 #Bash files
-*.bashrc
 *.sh
-*.bash_history
+.bashrc
+.bash_history
 
 *.json
 
