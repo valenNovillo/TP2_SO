@@ -1,0 +1,18 @@
+#Binary Files
+*.bin
+*.sys
+
+#The images
+*.img
+*.qcow2
+*.vmdk
+
+#Object files
+*.o
+
+#Bash files
+*.bashrc
+*.sh
+*.bash_history
+
+*.json
