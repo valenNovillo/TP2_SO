@@ -2,6 +2,10 @@
 #include "include/lib.h"
 #include "include/moduleLoader.h"
 #include "Interruptions/include/idtLoader.h"
+#include "include/memoryManager.h"
+
+#include "Test/test_mm.h"
+#include "include/lib.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -15,6 +19,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+static void * const startFreeMemoryAddress = (void*)0x600000;
 
 typedef int (*EntryPoint)();
 
@@ -49,6 +54,11 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
+	my_mm_init(startFreeMemoryAddress);
+
+	char*param[1];
+	param[0] = MEMORY_SIZE;
+    test_mm(1, param);
 	
 	((EntryPoint)sampleCodeModuleAddress)();
 
