@@ -5,6 +5,7 @@
 #include <string.h>
 #include "test_mm.h"
 #include "../include/memoryManager.h"
+#include "../Drivers/include/videoDriver.h"
 
 #define MAX_BLOCKS 128
 
