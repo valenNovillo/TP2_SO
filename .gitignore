@@ -14,7 +14,7 @@ mem
 #Bash files
 .bashrc
 .bash_history
-run.sh
+*run.sh
 
 *.json
 
