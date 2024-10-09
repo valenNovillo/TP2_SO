@@ -16,7 +16,8 @@ LOADEROBJECT=$(LOADERSRC:.c=.o)
 all: $(MODULE)
 
 $(MODULE): $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_SHELL) $(OBJECTS_LIBS) $(OBJECTS_ASM)
-	$(LD) $(LDFLAGS) -T sampleCodeModule.ld -o ../$(MODULE) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_SHELL) $(OBJECTS_LIBS) $(OBJECTS_ASM)	
+	$(LD) $(LDFLAGS) -T sampleCodeModule.ld -o ../$(MODULE) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_SHELL) $(OBJECTS_LIBS) $(OBJECTS_ASM)
+	$(LD) $(LDFLAGS) -T sampleCodeModule.ld --oformat=elf64-x86-64 -o ../sampleCodeModule.elf $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_SHELL) $(OBJECTS_LIBS) $(OBJECTS_ASM)	
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
@@ -28,6 +29,6 @@ $(LOADEROBJECT):
 	$(GCC) $(GCCFLAGS) $(LOADERSRC) -c -o $(LOADEROBJECT)
 
 clean:
-	rm -rf Shell/*.o Library/*o
+	rm -rf Shell/*.o Library/*.o *.o
 
 .PHONY: all clean

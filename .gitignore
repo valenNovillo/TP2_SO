@@ -20,3 +20,7 @@ mem
 
 *.DS_Store
 *:Zone.Identifier
+
+#GDB
+*.gdb_history
+*.elf

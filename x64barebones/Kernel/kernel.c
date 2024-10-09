@@ -58,7 +58,7 @@ int main()
 
 	char*param[1];
 	param[0] = MEMORY_SIZE;
-    test_mm(1, param);
+    //test_mm(1, param);
 	
 	((EntryPoint)sampleCodeModuleAddress)();
 
