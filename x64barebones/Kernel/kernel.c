@@ -6,6 +6,7 @@
 
 #include "Test/test_mm.h"
 #include "include/lib.h"
+#include "include/processes.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -19,7 +20,8 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
-static void * const startFreeMemoryAddress = (void*)0x600000;
+static void * const stacks = (void*)0x600000;
+static void * const startFreeMemoryAddress = (void*)0x700000; // 4KB stacks, 256 total stacks, 100000 adresses
 
 typedef int (*EntryPoint)();
 
@@ -55,6 +57,7 @@ int main()
 {	
 	load_idt();
 	my_mm_init(startFreeMemoryAddress);
+	stack_init(stacks);
 
 	char*param[1];
 	param[0] = MEMORY_SIZE;

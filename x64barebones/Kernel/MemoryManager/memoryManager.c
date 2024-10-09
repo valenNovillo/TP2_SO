@@ -1,4 +1,4 @@
-#include "include/memoryManager.h"
+#include "../include/memoryManager.h"
 
 void* start;
 int memory_size;
