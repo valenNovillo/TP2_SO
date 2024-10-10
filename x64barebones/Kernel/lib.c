@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#include "include/lib.h"
+
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -122,4 +124,19 @@ int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize) {
 
     // Devolver la longitud de la cadena hexadecimal
     return index;
+}
+
+size_t strlen(const char *cadena) {
+    int len = 0;
+    while(cadena[len++] != 0);
+    return len;
+}
+
+
+int count_args(void **array){
+    int len = 0;
+    while (*(array++) != 0){
+        len++;
+    }
+    return len;
 }
