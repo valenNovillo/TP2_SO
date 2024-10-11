@@ -54,5 +54,5 @@ void* initialize_stack(void *stack_ptr, int argc, char** argv, Main main_func) {
 }
 
 int get_pid_from_stack(void* stack_ptr) {
-    return (int)(stack_ptr - start) / STACK_SIZE;
+    return (int)(stack_ptr + 1 - start) / STACK_SIZE - 1;
 }

@@ -1,9 +1,14 @@
 #include "include/timeDriver.h"
+#include <stdint.h>
+#include "../include/scheduler.h"
+#include "include/videoDriver.h"
 
 static unsigned long ticks = 0;
 
-void timer_handler() {
+void timer_handler(uint64_t infoRegs) {
 	ticks++;
+    REGISTERS* aux = (REGISTERS*) infoRegs;
+    aux->rsp = schedule(infoRegs);
 }
 
 int ticks_elapsed() {
@@ -15,9 +20,7 @@ int seconds_elapsed() {
 }
 
 void wait(unsigned int ms){
-
     int count = ticks_elapsed();
-
 
     while((float)ticks_elapsed() < (float)count + (float)(ms *18)/(1000))
         _hlt();

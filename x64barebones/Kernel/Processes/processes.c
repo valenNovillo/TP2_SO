@@ -3,6 +3,8 @@
 #include "../include/memoryManager.h"
 #include "../include/processes.h"
 #include "../include/stack.h"
+#include "../include/scheduler.h"
+
 
 int16_t create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]) {
     PCB *process_pcb;
@@ -22,9 +24,19 @@ int16_t create_process(Main process_main, char** args, uint8_t run_mode, char* n
     initialize_process(process_pcb, process_main, args, name, priority, fds, run_mode); 
         
     //TO-DO: LOGICA PARA SCHEDULER
-    process_pcb->p_state = READY;
+    Node* process_node = my_malloc(sizeof(Node));
+    if (process_node == NULL) {
+        return -1;
+    }
+    process_node->data = (void*) process_pcb;
+
+    if(process_pcb->pid != DEFAULT_PID) {
+        process_pcb->p_state = READY;
+        queue(get_ready_list(), process_node);
+    }
 
     set_creating(0);
+    set_pid_on_array(process_pcb->pid, process_node);
     return process_pcb->pid; 
 }
 
@@ -36,10 +48,12 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
 
     pcb->pid = get_pid_from_stack(pcb->rbp);
 
-    if (pcb->pid != DEFAULT_PID && fds[0] == STDIN) {
+    if (pcb->pid != DEFAULT_PID) {
         PCB* parent_PCB = get_running_process(); 
         pcb->parent_pid = parent_PCB->pid;
-        if(parent_PCB->run_mode == FOREGROUND) {
+        parent_PCB->children[parent_PCB->childrenCount] = pcb->pid;
+        parent_PCB->childrenCount++;
+        if(fds[0] == STDIN && parent_PCB->run_mode == FOREGROUND) {
             parent_PCB->fds[STDIN] = NO_INPUT; //TO-DO: REVISE
             parent_PCB->run_mode = BACKGROUND;
             set_foreground(pcb->pid); 

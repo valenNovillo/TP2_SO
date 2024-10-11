@@ -15,8 +15,8 @@ void irqDispatcher(uint64_t irq, uint64_t infoRegs) {
     interrupt_handlers[irq](infoRegs);
 }
 
-void int_20() {
-	timer_handler();
+void int_20(uint64_t infoRegs) {
+	timer_handler(infoRegs);
 }
 
 void int_21(uint64_t infoRegs) {
