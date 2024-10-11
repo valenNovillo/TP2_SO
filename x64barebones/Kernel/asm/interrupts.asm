@@ -1,4 +1,3 @@
-
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -131,7 +130,6 @@ SECTION .text
 	iretq
 %endmacro
 
-
 _hlt:
 	sti
 	hlt
@@ -161,7 +159,6 @@ picSlaveMask:
     out	0A1h,al
     pop     rbp
     retn
-
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
@@ -197,7 +194,6 @@ _int80Handler:
 
 	iretq
 
-
 ;Zero Division Exception
 _exception00Handler:
 	exceptionHandler 0
@@ -210,8 +206,6 @@ haltcpu:
 	cli
 	hlt
 	ret
-
-
 
 SECTION .bss
 	aux resq 1

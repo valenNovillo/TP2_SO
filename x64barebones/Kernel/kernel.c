@@ -7,6 +7,7 @@
 #include "Test/test_mm.h"
 #include "include/lib.h"
 #include "include/processes.h"
+#include "include/stack.h"
 
 extern uint8_t text;
 extern uint8_t rodata;

@@ -4,6 +4,7 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
+#define NO_INPUT -1
 
 #define FDS 3
 

@@ -7,6 +7,7 @@ GLOBAL outb
 GLOBAL inb
 GLOBAL sound
 GLOBAL nosound
+GLOBAL call_timer_tick
 
 section .text
 
@@ -54,7 +55,6 @@ cpuVendor:
 
 	mov rax, 0
 	cpuid
-
 
 	mov [rdi], ebx
 	mov [rdi + 4], edx
@@ -129,8 +129,6 @@ keyPress:
     ret
 
 
-
-
 sound:
 	push rbp
     mov rbp, rsp
@@ -176,4 +174,8 @@ nosound:
 
     mov rsp, rbp
     pop rbp
+    ret
+
+call_timer_tick:
+    int 20h
     ret
