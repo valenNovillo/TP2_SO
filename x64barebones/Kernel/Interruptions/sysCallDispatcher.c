@@ -5,6 +5,8 @@
 #include "../Drivers/include/videoDriver.h"
 #include "../Drivers/include/timeDriver.h"
 #include "../Drivers/include/fileDescriptors.h"
+#include "../include/processes.h"
+#include "../include/scheduler.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
 static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) {
@@ -85,6 +87,44 @@ static ssize_t sys_call_reading(unsigned char flag) {
     return setReading(flag);
 }
 
+static ssize_t sys_call_create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]) {
+    return create_process(process_main, args, run_mode, name, priority, fds);
+}
+
+static ssize_t sys_call_get_pid(){
+    return get_pid();
+}
+
+static ssize_t sys_call_kill_process(uint16_t pid, int32_t ret) {
+    return kill_process(pid, ret);
+}
+
+static ssize_t sys_call_set_priority(uint16_t pid, uint8_t new_p) {
+    return set_priority(pid, new_p);
+}
+
+static ssize_t sys_call_block_process(uint16_t pid) {
+    return block_process(pid);
+}
+
+static ssize_t sys_call_unblock_process(uint16_t pid) {
+    return unblock_process(pid);
+}
+
+static ssize_t sys_call_yield() {
+    yield();
+    return 0;
+}
+
+static ssize_t sys_call_wait_pid(int16_t pid) {
+    return wait_pid(pid);
+}
+
+static ssize_t sys_call_ps(){ //TO-DO
+    ps();
+    return 0;
+}
+
 static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8) = {
     sys_call_read, 
     sys_call_write, 
@@ -100,7 +140,16 @@ static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, u
     sys_call_setColor, 
     sys_call_setSize,
     sys_call_printSquare,
-    sys_call_reading
+    sys_call_reading,
+    sys_call_create_process,
+    sys_call_get_pid,
+    sys_call_kill_process,
+    sys_call_set_priority,
+    sys_call_block_process,
+    sys_call_unblock_process,
+    sys_call_yield,
+    sys_call_wait_pid,
+    sys_call_ps
     };
 
 

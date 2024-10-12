@@ -1,6 +1,8 @@
 #include "../include/scheduler.h"
 #include "../include/processes.h"
 #include "../include/linkedList.h"
+#include "../Drivers/include/timeDriver.h"
+#include "../include/memoryManager.h"
 
 typedef struct SchedulerCDT {
     Node* processes[MAX_PROCESSES];
@@ -40,7 +42,7 @@ set_pid_on_array(uint16_t pid, Node * process_node){
     scheduler->process_count++;
 }
 
-PState setState(uint16_t pid, PState new_state) {
+PState set_state(uint16_t pid, PState new_state) {
     Node* node = scheduler->processes[pid];
     if (node == NULL || pid == DEFAULT_PID || new_state == RUNNING) {
         return -1;
@@ -53,7 +55,7 @@ PState setState(uint16_t pid, PState new_state) {
     if (new_state == BLOCKED) {
         remove(scheduler->ready_processes, node);
         if (pid == scheduler->running_pid) {
-            yieldNoSti();
+            yield();
         }
     }
     else if (new_state == READY) {
@@ -115,7 +117,7 @@ void set_foreground(uint16_t pid) {
     scheduler->foreground_pid = pid;
 }
 
-PCB* get_running_process() {
+uint16_t get_running_process_pid() {
     return scheduler->running_pid;
 }
 
@@ -133,7 +135,7 @@ void set_creating(uint8_t creating) {
 
 uint64_t wait_pid(int16_t pid) {
     ((PCB*)scheduler->processes[scheduler->running_pid]->data)->waiting_pid = pid;
-    setState(scheduler->running_pid, BLOCKED);
+    set_state(scheduler->running_pid, BLOCKED);
     return ((PCB*)scheduler->processes[scheduler->running_pid]->data)->ret;
 }
 
@@ -141,16 +143,101 @@ uint16_t get_pid() {
     return scheduler->running_pid;
 }
 
-void* processes_info() {
-    InfoProcess* to_return[get_processes_count()];
+InfoProcess* processes_info() {
+    int processes_count = get_processes_count();
+    
+    InfoProcess* to_return = my_malloc(sizeof(InfoProcess) * processes_count);
+    if(to_return == NULL)
+        return NULL;
 
     Node* current;
-    for(int i = 0; i < MAX_PROCESSES; i++) {
+    for (int i = 0, idx = 0; i < MAX_PROCESSES && idx < processes_count ; i++) {
         current = scheduler->processes[i];
-        if(current != NULL) {
-            to_return[i] = process_info_load(current->data);
+        if (current != NULL) {
+            to_return[idx] = process_info_load((PCB*)(current->data));
+            idx++;
         }
     }
 
     return to_return;
+}
+
+void yield(){
+    scheduler->pending_rounds = 0;
+    call_timer_tick();
+}
+
+int32_t kill_process(uint16_t pid, int32_t ret){
+    Node* process_to_kill = scheduler->processes[pid];
+    if(pid <= DOS){
+        return -1;
+    }
+
+    if(process_to_kill == NULL){
+        return 0;
+    }
+
+    PCB* pcb_to_kill = (PCB*)process_to_kill;
+
+    if(pcb_to_kill->p_state != BLOCKED){
+        remove(scheduler->ready_processes, process_to_kill);
+    }
+
+    pcb_to_kill->ret = ret;
+    pcb_to_kill->p_state = TERMINATED;
+
+    Node* parent_process = scheduler->processes[pcb_to_kill->parent_pid];
+    if(parent_process != NULL){
+        PCB* parent_process_pcb = (PCB*)parent_process->data;
+        if(is_waiting(parent_process_pcb, pcb_to_kill->pid) || is_waiting(parent_process_pcb, -1)){
+            set_state(pcb_to_kill->parent_pid, READY);
+            ((PCB*)parent_process->data)->ret = ret;
+        }
+        if(pcb_to_kill->run_mode){
+            scheduler->foreground_pid = parent_process_pcb->pid;
+            parent_process_pcb->run_mode = 1;
+        }
+    }
+
+    //Adoption!
+    for(int i = 0; i < pcb_to_kill->childrenCount; i++){
+        uint16_t child_pid = pcb_to_kill->children[i];
+        if(scheduler->processes[child_pid] != NULL){
+            ((PCB*)scheduler->processes[child_pid]->data)->parent_pid = pcb_to_kill->parent_pid;
+            unsigned char childrenCount = ((PCB*)scheduler->processes[pcb_to_kill->parent_pid]->data)->childrenCount;
+            (PCB*)(scheduler->processes[pcb_to_kill->parent_pid]->data)->children[childrenCount] = child_pid;
+            ((PCB*)scheduler->processes[pcb_to_kill->parent_pid]->data)->childrenCount++;
+        }
+    }
+
+    free_process_memory(pcb_to_kill);
+    //mem_free(process_to_kill);//Para qué?? ¿Qué mas tenemos que liberar?
+    scheduler->process_count--;
+    my_free(scheduler->processes[pid]); //TO-DO: revise
+    scheduler->processes[pid] = NULL;
+    
+    if(pid == scheduler->running_pid){
+        yield();
+    }
+
+    return 0;
+}
+
+
+int block_process(uint16_t pid) {
+    PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
+    if(get_running_process_pid() == pid) {
+        set_state(pid, BLOCKED);
+        return 0;
+    }
+    return -1;
+}
+
+int unblock_process(uint16_t pid) {
+    PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
+    if(process_pcb->p_state == BLOCKED) {
+        set_state(pid, READY);
+        return 0;
+    }
+    return -1;
 }

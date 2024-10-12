@@ -1,5 +1,6 @@
 #include "include/linkedList.h"
 #include "include/memoryManager.h"
+#include "include/processes.h"
 
 typedef struct LinkedListCDT {
     int len;
@@ -65,7 +66,7 @@ void remove(LinkedList list, Node *node) {
             node->next->prev = node->prev;
     }
 
-    free(node);
+    my_free(node);
     list->len--;
 }
 
@@ -108,8 +109,12 @@ void freeList(LinkedList list) {
 
     while(listHasNext(list)){
         Node * current = listNext(list);
-        memFree(current);
+        my_free(((PCB*)current->data)->name);
+        my_free(current->data);
+        my_free(current);
     }
     
     my_free(list);
 }
+
+

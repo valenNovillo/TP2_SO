@@ -1,5 +1,4 @@
 #include "include/timeDriver.h"
-#include <stdint.h>
 #include "../include/scheduler.h"
 #include "include/videoDriver.h"
 

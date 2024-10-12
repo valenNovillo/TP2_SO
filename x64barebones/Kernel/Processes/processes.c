@@ -4,6 +4,7 @@
 #include "../include/processes.h"
 #include "../include/stack.h"
 #include "../include/scheduler.h"
+#include "../Drivers/include/videoDriver.h"
 
 int16_t create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]) {
     PCB *process_pcb;
@@ -63,7 +64,7 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
     
     pcb->priority = priority;
 
-    int name_len = strLen(name) + 1;
+    int name_len = strlen(name) + 1;
     pcb->name = my_malloc(name_len + 1);
     memcpy(pcb->name, name, name_len + 1);
     pcb->name[name_len - 1] = '\0';
@@ -92,7 +93,7 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
     int total_args_len = 0;
     int args_len[argc];
     for (int i = 0; i < argc; i++) {
-        args_len[i] = strLen(args[i]) + 1;
+        args_len[i] = strlen(args[i]) + 1;
         total_args_len += args_len[i];
     }
     
@@ -119,8 +120,15 @@ void free_process_memory(PCB * pcb){
     my_free(pcb);
 }
 
+void is_waiting(PCB* pcb, int16_t pid_to_wait){
+    return pcb->waiting_pid == pid_to_wait;
+}
+
 InfoProcess* process_info_load(PCB* pcb) {
     InfoProcess* aux = my_malloc(sizeof(InfoProcess));
+    if(aux == NULL)
+        return NULL;
+    
     aux->name = pcb->name;
     aux->pid = pcb->pid;
     aux->parent_pid = pcb->parent_pid;
@@ -132,3 +140,51 @@ InfoProcess* process_info_load(PCB* pcb) {
     
     return aux;
 }
+
+
+void ps() {
+    char* foreground[2] = {"Background", "foreground"};
+    char* state[STATES] = {"RUNNING", "BLOCKED", "READY", "ZOMBIE", "TERMINATED"};
+
+    InfoProcess* info_processes = processes_info();
+    putString(STDOUT, "\n", 1);
+    
+    int process_count = get_processes_count();
+    for(int i = 0; i < process_count; i++) {
+        putString(STDOUT, "Process: ", 9);
+        putString(STDOUT, info_processes[i].name, strlen(info_processes[i].name));
+
+        putString(STDOUT, "\tPID: ", 6);
+        char string_pid[4];
+        int len = intToString(info_processes[i].pid, string_pid);
+        putString(STDOUT, string_pid, len);
+
+        putString(STDOUT, "\tPriority: ", 11);
+        char string_prioridad[1];
+        len = intToString(info_processes[i].priority, string_prioridad);
+        putString(STDOUT, string_prioridad, len);
+
+        putString(STDOUT, "\tRSP: ", 6);
+        char string_rsp[8];
+        len = intToString(info_processes[i].rsp, string_rsp);
+        putString(STDOUT, string_rsp, len);
+
+        putString(STDOUT, "\tRBP: ", 6);
+        char string_rbp[8];
+        len = intToString(info_processes[i].rbp, string_rbp);
+        putString(STDOUT, string_rbp, len);
+
+        putString(STDOUT, "\tRunning in: ", 13);
+        putString(STDOUT, foreground[info_processes[i].is_fg], strlen(foreground[info_processes[i].is_fg]));
+
+        putString(STDOUT, "\tState: ", 8);
+        putString(STDOUT, state[info_processes[i].state], strlen(state[info_processes[i].state]));
+
+        putString(STDOUT, "\n", 1);
+    }
+    
+    
+    my_free(info_processes);
+}
+
+

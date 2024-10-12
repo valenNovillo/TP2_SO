@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 #define BLOCK_COUNT 8192
-#define BLOCK_SIZE 1024
-#define MEMORY_SIZE "8388608"
+#define BLOCK_SIZE 2048
+#define MEMORY_SIZE "16777216"
 
 void my_mm_init(void* ptr);
 void* my_malloc(uint64_t size);

@@ -23,7 +23,9 @@ void* my_malloc(uint64_t size) {
 }
 
 void my_free(void * ptr) {
-    free_ptrs[--current] = ptr;
+    if (current > 0) {
+        free_ptrs[--current] = ptr;
+    }
 }
 
 

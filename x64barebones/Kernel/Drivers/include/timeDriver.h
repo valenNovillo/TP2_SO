@@ -1,11 +1,13 @@
 #ifndef _TIMEDRIVER_H_
 #define _TIMEDRIVER_H_
 
+#include <stdint.h>
+
 extern int bringSeconds();
 extern int bringMinutes();
 extern int bringHours();
 
-void timer_handler();
+void timer_handler(uint64_t infoRegs);
 
 int ticks_elapsed();
 
