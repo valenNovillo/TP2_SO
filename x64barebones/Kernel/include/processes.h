@@ -37,7 +37,20 @@ typedef struct PCB {
 
 } PCB;
 
-int16_t create_process(int (*proccess_main) (int argc, char **argv), char **argv, uint8_t run_mode);
-void initializeProcess(PCB *pcb, uint16_t pid, uint16_t parent_pid, Main main_func, char **args, char *name, uint8_t priority, int16_t fds[]);
+typedef struct InfoProcess {
+    char *name;
+    uint16_t pid;
+    uint16_t parent_pid;
+    uint8_t priority;
+    void* rsp;
+    void* rbp;
+    uint8_t is_fg;
+    PState state;
+} InfoProcess;
+
+
+int16_t create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]);
+static void initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[], uint8_t run_mode);
+void free_process_memory(PCB * pcb);
 
 #endif

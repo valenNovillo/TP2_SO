@@ -5,7 +5,6 @@
 #include "../include/stack.h"
 #include "../include/scheduler.h"
 
-
 int16_t create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]) {
     PCB *process_pcb;
     set_creating(1);
@@ -119,4 +118,3 @@ void free_process_memory(PCB * pcb){
     free_stack(pcb->rbp);
     my_free(pcb);
 }
-

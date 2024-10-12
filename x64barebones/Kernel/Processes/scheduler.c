@@ -15,7 +15,7 @@ typedef struct SchedulerCDT {
 Scheduler scheduler;
 char is_creating = 0;
 
-void initializeScheduler() {
+void initialize_scheduler() {
     for (int i = 0; i < MAX_PROCESSES; i++) {
         scheduler->processes[i] = NULL;
     }
@@ -26,7 +26,7 @@ void initializeScheduler() {
     scheduler->running_pid = 0;
 }
 
-static uint16_t getNextReadyProcess() {
+static uint16_t get_next_ready_process() {
     startIterator(scheduler->ready_processes);
     Node* node = ((Node*)listNext(scheduler->ready_processes));
     if (node == NULL) {
@@ -62,14 +62,14 @@ PState setState(uint16_t pid, PState new_state) {
     return new_state;
 }
 
-int32_t setPriority(uint16_t pid, uint8_t new_prio) {
-    Node* node = scheduler.processes[pid];
-    if (node == NULL || pid == TRIVIAL_PID || new_prio >= QTY_PRIORITIES) {
+int32_t set_priority(uint16_t pid, uint8_t new_p) {
+    Node* node = scheduler->processes[pid];
+    if (node == NULL || pid == DEFAULT_PID || new_p >= MAX_PRIORITY) {
         return -1;
     }
     PCB* pcb = (PCB*)node->data;
-    pcb->priority = new_prio;
-    return new_prio;
+    pcb->priority = new_p;
+    return new_p;
 }
 
 void* schedule(void* last_rsp){
@@ -95,7 +95,7 @@ void* schedule(void* last_rsp){
         ((PCB*)running->data)->p_state = READY;
     }
 
-    uint16_t new_PID = getNextReadyProcess();
+    uint16_t new_PID = get_next_ready_process();
     PCB* new_P = scheduler->processes[new_PID]->data;
     scheduler->pending_rounds = new_P->priority + 1;
     if (!first_round && running != NULL) {
@@ -129,4 +129,14 @@ LinkedList get_ready_list() {
 
 void set_creating(uint8_t creating) {
     is_creating = creating;
+}
+
+uint64_t wait_pid(int16_t pid) {
+    ((PCB*)scheduler->processes[scheduler->running_pid]->data)->waiting_pid = pid;
+    setState(scheduler->running_pid, BLOCKED);
+    return ((PCB*)scheduler->processes[scheduler->running_pid]->data)->ret;
+}
+
+uint16_t get_pid() {
+    return scheduler->running_pid;
 }
