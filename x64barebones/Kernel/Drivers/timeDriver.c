@@ -7,7 +7,7 @@ static unsigned long ticks = 0;
 void timer_handler(uint64_t infoRegs) {
 	ticks++;
     REGISTERS* aux = (REGISTERS*) infoRegs;
-    aux->rsp = schedule(infoRegs);
+    aux->rsp = (uint64_t)schedule((void*)infoRegs);
 }
 
 int ticks_elapsed() {

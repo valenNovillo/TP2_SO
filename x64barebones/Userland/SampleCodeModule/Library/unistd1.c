@@ -59,5 +59,5 @@ void printSquare(unsigned char color[3], int x, int y, int length) {
 }
 
 int reading(unsigned char flag) {
-    sysCall(14, flag, 0, 0, 0, 0);
+    return sysCall(14, flag, 0, 0, 0, 0);
 }

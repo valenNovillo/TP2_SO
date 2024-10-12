@@ -71,7 +71,7 @@ void remove(LinkedList list, Node *node) {
 }
 
 int isEmpty(LinkedList list) {
-    if(list == NULL) return NULL;
+    if(list == NULL) return 0;
 
     return list->len == 0;
 }
@@ -109,9 +109,7 @@ void freeList(LinkedList list) {
 
     while(listHasNext(list)){
         Node * current = listNext(list);
-        my_free(((PCB*)current->data)->name);
-        my_free(current->data);
-        my_free(current);
+        free_process_memory(current->data);
     }
     
     my_free(list);

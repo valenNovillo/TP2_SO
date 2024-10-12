@@ -120,7 +120,7 @@ void free_process_memory(PCB * pcb){
     my_free(pcb);
 }
 
-void is_waiting(PCB* pcb, int16_t pid_to_wait){
+char is_waiting(PCB* pcb, int16_t pid_to_wait){
     return pcb->waiting_pid == pid_to_wait;
 }
 

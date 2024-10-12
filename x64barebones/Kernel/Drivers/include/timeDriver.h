@@ -6,6 +6,7 @@
 extern int bringSeconds();
 extern int bringMinutes();
 extern int bringHours();
+extern void _hlt();
 
 void timer_handler(uint64_t infoRegs);
 

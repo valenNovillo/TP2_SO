@@ -121,6 +121,10 @@ uint16_t get_running_process_pid() {
     return scheduler->running_pid;
 }
 
+PCB* get_running_process() {
+    return (PCB*)(scheduler->processes[scheduler->running_pid]->data);
+}
+
 int get_processes_count() {
     return scheduler->process_count;
 }
@@ -146,7 +150,7 @@ uint16_t get_pid() {
 InfoProcess* processes_info() {
     int processes_count = get_processes_count();
     
-    InfoProcess* to_return = my_malloc(sizeof(InfoProcess) * processes_count);
+    InfoProcess** to_return = my_malloc(sizeof(InfoProcess) * processes_count);
     if(to_return == NULL)
         return NULL;
 
@@ -205,7 +209,7 @@ int32_t kill_process(uint16_t pid, int32_t ret){
         if(scheduler->processes[child_pid] != NULL){
             ((PCB*)scheduler->processes[child_pid]->data)->parent_pid = pcb_to_kill->parent_pid;
             unsigned char childrenCount = ((PCB*)scheduler->processes[pcb_to_kill->parent_pid]->data)->childrenCount;
-            (PCB*)(scheduler->processes[pcb_to_kill->parent_pid]->data)->children[childrenCount] = child_pid;
+            ((PCB*)scheduler->processes[pcb_to_kill->parent_pid]->data)->children[childrenCount] = child_pid;
             ((PCB*)scheduler->processes[pcb_to_kill->parent_pid]->data)->childrenCount++;
         }
     }

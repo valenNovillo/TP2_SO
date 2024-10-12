@@ -8,6 +8,7 @@
 #include "include/lib.h"
 #include "include/processes.h"
 #include "include/stack.h"
+#include "include/typedef_process.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -60,8 +61,8 @@ int main()
 	my_mm_init(startFreeMemoryAddress);
 	stack_init(stacks);
 
-	char*param[1];
-	param[0] = MEMORY_SIZE;
+	//char* param[1];
+	//param[0] = MEMORY_SIZE;
     //test_mm(1, param);
 	
 	((EntryPoint)sampleCodeModuleAddress)();

@@ -4,7 +4,7 @@ void intToString(int n, char* s);
 int readByDelim(int fd, char * buff, int count, char delim);
 
 int getChar() {
-    unsigned char c = 0;
+    char c = 0;
     int count = 0;
     while(count == 0) 
         count = read(0, &c, 1);

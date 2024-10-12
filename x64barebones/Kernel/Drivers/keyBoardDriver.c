@@ -78,7 +78,7 @@ static char checkAlternative(unsigned char code) {
 
 static unsigned char getStringFromCode(unsigned char code){
     char alternate = checkAlternative(code);
-    return scan_codes[alternate][code];
+    return scan_codes[(int)alternate][code];
 }
 
 static void removeLastFromBuff() {

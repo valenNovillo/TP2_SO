@@ -16,7 +16,7 @@ static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t 
 }
 
 //Devuelve la cantidad de caracteres que pudo escribir
-static ssize_t sys_call_write(uint64_t fd, const char * buff, uint64_t count, uint64_t r10, uint64_t r8) { 
+static ssize_t sys_call_write(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) { 
     if (fd != STDOUT && fd != STDERR) {
         return -1;
     }
@@ -155,7 +155,7 @@ static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, u
 
 ssize_t sysCallDispatcher(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8) {
     if (rax >= sizeof(syscall_handlers) / sizeof(syscall_handlers[0])) 
-            return;
+            return -1;
 
     return syscall_handlers[rax](rdi, rsi, rdx, r10, r8);
 }

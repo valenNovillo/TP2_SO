@@ -27,7 +27,7 @@ typedef enum {
 
 typedef struct Position{
     int x;
-    int y
+    int y;
 } Position;
 
 //Estas constantes definen valores simbólicos para las teclas de flecha
@@ -46,6 +46,9 @@ typedef struct Position{
 
 #define STARTING_2_X MAPWIDTH / 2
 #define STARTING_2_Y MAPHEIGHT - 4
+
+//función que implementa la ejecución de una nueva partida del juego eliminator
+void eliminator();
 
 
 #endif //ELIMINATOR_H

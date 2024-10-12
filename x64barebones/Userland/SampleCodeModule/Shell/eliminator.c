@@ -2,9 +2,6 @@
 
 //===================================================================================== PROTOTIPOS ===================================================================================================================
 
-//función que implementa la ejecución de una nueva partida del juego eliminator
-void eliminator();
-
 //función que para darle una introduccion al juego eliminator - suena una musica y se imprime un mensaje
 void intro();
 

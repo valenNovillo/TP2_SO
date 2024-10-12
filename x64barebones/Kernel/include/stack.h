@@ -4,7 +4,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
-typedef struct StackInit {
+#include "typedef_process.h"
+
+#define STACK_SIZE 4096
+
+typedef struct { 
     uint64_t r15;
     uint64_t r14;
     uint64_t r13;
@@ -33,4 +37,4 @@ void free_stack(void * ptr);
 void* initialize_stack(void *stack_ptr, int argc, char** argv, Main main_func);
 int get_pid_from_stack(void* stack_ptr);
 
-#endif
+#endif //STACK_H
