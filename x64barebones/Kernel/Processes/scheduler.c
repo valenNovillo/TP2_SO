@@ -140,3 +140,17 @@ uint64_t wait_pid(int16_t pid) {
 uint16_t get_pid() {
     return scheduler->running_pid;
 }
+
+void* processes_info() {
+    InfoProcess* to_return[get_processes_count()];
+
+    Node* current;
+    for(int i = 0; i < MAX_PROCESSES; i++) {
+        current = scheduler->processes[i];
+        if(current != NULL) {
+            to_return[i] = process_info_load(current->data);
+        }
+    }
+
+    return to_return;
+}

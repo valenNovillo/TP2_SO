@@ -7,7 +7,7 @@ typedef struct Node {
     void* data;
     struct Node *prev;
     struct Node *next;
-}Node;
+} Node;
 
 LinkedList createLinkedList();
 void queue(LinkedList list, Node *node);

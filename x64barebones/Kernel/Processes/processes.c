@@ -118,3 +118,17 @@ void free_process_memory(PCB * pcb){
     free_stack(pcb->rbp);
     my_free(pcb);
 }
+
+InfoProcess* process_info_load(PCB* pcb) {
+    InfoProcess* aux = my_malloc(sizeof(InfoProcess));
+    aux->name = pcb->name;
+    aux->pid = pcb->pid;
+    aux->parent_pid = pcb->parent_pid;
+    aux->priority = pcb->priority;
+    aux->rsp = pcb->rsp;
+    aux->rbp = pcb->rbp;
+    aux->is_fg = pcb->run_mode;
+    aux->state = pcb->p_state;
+    
+    return aux;
+}
