@@ -149,10 +149,10 @@ uint16_t get_pid() {
     return scheduler->running_pid;
 }
 
-InfoProcess* processes_info() {
+InfoProcess** processes_info() {
     int processes_count = get_processes_count();
     
-    InfoProcess** to_return = my_malloc(sizeof(InfoProcess) * processes_count);
+    InfoProcess** to_return = my_malloc(sizeof(InfoProcess*) * processes_count);
     if(to_return == NULL)
         return NULL;
 

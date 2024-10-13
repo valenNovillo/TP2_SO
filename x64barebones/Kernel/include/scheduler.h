@@ -27,6 +27,7 @@ int block_process(uint16_t pid);
 int unblock_process(uint16_t pid);
 int32_t kill_process(uint16_t pid, int32_t ret);
 void set_creating(uint8_t creating);
+InfoProcess** processes_info();
 
 
 

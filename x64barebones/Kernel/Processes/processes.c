@@ -150,39 +150,39 @@ void ps() {
     char* foreground[2] = {"Background", "foreground"};
     char* state[STATES] = {"RUNNING", "BLOCKED", "READY", "ZOMBIE", "TERMINATED"};
 
-    InfoProcess* info_processes = processes_info();
+    InfoProcess** info_processes = processes_info();
     putString(STDOUT, "\n", 1);
     
     int process_count = get_processes_count();
     for(int i = 0; i < process_count; i++) {
         putString(STDOUT, "Process: ", 9);
-        putString(STDOUT, info_processes[i].name, strlen(info_processes[i].name));
+        putString(STDOUT, info_processes[i]->name, strlen(info_processes[i]->name));
 
         putString(STDOUT, "\tPID: ", 6);
         char string_pid[4];
-        int len = intToString(info_processes[i].pid, string_pid);
+        int len = intToString(info_processes[i]->pid, string_pid);
         putString(STDOUT, string_pid, len);
 
         putString(STDOUT, "\tPriority: ", 11);
         char string_prioridad[1];
-        len = intToString(info_processes[i].priority, string_prioridad);
+        len = intToString(info_processes[i]->priority, string_prioridad);
         putString(STDOUT, string_prioridad, len);
 
         putString(STDOUT, "\tRSP: ", 6);
         char string_rsp[8];
-        len = decimalToHexadecimal(info_processes[i].rsp, string_rsp, 8);
+        len = decimalToHexadecimal(info_processes[i]->rsp, string_rsp, 8);
         putString(STDOUT, string_rsp, len);
 
         putString(STDOUT, "\tRBP: ", 6);
         char string_rbp[8];
-        len = decimalToHexadecimal(info_processes[i].rbp, string_rbp, 8);
+        len = decimalToHexadecimal(info_processes[i]->rbp, string_rbp, 8);
         putString(STDOUT, string_rbp, len);
 
         putString(STDOUT, "\tRunning in: ", 13);
-        putString(STDOUT, foreground[info_processes[i].is_fg], strlen(foreground[info_processes[i].is_fg]));
+        putString(STDOUT, foreground[info_processes[i]->is_fg], strlen(foreground[info_processes[i]->is_fg]));
 
         putString(STDOUT, "\tState: ", 8);
-        putString(STDOUT, state[info_processes[i].state], strlen(state[info_processes[i].state]));
+        putString(STDOUT, state[info_processes[i]->state], strlen(state[info_processes[i]->state]));
 
         putString(STDOUT, "\n", 1);
     }
