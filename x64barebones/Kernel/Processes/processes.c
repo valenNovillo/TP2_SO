@@ -6,6 +6,11 @@
 #include "../include/scheduler.h"
 #include "../Drivers/include/videoDriver.h"
 
+static void main_wraper(int argc, char** argv, Main main ) {
+    int32_t return_value = main(argc, argv);
+    kill_process(get_running_process()->pid, return_value);
+}
+
 static void initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[]){
 
     if((pcb->rbp = create_stack()) == NULL) {
@@ -76,8 +81,7 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
 
     pcb->argv = args_array;
     pcb->argv[argc] = NULL;
-
-    pcb->rsp = initialize_stack(pcb->rbp, argc, args, main_func); 
+    pcb->rsp = initialize_stack(pcb->rbp, argc, args, main_func, main_wraper); 
 }
 
 int16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
@@ -166,12 +170,12 @@ void ps() {
 
         putString(STDOUT, "\tRSP: ", 6);
         char string_rsp[8];
-        len = intToString(info_processes[i].rsp, string_rsp);
+        len = decimalToHexadecimal(info_processes[i].rsp, string_rsp, 8);
         putString(STDOUT, string_rsp, len);
 
         putString(STDOUT, "\tRBP: ", 6);
         char string_rbp[8];
-        len = intToString(info_processes[i].rbp, string_rbp);
+        len = decimalToHexadecimal(info_processes[i].rbp, string_rbp, 8);
         putString(STDOUT, string_rbp, len);
 
         putString(STDOUT, "\tRunning in: ", 13);

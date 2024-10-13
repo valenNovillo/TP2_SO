@@ -183,7 +183,7 @@ call_timer_tick:
 
 
 initialize_stack:
-	mov r8, rsp
+	mov r9, rsp
 	mov rsp, rdi	
 
 	push 0	    ;ss
@@ -194,17 +194,17 @@ initialize_stack:
 
 	push 0x8    ;cs
 
-	push rcx	;ri
+	push r8	    ;rip -> main_wrapper
 
 	mov rax, 0
 	push rax    ;rax
 	push rax	;rbx
 	push rax	;rcx
-	push rax	;rdx
+	push rcx	;rdx
 
 	push rdi	;rbp
 	push rsi	;rdi -> argc 
-	push rdx	;rsi -> argv como segundo argumento
+	push rdx	;rsi -> argv
 
 	push rax	;r8
 	push rax	;r9
@@ -215,5 +215,5 @@ initialize_stack:
 	push rax	;r14
 	push rax	;r15
 	mov rax, rsp
-	mov rsp, r8 ;restaurar el stack viejo
+	mov rsp, r9 
 	ret

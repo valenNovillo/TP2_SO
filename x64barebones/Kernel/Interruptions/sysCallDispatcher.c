@@ -95,8 +95,8 @@ static ssize_t sys_call_get_pid(){
     return get_pid();
 }
 
-static ssize_t sys_call_kill_process(uint16_t pid, int32_t ret) {
-    return kill_process(pid, ret);
+static ssize_t sys_call_kill_process(uint16_t pid) {
+    return kill_process(pid, -1);
 }
 
 static ssize_t sys_call_set_priority(uint16_t pid, uint8_t new_p) {

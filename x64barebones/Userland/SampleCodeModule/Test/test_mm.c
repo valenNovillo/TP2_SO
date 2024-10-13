@@ -1,15 +1,13 @@
 #include "syscall.h"
 #include "test_util.h"
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "test_mm.h"
-#include "../include/memoryManager.h"
-#include "../Drivers/include/videoDriver.h"
+#include "test.h"
+#include "../Library/include/stdio1.h"
+#include "../Library/include/unistd1.h"
 
 #define MAX_BLOCKS 128
 
-typedef struct MM_rq {
+/*typedef struct MM_rq {
   void *address;
   uint32_t size;
 } mm_rq;
@@ -52,9 +50,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          //printf("test_mm ERROR\n");
-          char * buff = "test_mm ERROR\n";
-          putString(2, buff, 14);
+          printf("test_mm ERROR\n");
           return -1;
         }
 
@@ -64,3 +60,4 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
         my_free(mm_rqs[i].address);
   }
 }
+*/

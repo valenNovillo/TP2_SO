@@ -70,8 +70,8 @@ uint16_t get_pid(){
     return sysCall(16, 0, 0, 0, 0, 0);
 }
 
-int32_t kill_process(uint16_t pid, int32_t ret){
-    return sysCall(17, pid, ret, 0, 0, 0);
+int32_t kill_process(uint16_t pid) {
+    return sysCall(17, pid, 0, 0, 0, 0);
 }
 
 int32_t set_priority(uint16_t pid, uint8_t new_p) {

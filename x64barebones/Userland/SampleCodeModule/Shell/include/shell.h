@@ -49,6 +49,10 @@ void findCommand(char * buffer);
 //funcion para resetear el contenido del buffer de la shell
 void resetBuffer();
 
+void test_process();
+
+void ps_commmand();
+
 //========================================================================================================================================================================================================================
 
 

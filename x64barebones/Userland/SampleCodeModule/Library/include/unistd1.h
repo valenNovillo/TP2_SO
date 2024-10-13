@@ -26,7 +26,7 @@ void printSquare(unsigned char color[3], int x, int y, int length);
 int reading(unsigned char flag);
 uint16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]);
 uint16_t get_pid();
-int32_t kill_process(uint16_t pid, int32_t ret);
+int32_t kill_process(uint16_t pid);
 int32_t set_priority(uint16_t pid, uint8_t new_p);
 int block_process(uint16_t pid);
 int unblock_process(uint16_t pid);

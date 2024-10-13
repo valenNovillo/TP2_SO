@@ -16,6 +16,8 @@ typedef enum PState {RUNNING, BLOCKED, READY, ZOMBIE, TERMINATED} PState;
 
 typedef int (*Main)(int argc, char **args);
 
+typedef void (*Main_wrapper)(Main main, int argc, char **args);
+
 typedef struct PCB {
     int16_t waiting_pid; //TODO chequear
     uint16_t parent_pid;

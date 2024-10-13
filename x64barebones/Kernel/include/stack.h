@@ -13,5 +13,5 @@ void* create_stack();
 void free_stack(void * ptr);
 int get_pid_from_stack(void* stack_ptr);
 
-extern void* initialize_stack(void *stack_ptr, int argc, char** argv, Main main_func);
+extern void* initialize_stack(void *stack_ptr, int argc, char** argv, Main main_func, Main_wrapper main_wraper);
 #endif //STACK_H

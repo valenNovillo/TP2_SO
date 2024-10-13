@@ -9,6 +9,7 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
+#define NO_INPUT -1
 
 //función que lee un caracter por entrada estándar
 int getChar();
