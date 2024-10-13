@@ -29,6 +29,7 @@ $(LOADEROBJECT):
 	$(GCC) $(GCCFLAGS) $(LOADERSRC) -c -o $(LOADEROBJECT)
 
 clean:
-	rm -rf Shell/*.o Library/*.o *.o
+#	rm -rf Shell/*.o Library/*.o *.o
+	find . -name "*.o" -delete
 
 .PHONY: all clean

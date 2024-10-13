@@ -87,8 +87,8 @@ static ssize_t sys_call_reading(unsigned char flag) {
     return setReading(flag);
 }
 
-static ssize_t sys_call_create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]) {
-    return create_process(process_main, args, run_mode, name, priority, fds);
+static ssize_t sys_call_create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
+    return create_process(process_main, args, name, priority, fds);
 }
 
 static ssize_t sys_call_get_pid(){
@@ -120,8 +120,13 @@ static ssize_t sys_call_wait_pid(int16_t pid) {
     return wait_pid(pid);
 }
 
-static ssize_t sys_call_ps(){ //TO-DO
+static ssize_t sys_call_ps(){ 
     ps();
+    return 0;
+}
+
+static ssize_t sys_call_hlt() {
+    _hlt();
     return 0;
 }
 
@@ -149,7 +154,8 @@ static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, u
     sys_call_unblock_process,
     sys_call_yield,
     sys_call_wait_pid,
-    sys_call_ps
+    sys_call_ps,
+    sys_call_hlt
     };
 
 

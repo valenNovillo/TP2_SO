@@ -7,6 +7,8 @@
 
 //todas estas funciones son llamadas a sycalls
 
+typedef int (*Main)(int argc, char **args);
+
 int read(int fd, char * buff, int count);
 ssize_t write(int fildes, const void *buf, size_t nbyte);
 void beep(uint64_t freq , uint64_t duration);
@@ -22,5 +24,15 @@ void setColor(unsigned char b, unsigned char g, unsigned char r);
 void setSize(unsigned int size);
 void printSquare(unsigned char color[3], int x, int y, int length);
 int reading(unsigned char flag);
+uint16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]);
+uint16_t get_pid();
+int32_t kill_process(uint16_t pid, int32_t ret);
+int32_t set_priority(uint16_t pid, uint8_t new_p);
+int block_process(uint16_t pid);
+int unblock_process(uint16_t pid);
+void yield();
+uint64_t wait_pid(int16_t pid);
+int ps();
+void _hlt();
 
 #endif //UNISTD1_H

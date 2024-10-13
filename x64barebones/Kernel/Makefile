@@ -4,8 +4,8 @@ KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_DRIVERS=$(wildcard Drivers/*.c)
 SOURCES_INTERRUPTIONS=$(wildcard Interruptions/*.c)
-SOURCES_MMANAGER=$(wildcard Processes/*.c)
-SOURCES_PROCESSES=$(wildcard memoryManager/*.c)
+SOURCES_MMANAGER=$(wildcard MemoryManager/*.c)
+SOURCES_PROCESSES=$(wildcard Processes/*.c)
 SOURCES_TEST=$(wildcard Test/*.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
@@ -35,6 +35,9 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf asm/*.o Drivers/*o Interruptions/*o Test/*o *.o *.bin *elf
+#rm -rf asm/*.o Drivers/*o Interruptions/*o Test/*o *.o *.bin *elf
+	find . -name "*.o" -delete
+	find . -name "*.elf" -delete
+	find . -name "*.bin" -delete
 
 .PHONY: all clean

@@ -10,7 +10,7 @@
 #define FOREGROUND 1
 #define DEFAULT_PID 0
 #define MAX_PRIORITY 5
-#define DOS 2
+#define UNO 1
 
 typedef enum PState {RUNNING, BLOCKED, READY, ZOMBIE, TERMINATED} PState;
 

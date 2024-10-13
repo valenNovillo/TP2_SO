@@ -6,41 +6,7 @@
 #include "../include/scheduler.h"
 #include "../Drivers/include/videoDriver.h"
 
-int16_t create_process(Main process_main, char** args, uint8_t run_mode, char* name, uint8_t priority, int16_t fds[]) {
-    PCB *process_pcb;
-    set_creating(1);
-
-    if(get_processes_count() == MAX_PROCESSES ||process_main == NULL || fds == NULL || name == NULL 
-        || priority > MAX_PRIORITY || run_mode > FOREGROUND) {
-        set_creating(0);
-        return -1;
-    }
-
-    if((process_pcb = my_malloc(sizeof(PCB))) == NULL) {
-        return -1;
-        set_creating(0);
-    }
-
-    initialize_process(process_pcb, process_main, args, name, priority, fds, run_mode); 
-        
-    //TO-DO: LOGICA PARA SCHEDULER
-    Node* process_node = my_malloc(sizeof(Node));
-    if (process_node == NULL) {
-        return -1;
-    }
-    process_node->data = (void*) process_pcb;
-
-    if(process_pcb->pid != DEFAULT_PID) {
-        process_pcb->p_state = READY;
-        queue(get_ready_list(), process_node);
-    }
-
-    set_creating(0);
-    set_pid_on_array(process_pcb->pid, process_node);
-    return process_pcb->pid; 
-}
-
-static void initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[], uint8_t run_mode){
+static void initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[]){
 
     if(pcb->rbp = create_stack() == NULL) {
         return NULL;
@@ -58,6 +24,7 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
             parent_PCB->run_mode = BACKGROUND;
             set_foreground(pcb->pid); 
         } else {
+            set_creating(0);
             return -1;
         }
     }     
@@ -83,9 +50,9 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
     }
 
     if(fds[STDIN] == STDIN) {
-        pcb->run_mode = 1; //if process interacts with user stdin then is running in foreground!
+        pcb->run_mode = FOREGROUND; //if process interacts with user stdin then is running in foreground!
     } else {
-        pcb->run_mode = 0;
+        pcb->run_mode = BACKGROUND;
     }
     
     //Arguments configuration
@@ -111,6 +78,39 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
     pcb->argv[argc] = NULL;
 
     pcb->rsp = initialize_stack(pcb->rbp, argc, args, main_func); 
+}
+
+int16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
+    PCB *process_pcb;
+    set_creating(1);
+
+    if(get_processes_count() == MAX_PROCESSES || process_main == NULL || fds == NULL || name == NULL 
+        || priority > MAX_PRIORITY) {
+        set_creating(0);
+        return -1;
+    }
+
+    if((process_pcb = my_malloc(sizeof(PCB))) == NULL) {
+        return -1;
+        set_creating(0);
+    }
+
+    initialize_process(process_pcb, process_main, args, name, priority, fds); 
+        
+    Node* process_node = my_malloc(sizeof(Node));
+    if (process_node == NULL) {
+        return -1;
+    }
+    process_node->data = (void*) process_pcb;
+
+    if(process_pcb->pid != DEFAULT_PID) {
+        process_pcb->p_state = READY;
+        queue(get_ready_list(), process_node);
+    }
+
+    set_creating(0);
+    set_pid_on_array(process_pcb->pid, process_node);
+    return process_pcb->pid; 
 }
 
 void free_process_memory(PCB * pcb){

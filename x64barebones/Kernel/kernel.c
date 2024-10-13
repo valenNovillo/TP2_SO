@@ -8,6 +8,7 @@
 #include "include/lib.h"
 #include "include/processes.h"
 #include "include/stack.h"
+#include "include/scheduler.h"
 #include "include/typedef_process.h"
 
 extern uint8_t text;
@@ -55,17 +56,34 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-int main()
-{	
-	load_idt();
+/*int default(int argc, char **argv){
+    char * argv[] = {NULL};
+    //int16_t* fds = memAlloc(3*sizeof(int16_t));
+    //getFDs(fds);
+	
+    createProcess(userCodeAddress, argv, "idle", 0, fds);
+    memFree(fds);
+    while (1) {
+        _hlt();
+    }
+
+	return 0;
+}*/
+
+int main() {	
 	my_mm_init(startFreeMemoryAddress);
 	stack_init(stacks);
-
+	initialize_scheduler();
+	char * argv[] = {NULL};
+	int16_t fds[3] = {STDIN, STDOUT, STDERR};
+	create_process(sampleCodeModuleAddress, argv, "default", 0, fds);
+	load_idt();
+	call_timer_tick();
 	//char* param[1];
 	//param[0] = MEMORY_SIZE;
     //test_mm(1, param);
 	
-	((EntryPoint)sampleCodeModuleAddress)();
+	//((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;
 }

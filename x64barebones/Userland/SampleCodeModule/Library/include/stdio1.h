@@ -6,6 +6,10 @@
 #include "string.h"
 #include "unistd1.h"
 
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
 //función que lee un caracter por entrada estándar
 int getChar();
 

@@ -61,3 +61,44 @@ void printSquare(unsigned char color[3], int x, int y, int length) {
 int reading(unsigned char flag) {
     return sysCall(14, flag, 0, 0, 0, 0);
 }
+
+uint16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
+    return sysCall(15, process_main, args, name, priority, fds);
+}
+
+uint16_t get_pid(){
+    return sysCall(16, 0, 0, 0, 0, 0);
+}
+
+int32_t kill_process(uint16_t pid, int32_t ret){
+    return sysCall(17, pid, ret, 0, 0, 0);
+}
+
+int32_t set_priority(uint16_t pid, uint8_t new_p) {
+    return sysCall(18, pid, new_p, 0, 0, 0);
+}
+
+int block_process(uint16_t pid){
+    return sysCall(19,pid, 0, 0, 0, 0);
+}
+
+int unblock_process(uint16_t pid) {
+    return sysCall(20, pid, 0, 0, 0, 0);
+}
+
+void yield(){
+   sysCall(21,0, 0, 0, 0, 0); 
+}
+
+uint64_t wait_pid(int16_t pid) {
+    return sysCall(22, pid, 0, 0, 0, 0);
+}
+
+int ps(){
+    return sysCall(23, 0, 0, 0, 0, 0);
+}
+
+void _hlt(){
+    sysCall(24, 0, 0, 0, 0, 0);
+}
+

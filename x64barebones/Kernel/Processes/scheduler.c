@@ -173,7 +173,7 @@ void yield(){
 
 int32_t kill_process(uint16_t pid, int32_t ret){
     Node* process_to_kill = scheduler->processes[pid];
-    if(pid <= DOS){
+    if(pid <= UNO){ //if pid = 0 or pid = 1 it's trivial or shell
         return -1;
     }
 
