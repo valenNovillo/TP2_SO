@@ -5,7 +5,7 @@
 #include "../Drivers/include/fileDescriptors.h"
 
 #define STATES 5
-#define MAX_PROCESSES 256 
+#define MAX_PROCESSES 128 
 #define BACKGROUND 0
 #define FOREGROUND 1
 #define DEFAULT_PID 0

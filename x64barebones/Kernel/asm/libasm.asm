@@ -8,6 +8,7 @@ GLOBAL inb
 GLOBAL sound
 GLOBAL nosound
 GLOBAL call_timer_tick
+GLOBAL initialize_stack
 
 section .text
 
@@ -179,3 +180,40 @@ nosound:
 call_timer_tick:
     int 20h
     ret
+
+
+initialize_stack:
+	mov r8, rsp
+	mov rsp, rdi	
+
+	push 0	    ;ss
+
+	push rdi	;rsp
+
+	push 0x202  ;RFLAGS
+
+	push 0x8    ;cs
+
+	push rcx	;ri
+
+	mov rax, 0
+	push rax    ;rax
+	push rax	;rbx
+	push rax	;rcx
+	push rax	;rdx
+
+	push rdi	;rbp
+	push rsi	;rdi -> argc 
+	push rdx	;rsi -> argv como segundo argumento
+
+	push rax	;r8
+	push rax	;r9
+	push rax	;r10
+	push rax	;r11
+	push rax	;r12
+	push rax	;r13
+	push rax	;r14
+	push rax	;r15
+	mov rax, rsp
+	mov rsp, r8 ;restaurar el stack viejo
+	ret

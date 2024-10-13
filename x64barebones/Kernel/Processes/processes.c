@@ -8,7 +8,7 @@
 
 static void initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[]){
 
-    if(pcb->rbp = create_stack() == NULL) {
+    if((pcb->rbp = create_stack()) == NULL) {
         return NULL;
     }
 
@@ -31,8 +31,8 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
     
     pcb->priority = priority;
 
-    int name_len = strlen(name) + 1;
-    pcb->name = my_malloc(name_len + 1);
+    int name_len = strlen(name);
+    pcb->name = my_malloc(name_len);
     memcpy(pcb->name, name, name_len + 1);
     pcb->name[name_len - 1] = '\0';
 

@@ -18,6 +18,7 @@ Scheduler scheduler;
 char is_creating = 0;
 
 void initialize_scheduler() {
+    scheduler = my_malloc(sizeof(SchedulerCDT));
     for (int i = 0; i < MAX_PROCESSES; i++) {
         scheduler->processes[i] = NULL;
     }
@@ -26,6 +27,7 @@ void initialize_scheduler() {
     scheduler->foreground_pid = 0;
     scheduler->pending_rounds = 0;
     scheduler->running_pid = 0;
+    scheduler->process_count = 0;
 }
 
 static uint16_t get_next_ready_process() {
