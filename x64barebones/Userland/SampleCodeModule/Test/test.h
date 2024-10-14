@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define MAX_PROCESSES "128"
+#define MAX_PROCESSES "120"
 
 uint64_t test_mm(uint64_t argc, char *argv[]);
 int64_t test_processes(uint64_t argc, char *argv[]);

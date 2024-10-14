@@ -80,17 +80,20 @@ void* schedule(void* last_rsp){
     if (is_creating) {
         return last_rsp;
     }
-
+   
     static int first_round = 1;
     Node* running = scheduler->processes[scheduler->running_pid];
+    PCB * running_pcb = ((PCB*)running->data);
     if (scheduler->pending_rounds > 0 && running != NULL) {
         scheduler->pending_rounds--;
         return last_rsp;
     }
-    if (running != NULL && ((PCB*)running->data)->p_state == RUNNING && scheduler->running_pid != DEFAULT_PID) {
-        if (((PCB*)running->data)->priority > 0) {
-            ((PCB*)running->data)->priority--;
-        }
+
+    
+    if (running != NULL && running_pcb->p_state == RUNNING && scheduler->running_pid != DEFAULT_PID) {
+        /*if (((PCB*)running->data)->priority > 0) {
+            ((PCB*)running->data)->priority--; //TO-DO revise
+        }*/
         ((PCB*)running->data)->p_state = READY;
         remove(scheduler->ready_processes, running);
         queue(scheduler->ready_processes, running);
@@ -182,7 +185,7 @@ int32_t kill_process(uint16_t pid, int32_t ret){
         return 0;
     }
 
-    PCB* pcb_to_kill = (PCB*)process_to_kill;
+    PCB* pcb_to_kill = (PCB*)(process_to_kill->data);
 
     if(pcb_to_kill->p_state != BLOCKED){
         remove(scheduler->ready_processes, process_to_kill);
@@ -231,18 +234,25 @@ int32_t kill_process(uint16_t pid, int32_t ret){
 
 int block_process(uint16_t pid) {
     PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
-    if(get_running_process_pid() == pid) {
+    /*if(get_running_process_pid() == pid) {
         set_state(pid, BLOCKED);
         return 0;
+    }*/
+
+   if(set_state(pid, BLOCKED) != BLOCKED) {
+        return -1;  
     }
-    return -1;
+    return 0;
 }
 
 int unblock_process(uint16_t pid) {
     PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
-    if(process_pcb->p_state == BLOCKED) {
+    /*if(process_pcb->p_state == BLOCKED) {
         set_state(pid, READY);
         return 0;
-    }
-    return -1;
+    }*/
+    if(set_state(pid, READY) != READY) {
+        return -1;
+    }    
+    return 0;
 }

@@ -194,10 +194,9 @@ void playSong()
 }
 
 void test_process() {
-    char* argv[1];
-    argv[0] = MAX_PROCESSES;
+    char* argv[] = {"10", 0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process(test_processes, argv, "create_process", 1, fds);
+    create_process(test_processes, argv, "create_process", 2, fds);
 }
 
 void test_priority() {

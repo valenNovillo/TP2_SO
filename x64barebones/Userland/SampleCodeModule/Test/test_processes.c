@@ -3,8 +3,7 @@
 #include "test_util.h"
 #include "test.h"
 
-//enum State { RUNNING, BLOCKED, KILLED };
-enum State { RUNNING, BLOCKED, READY, ZOMBIE, TERMINATED, KILLED};
+enum State { RUNNING, BLOCKED, KILLED };
 
 typedef struct P_rq {
   int32_t pid;
@@ -17,7 +16,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
   uint8_t action;
   uint64_t max_processes;
   char *argvAux[] = {0};
-  int16_t fds[] = {NO_INPUT,STDOUT,STDERR};
+  int16_t fds[] = {NO_INPUT, STDOUT,STDERR};
 
   if (argc != 1)
     return -1;
@@ -32,7 +31,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
       //p_rqs[rq].pid = my_create_process("endless_loop", 0, argvAux);
-      p_rqs[rq].pid = create_process(endless_loop,argvAux, "endless_loop", 1, fds);
+      p_rqs[rq].pid = create_process(endless_loop,argvAux, "endless_loop", 0, fds);
 
       if (p_rqs[rq].pid == -1) {
         printf("test_processes: ERROR creating process\n");
@@ -41,8 +40,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
         p_rqs[rq].state = RUNNING;
         alive++;
       }
-
-      printf("Iterando en el for (creando)! vuelta: %d\n", rq);
     }
 
     // Randomly kills, blocks or unblocks processes until every one has been killed
@@ -74,7 +71,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
                 return -1;
               } */
              if(block_process(p_rqs[rq].pid) == -1){
-                printf("test_processes: ERROR blocking process\n");
+                printf("test_processes: ERROR blocking process");
                 return -1;
              }
               p_rqs[rq].state = BLOCKED;
@@ -83,7 +80,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
         }
       }
 
-      printf("Saliendo del for de alive\n");
 
       // Randomly unblocks processes
       for (rq = 0; rq < max_processes; rq++)
@@ -99,7 +95,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
           p_rqs[rq].state = RUNNING;
         }
     }
-
-    printf("Saliendo del while alive\n");
+    printf("ACA\n");
   }
 }

@@ -134,9 +134,9 @@ size_t strlen(const char *cadena) {
 
 
 int count_args(void **array){
-    int len = 0;
-    while (*(array++) != 0){
-        len++;
+    int count = 0;
+    while (array[count] != NULL){
+        count++;
     }
-    return len;
+    return count;
 }

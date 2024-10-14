@@ -28,6 +28,7 @@ typedef struct PCB {
     
     char *name;
     char **argv;
+    int argc;
 
     uint8_t priority;
     PState p_state;

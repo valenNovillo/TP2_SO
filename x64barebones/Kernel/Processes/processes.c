@@ -66,27 +66,25 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
     }
     
     //Arguments configuration
-    int argc = count_args((void*)args);
+    pcb->argc = count_args((void*)args);
     int total_args_len = 0;
-    int args_len[argc];
-    for (int i = 0; i < argc; i++) {
-        args_len[i] = strlen(args[i]) + 1;
+    int args_len[pcb->argc];
+    for (int i = 0; i < pcb->argc; i++) {
+        args_len[i] = strlen(args[i]);
         total_args_len += args_len[i];
     }
     
-    int size = sizeof(char**) * (argc + 1);
-    char** args_array = (char**)my_malloc(total_args_len + size);
-    char* start_ptr = (char*)args_array + size;
+    int size = sizeof(char**) * (pcb->argc + 1);
+    char** args_array = (char**)my_malloc(size);
     
-    for (int i = 0; i < argc; i++) {
-        args_array[i] = start_ptr;
-        memcpy(start_ptr, args[i], args_len[i]);
-        start_ptr += args_len[i];
+    for (int i = 0; i < pcb->argc; i++) {
+        args_array[i] = my_malloc(args_len[i]);
+        memcpy(args_array[i], args[i], args_len[i]);
     }
 
     pcb->argv = args_array;
-    pcb->argv[argc] = NULL;
-    pcb->rsp = initialize_stack(pcb->rbp, argc, args, main_func, main_wraper); 
+    pcb->argv[pcb->argc] = NULL;
+    pcb->rsp = initialize_stack(pcb->rbp, pcb->argc, pcb->argv, main_func, main_wraper); 
     return 0;
 }
 
@@ -129,6 +127,9 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
 
 void free_process_memory(PCB * pcb){
     my_free(pcb->name);
+    for(int i = 0; i < pcb->argc; i++) {
+        my_free(pcb->argv[i]);
+    }
     my_free(pcb->argv);
     free_stack(pcb->rbp);
     my_free(pcb);
@@ -195,6 +196,8 @@ void ps() {
         putString(STDOUT, state[info_processes[i]->state], strlen(state[info_processes[i]->state]));
 
         putString(STDOUT, "\n", 1);
+
+        my_free(info_processes[i]);
     }
     
     
