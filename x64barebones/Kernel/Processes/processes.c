@@ -67,11 +67,9 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
     
     //Arguments configuration
     pcb->argc = count_args((void*)args);
-    int total_args_len = 0;
     int args_len[pcb->argc];
     for (int i = 0; i < pcb->argc; i++) {
         args_len[i] = strlen(args[i]);
-        total_args_len += args_len[i];
     }
     
     int size = sizeof(char**) * (pcb->argc + 1);

@@ -3,7 +3,7 @@
 #include "../Test/test.h"
 
 //vector de punteros a funcion para ejecutar cada comando
-static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator, playSong, test_process, ps_commmand};
+static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator, playSong, test_process,test_priority, ps_commmand};
 
 //buffer de lo que ingresan en la terminal
 char buffer[BUFF_SIZE]={0};
@@ -58,8 +58,10 @@ void findCommand(char * buffer) {
         return commands[8]();
     if(strcmp(buffer, "test_processes") == 0)
         return commands[9]();
+    if(strcmp(buffer, "test_priority") == 0)
+        return commands[10]();    
     if(strcmp(buffer, "ps") == 0)
-        return commands[10]();
+        return commands[11]();
     else {
         printErr("\nPlease type a valid command.\n\n");
     }
@@ -119,6 +121,11 @@ void help() {
     printf("test_processes \n\n");
     setColor(255, 255, 255);
     printf("--> Checks the management of multiple processes\n\n");
+
+    setColor(250, 255, 0);
+    printf("test_priority \n\n");
+    setColor(255, 255, 255);
+    printf("--> Checks the management of multiple priorities\n\n");
 
     setColor(133, 21, 199);
     printf("registers \n\n");
@@ -194,13 +201,15 @@ void playSong()
 }
 
 void test_process() {
-    char* argv[] = {"10", 0};
+    char* argv[] = {MAX_PROCESSES, 0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process(test_processes, argv, "create_process", 2, fds);
+    create_process(test_processes, argv, "test_process", 2, fds);
 }
 
 void test_priority() {
-    //create_process()
+    char* argv[] = {0};
+    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
+    create_process(test_prio, argv, "test_priority", 2, fds);
 }
 
 void ps_commmand() {

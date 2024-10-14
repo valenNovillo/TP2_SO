@@ -95,6 +95,5 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
           p_rqs[rq].state = RUNNING;
         }
     }
-    printf("ACA\n");
   }
 }

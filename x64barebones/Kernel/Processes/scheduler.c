@@ -39,7 +39,7 @@ static uint16_t get_next_ready_process() {
     return ((PCB*)node->data)->pid;
 }
 
-set_pid_on_array(uint16_t pid, Node * process_node){
+void set_pid_on_array(uint16_t pid, Node * process_node){
     scheduler->processes[pid] = process_node;
     scheduler->process_count++;
 }
@@ -68,7 +68,7 @@ PState set_state(uint16_t pid, PState new_state) {
 
 int32_t set_priority(uint16_t pid, uint8_t new_p) {
     Node* node = scheduler->processes[pid];
-    if (node == NULL || pid == DEFAULT_PID || new_p >= MAX_PRIORITY) {
+    if (node == NULL || pid == DEFAULT_PID || new_p > MAX_PRIORITY) {
         return -1;
     }
     PCB* pcb = (PCB*)node->data;
@@ -197,7 +197,7 @@ int32_t kill_process(uint16_t pid, int32_t ret){
     Node* parent_process = scheduler->processes[pcb_to_kill->parent_pid];
     if(parent_process != NULL){
         PCB* parent_process_pcb = (PCB*)parent_process->data;
-        if(is_waiting(parent_process_pcb, pcb_to_kill->pid) || is_waiting(parent_process_pcb, -1)){
+        if(is_waiting(parent_process_pcb, pcb_to_kill->pid)){
             set_state(pcb_to_kill->parent_pid, READY);
             ((PCB*)parent_process->data)->ret = ret;
         }
@@ -233,8 +233,8 @@ int32_t kill_process(uint16_t pid, int32_t ret){
 
 
 int block_process(uint16_t pid) {
-    PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
-    /*if(get_running_process_pid() == pid) {
+    /*PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
+    if(get_running_process_pid() == pid) {
         set_state(pid, BLOCKED);
         return 0;
     }*/
@@ -246,8 +246,9 @@ int block_process(uint16_t pid) {
 }
 
 int unblock_process(uint16_t pid) {
+    /*
     PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
-    /*if(process_pcb->p_state == BLOCKED) {
+    if(process_pcb->p_state == BLOCKED) {
         set_state(pid, READY);
         return 0;
     }*/
