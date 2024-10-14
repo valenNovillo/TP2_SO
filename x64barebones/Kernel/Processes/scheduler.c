@@ -233,8 +233,8 @@ int32_t kill_process(uint16_t pid, int32_t ret){
 
 
 int block_process(uint16_t pid) {
-    /*PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
-    if(get_running_process_pid() == pid) {
+    PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
+    /*if(get_running_process_pid() == pid) {
         set_state(pid, BLOCKED);
         return 0;
     }*/
@@ -246,9 +246,8 @@ int block_process(uint16_t pid) {
 }
 
 int unblock_process(uint16_t pid) {
-    /*
     PCB* process_pcb = (PCB*) (scheduler->processes[pid]->data);
-    if(process_pcb->p_state == BLOCKED) {
+    /*if(process_pcb->p_state == BLOCKED) {
         set_state(pid, READY);
         return 0;
     }*/
