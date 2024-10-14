@@ -48,25 +48,20 @@ void push(LinkedList list, Node *node) {
     list->len++;
 }
 
-void remove(LinkedList list, Node *node) {
-    if (node == NULL || list->len == 0) return;
+void remove(LinkedList list, Node *node){
+    if (list==NULL || node == NULL) return;
 
-    if (node == list->first) {
-        list->first = node->next;
-        if (list->first != NULL)
-            list->first->prev = NULL;
-    } else if (node == list->last) {
-        list->last = node->prev;
-        if (list->last != NULL)
-            list->last->next = NULL;
+    if(node->prev != NULL){
+        node->prev->next = node->next;
     } else {
-        if (node->prev != NULL)
-            node->prev->next = node->next;
-        if (node->next != NULL)
-            node->next->prev = node->prev;
+        list->first = node->next;
+    }
+    if (node->next != NULL){
+        node->next->prev = node->prev;
+    } else {
+        list->last = node->prev;
     }
 
-    my_free(node);
     list->len--;
 }
 

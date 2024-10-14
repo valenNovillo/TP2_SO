@@ -164,7 +164,6 @@ InfoProcess** processes_info() {
             idx++;
         }
     }
-
     return to_return;
 }
 

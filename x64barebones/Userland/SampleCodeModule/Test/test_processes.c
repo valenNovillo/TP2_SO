@@ -41,11 +41,12 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
         p_rqs[rq].state = RUNNING;
         alive++;
       }
+
+      printf("Iterando en el for (creando)! vuelta: %d\n", rq);
     }
 
     // Randomly kills, blocks or unblocks processes until every one has been killed
     while (alive > 0) {
-
       for (rq = 0; rq < max_processes; rq++) {
         action = GetUniform(100) % 2;
 
@@ -82,6 +83,8 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
         }
       }
 
+      printf("Saliendo del for de alive\n");
+
       // Randomly unblocks processes
       for (rq = 0; rq < max_processes; rq++)
         if (p_rqs[rq].state == BLOCKED && GetUniform(100) % 2) {
@@ -96,5 +99,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
           p_rqs[rq].state = RUNNING;
         }
     }
+
+    printf("Saliendo del while alive\n");
   }
 }

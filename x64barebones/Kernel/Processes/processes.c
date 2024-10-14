@@ -11,10 +11,10 @@ static void main_wraper(int argc, char** argv, Main main ) {
     kill_process(get_running_process()->pid, return_value);
 }
 
-static void initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[]){
+static int initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[]){
 
     if((pcb->rbp = create_stack()) == NULL) {
-        return NULL;
+        return -1;
     }
 
     pcb->pid = get_pid_from_stack(pcb->rbp);
@@ -24,20 +24,25 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
         pcb->parent_pid = parent_PCB->pid;
         parent_PCB->children[parent_PCB->childrenCount] = pcb->pid;
         parent_PCB->childrenCount++;
-        if(fds[0] == STDIN && parent_PCB->run_mode == FOREGROUND) {
-            parent_PCB->fds[STDIN] = NO_INPUT; //TO-DO: REVISE
-            parent_PCB->run_mode = BACKGROUND;
-            set_foreground(pcb->pid); 
-        } else {
-            set_creating(0);
-            return -1;
+
+        if (fds[0] == STDIN) {
+            if(parent_PCB->run_mode == FOREGROUND) {
+                parent_PCB->fds[STDIN] = NO_INPUT; //TO-DO: REVISE
+                parent_PCB->run_mode = BACKGROUND;
+                set_foreground(pcb->pid); 
+            } else {
+                set_creating(0);
+                return -1;
+            }
         }
     }     
     
     pcb->priority = priority;
 
     int name_len = strlen(name);
-    pcb->name = my_malloc(name_len);
+    if ((pcb->name = my_malloc(name_len)) == NULL) {
+        return -1;
+    }
     memcpy(pcb->name, name, name_len + 1);
     pcb->name[name_len - 1] = '\0';
 
@@ -82,6 +87,7 @@ static void initialize_process(PCB* pcb, Main main_func, char** args, char* name
     pcb->argv = args_array;
     pcb->argv[argc] = NULL;
     pcb->rsp = initialize_stack(pcb->rbp, argc, args, main_func, main_wraper); 
+    return 0;
 }
 
 int16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
@@ -99,10 +105,14 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
         set_creating(0);
     }
 
-    initialize_process(process_pcb, process_main, args, name, priority, fds); 
+    if (initialize_process(process_pcb, process_main, args, name, priority, fds) == -1) {
+        set_creating(0);
+        return -1;
+    } 
         
     Node* process_node = my_malloc(sizeof(Node));
     if (process_node == NULL) {
+        set_creating(0);
         return -1;
     }
     process_node->data = (void*) process_pcb;
@@ -111,9 +121,9 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
         process_pcb->p_state = READY;
         queue(get_ready_list(), process_node);
     }
-
-    set_creating(0);
+    
     set_pid_on_array(process_pcb->pid, process_node);
+    set_creating(0);
     return process_pcb->pid; 
 }
 
