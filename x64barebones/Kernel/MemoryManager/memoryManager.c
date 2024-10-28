@@ -15,17 +15,22 @@ void my_mm_init(void* ptr) {
 }
 
 void* my_malloc(uint64_t size) {
+    _cli();
     if (size <= BLOCK_SIZE && current_block < BLOCK_COUNT) {
+        _sti();
         return free_ptrs[current_block++];
     } else {
+        _sti();
         return NULL;
     }
 }
 
 void my_free(void * ptr) {
+    _cli();
     if (current_block > 0) {
         free_ptrs[--current_block] = ptr;
     }
+    _sti();
 }
 
 

@@ -217,3 +217,15 @@ initialize_stack:
 	mov rax, rsp
 	mov rsp, r9 
 	ret
+
+aquire:
+    mov al, 0
+.retry
+    xchg [lock], al
+    test al, al
+    jz .retry
+    ret
+
+release:
+    mov [lock], 1
+    ret

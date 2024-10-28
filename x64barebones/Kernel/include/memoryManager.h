@@ -12,4 +12,7 @@ void my_mm_init(void* ptr);
 void* my_malloc(uint64_t size);
 void my_free(void * ptr);
 
+extern void _cli(void);
+extern void _sti(void);
+
 #endif
