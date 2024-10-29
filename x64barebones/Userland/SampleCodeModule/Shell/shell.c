@@ -3,7 +3,7 @@
 #include "../Test/test.h"
 
 //vector de punteros a funcion para ejecutar cada comando
-static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator, playSong, test_process,test_priority, ps_commmand};
+static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator, playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync};
 
 //buffer de lo que ingresan en la terminal
 char buffer[BUFF_SIZE]={0};
@@ -62,6 +62,10 @@ void findCommand(char * buffer) {
         return commands[10]();    
     if(strcmp(buffer, "ps") == 0)
         return commands[11]();
+    if(strcmp(buffer, "test_sync") == 0)
+        return commands[12]();
+    if(strcmp(buffer, "test_no_sync") == 0)
+        return commands[13]();
     else {
         printErr("\nPlease type a valid command.\n\n");
     }
@@ -126,6 +130,16 @@ void help() {
     printf("test_priority \n\n");
     setColor(255, 255, 255);
     printf("--> Checks the management of multiple priorities\n\n");
+
+    setColor(250, 255, 0);
+    printf("test_sync \n\n");
+    setColor(255, 255, 255);
+    printf("--> Checks the syncronization between processes\n\n");
+
+    setColor(250, 255, 0);
+    printf("test_no_sync \n\n");
+    setColor(255, 255, 255);
+    printf("--> Checks the result withouth sync between processes\n\n");
 
     setColor(133, 21, 199);
     printf("registers \n\n");
@@ -216,6 +230,17 @@ void ps_commmand() {
     ps();
 }
 
+void testing_sync() {
+    char* argv[] = {"3", "1", 0}; //{n, use_sem, 0}
+    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
+    create_process(test_sync, argv, "test_sync", 1, fds);
+}
+
+void testing_no_sync() {
+    char* argv[] = {"3", "0", 0}; //{n, use_sem, 0}
+    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
+    create_process(test_sync, argv, "test_no_sync", 1, fds);
+}
 
 
  

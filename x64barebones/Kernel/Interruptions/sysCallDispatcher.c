@@ -7,6 +7,7 @@
 #include "../Drivers/include/fileDescriptors.h"
 #include "../include/processes.h"
 #include "../include/scheduler.h"
+#include "../include/semaphore.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
 static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) {
@@ -130,6 +131,29 @@ static ssize_t sys_call_hlt() {
     return 0;
 }
 
+static ssize_t sys_call_sem_create(uint8_t id, uint64_t value) {
+    return my_sem_create(id, value);
+}
+
+static ssize_t sys_call_sem_destroy(semaphore* semaphore_ptr) {
+    my_sem_destroy(semaphore_ptr);
+    return 0;
+}
+
+static ssize_t sys_call_sem_open(uint8_t id){
+    return my_sem_open(id);
+}
+
+static ssize_t sys_call_sem_post(semaphore* semaphore_ptr){
+    return my_sem_post(semaphore_ptr);
+}
+
+static ssize_t sys_call_sem_wait(semaphore* semaphore_ptr) {
+    return my_sem_wait(semaphore_ptr);
+}
+
+
+
 static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8) = {
     sys_call_read, 
     sys_call_write, 
@@ -155,7 +179,12 @@ static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, u
     sys_call_yield,
     sys_call_wait_pid,
     sys_call_ps,
-    sys_call_hlt
+    sys_call_hlt,
+    sys_call_sem_create,
+    sys_call_sem_destroy,
+    sys_call_sem_open,
+    sys_call_sem_post,
+    sys_call_sem_wait
     };
 
 

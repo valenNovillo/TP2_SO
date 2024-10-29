@@ -9,6 +9,8 @@ GLOBAL sound
 GLOBAL nosound
 GLOBAL call_timer_tick
 GLOBAL initialize_stack
+GLOBAL aquire
+GLOBAL release
 
 section .text
 
@@ -221,11 +223,11 @@ initialize_stack:
 aquire:
     mov al, 0
 .retry
-    xchg [lock], al
+    xchg [rdi], al
     test al, al
     jz .retry
     ret
 
 release:
-    mov [lock], 1
+    mov byte [rdi], 1
     ret

@@ -102,3 +102,24 @@ void _hlt(){
     sysCall(24, 0, 0, 0, 0, 0);
 }
 
+sem_ptr my_sem_create(uint8_t id, uint64_t value) {
+    return sysCall(25, id, value, 0, 0, 0);
+}
+
+void my_sem_destroy(sem_ptr ptr){
+    sysCall(26, ptr, 0, 0, 0, 0);
+}
+
+sem_ptr my_sem_open(uint8_t id) {
+    return sysCall(27, id, 0, 0, 0, 0);
+}
+
+
+uint8_t my_sem_post(sem_ptr ptr){
+    return sysCall(28, ptr, 0, 0, 0, 0);
+}
+
+
+uint8_t my_sem_wait(sem_ptr ptr) {
+    return sysCall(29, ptr, 0, 0, 0, 0);
+}

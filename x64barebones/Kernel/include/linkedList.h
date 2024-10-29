@@ -13,6 +13,7 @@ LinkedList createLinkedList();
 void queue(LinkedList list, Node *node);
 void push(LinkedList list, Node *node);
 void remove(LinkedList list, Node *node);
+void* dequeue(LinkedList list);
 int isEmpty(LinkedList list);
 void startIterator(LinkedList list);
 int getLength(LinkedList list);

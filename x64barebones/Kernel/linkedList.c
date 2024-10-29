@@ -65,6 +65,32 @@ void remove(LinkedList list, Node *node){
     list->len--;
 }
 
+#include <stdlib.h>
+
+void* dequeue(LinkedList list) {
+    if (list->len == 0) {
+        return NULL;
+    }
+
+    Node *firstNode = list->first;
+    void *data = firstNode->data;
+
+
+    list->first = firstNode->next;
+
+    if (list->first == NULL) {
+        list->last = NULL;
+    } else {
+        list->first->prev = NULL;
+    }
+
+    list->len--;
+
+    my_free(firstNode);
+    return data;
+}
+
+
 int isEmpty(LinkedList list) {
     if(list == NULL) return 0;
 

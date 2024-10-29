@@ -66,6 +66,17 @@ PState set_state(uint16_t pid, PState new_state) {
     return new_state;
 }
 
+PState get_state(int16_t pid)
+{
+    Node* node = scheduler->processes[pid];
+    if(node == NULL){
+        return -1;
+    }
+
+    PCB* pcb = (PCB*)node->data;
+    return pcb->p_state;
+}
+
 int32_t set_priority(uint16_t pid, uint8_t new_p) {
     Node* node = scheduler->processes[pid];
     if (node == NULL || pid == DEFAULT_PID || new_p > MAX_PRIORITY) {
@@ -143,9 +154,12 @@ void set_creating(uint8_t creating) {
 }
 
 uint64_t wait_pid(int16_t pid) {
-    ((PCB*)scheduler->processes[scheduler->running_pid]->data)->waiting_pid = pid;
-    set_state(scheduler->running_pid, BLOCKED);
-    return ((PCB*)scheduler->processes[scheduler->running_pid]->data)->ret;
+    if (scheduler->processes[pid] != NULL) {
+        ((PCB*)scheduler->processes[scheduler->running_pid]->data)->waiting_pid = pid;
+        set_state(scheduler->running_pid, BLOCKED);
+        return ((PCB*)scheduler->processes[scheduler->running_pid]->data)->ret;
+    }
+    return 0;
 }
 
 uint16_t get_pid() {
