@@ -1,5 +1,9 @@
 #include "../include/memoryManager.h"
 
+#define BLOCK_COUNT 8192
+#define BLOCK_SIZE 2048
+#define MEMORY_SIZE "16777216"
+
 void* start_heap;
 int memory_size;
 int current_block;

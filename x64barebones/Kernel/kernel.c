@@ -30,8 +30,7 @@ static void * const startFreeMemoryAddress = (void*)0x700000;
 typedef int (*EntryPoint)();
 
 
-void clearBSS(void * bssAddress, uint64_t bssSize)
-{
+void clearBSS(void * bssAddress, uint64_t bssSize) {
 	memset(bssAddress, 0, bssSize);
 }
 
