@@ -8,7 +8,7 @@
 
 typedef struct Block {
     uint64_t size;
-    Block* next;
+    struct Block* next;
 } Block;
 
 static Block* free_lists[MAX_2_POW +1];
@@ -116,11 +116,11 @@ static void my_free_rec(void* ptr){
         *current = buddy->next;
 
         if(ptr > (void *)buddy){
-            buddy->size = block_size(i + 1):
-            mem_free_rec(buddy);
+            buddy->size = block_size(i + 1);
+            my_free_rec(buddy);
         }else{
             ((Block *)ptr)->size = block_size(i + 1);
-            mem_free_rec(ptr);
+            my_free_rec(ptr);
         }
     }
 }

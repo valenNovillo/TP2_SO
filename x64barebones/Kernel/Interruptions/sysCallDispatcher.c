@@ -154,7 +154,7 @@ static ssize_t sys_call_sem_wait(semaphore* semaphore_ptr) {
 
 static ssize_t sys_call_print_mem_status(){
     print_mem_status();
-    return 0
+    return 0;
 }
 
 static ssize_t sys_call_my_malloc(uint64_t size){
@@ -163,7 +163,7 @@ static ssize_t sys_call_my_malloc(uint64_t size){
 
 static ssize_t sys_call_my_free(void* ptr){
     my_free(ptr);
-    return 0
+    return 0;
 }
 
 static Syscall syscall_handlers[] = {

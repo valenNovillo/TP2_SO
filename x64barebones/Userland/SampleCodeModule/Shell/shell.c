@@ -6,7 +6,7 @@ static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, 
  playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command};
 
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
-     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "print_mem_status", "test_mm"}
+     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "print_mem_status", "test_mm"};
 
 char buffer[BUFF_SIZE]={0};
 
@@ -41,7 +41,7 @@ void resetBuffer() {
 
 void findCommand(char * buffer) {
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
-        if (strcmp(buffer, commands_names[i]) == 0) {
+        if (strcmp(buffer, commands_name[i]) == 0) {
             return commands[i];
         }
     }
@@ -234,9 +234,7 @@ void print_mem_status_command(){
 }
 
 int test_mm_command(){
-    char*param[1];
-    param[0] = MEMORY_SIZE;
-    char* argv[] = {1, param};
+    char* argv[] = {MEMORY_SIZE, 0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
     create_process((Main)test_mm, argv, "test_mm", 1, fds);
 }
