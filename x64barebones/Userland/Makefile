@@ -3,6 +3,8 @@ include Makefile.inc
 SAMPLE_DATA=0001-sampleDataModule.bin
 
 all: sampleCodeModule sampleDataModule
+buddy: CFLAGS += -DBUDDY_MODE
+buddy: sampleCodeModule sampleDataModule
 
 sampleCodeModule:
 	cd SampleCodeModule; make
@@ -12,10 +14,9 @@ sampleDataModule:
 
 clean:
 	cd SampleCodeModule; make clean
-#	rm -rf *.bin *.elf asm/*.o
 	find . -name "*.o" -delete
 	find . -name "*.elf" -delete
 	find . -name "*.bin" -delete
 
 
-.PHONY: sampleCodeModule all clean
+.PHONY: sampleCodeModule all buddy clean

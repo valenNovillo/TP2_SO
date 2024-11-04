@@ -4,7 +4,8 @@ KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_DRIVERS=$(wildcard Drivers/*.c)
 SOURCES_INTERRUPTIONS=$(wildcard Interruptions/*.c)
-SOURCES_MMANAGER=$(wildcard MemoryManager/*.c)
+SOURCES_MMANAGER=$(wildcard MemoryManager/memoryManager.c)
+SOURCES_MMANAGER_BUDDY=$(wildcard MemoryManager/buddyManager.c)
 SOURCES_PROCESSES=$(wildcard Processes/*.c)
 SOURCES_SEMAPHORES=$(wildcard Semaphore/*.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
@@ -12,6 +13,7 @@ OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_DRIVERS=$(SOURCES_DRIVERS:.c=.o)
 OBJECTS_INTERRUPTIONS=$(SOURCES_INTERRUPTIONS:.c=.o)
 OBJECTS_MMANAGER=$(SOURCES_MMANAGER:.c=.o)
+OBJECTS_MMANAGER_BUDDY=$(SOURCES_MMANAGER_BUDDY:.c=.o)
 OBJECTS_PROCESSES=$(SOURCES_PROCESSES:.c=.o)
 OBJECTS_SEMAPHORES=$(SOURCES_SEMAPHORES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
@@ -34,10 +36,26 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECT
 $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
+buddy: CFLAGS += -DBUDDY_MODE
+buddy: $(KERNEL)
+
+$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_INTERRUPTIONS) $(OBJECTS_MMANAGER_BUDDY) $(OBJECTS_PROCESSES) $(OBJECTS_SEMAPHORES)
+	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_INTERRUPTIONS) $(OBJECTS_MMANAGER_BUDDY) $(OBJECTS_PROCESSES) $(OBJECTS_SEMAPHORES)
+	$(LD) $(LDFLAGS) -T kernel.ld --oformat=elf64-x86-64 -o kernel.elf $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_INTERRUPTIONS) $(OBJECTS_MMANAGER_BUDDY) $(OBJECTS_PROCESSES) $(OBJECTS_SEMAPHORES)
+
+%.o: %.c
+	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
+
+%.o : %.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+$(LOADEROBJECT):
+	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
+
+
 clean:
-#rm -rf asm/*.o Drivers/*o Interruptions/*o Test/*o *.o *.bin *elf
 	find . -name "*.o" -delete
 	find . -name "*.elf" -delete
 	find . -name "*.bin" -delete
 
-.PHONY: all clean
+.PHONY: all buddy clean

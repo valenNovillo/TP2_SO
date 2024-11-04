@@ -7,6 +7,7 @@
 #include "../include/processes.h"
 #include "../include/scheduler.h"
 #include "../include/semaphore.h"
+#include "../include/memoryManager.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
 static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) {
@@ -151,7 +152,19 @@ static ssize_t sys_call_sem_wait(semaphore* semaphore_ptr) {
     return (ssize_t) my_sem_wait(semaphore_ptr);
 }
 
+static ssize_t sys_call_print_mem_status(){
+    print_mem_status();
+    return 0
+}
 
+static ssize_t sys_call_my_malloc(uint64_t size){
+    return (ssize_t) my_malloc(size);
+}
+
+static ssize_t sys_call_my_free(void* ptr){
+    my_free(ptr);
+    return 0
+}
 
 static Syscall syscall_handlers[] = {
     (Syscall)sys_call_read, 
@@ -183,7 +196,10 @@ static Syscall syscall_handlers[] = {
     (Syscall) sys_call_sem_destroy,
     (Syscall) sys_call_sem_open,
     (Syscall) sys_call_sem_post,
-    (Syscall) sys_call_sem_wait
+    (Syscall) sys_call_sem_wait,
+    (Syscall) sys_call_print_mem_status,
+    (Syscall) sys_call_my_malloc,
+    (Syscall) sys_call_my_free
     };
 
 

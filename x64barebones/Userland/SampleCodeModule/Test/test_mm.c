@@ -1,13 +1,16 @@
-#include "syscall.h"
-#include "test_util.h"
 #include <stdlib.h>
+#include "test_util.h"
 #include "test.h"
 #include "../Library/include/stdio1.h"
 #include "../Library/include/unistd1.h"
 
-#define MAX_BLOCKS 128
+#ifdef BUDDY_MODE 
+  #define MAX_BLOCKS 262144
+#else
+  #define MAX_BLOCKS 128
+#endif
 
-/*typedef struct MM_rq {
+typedef struct MM_rq {
   void *address;
   uint32_t size;
 } mm_rq;
@@ -60,4 +63,3 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
         my_free(mm_rqs[i].address);
   }
 }
-*/

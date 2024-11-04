@@ -2,10 +2,12 @@
 #include "include/eliminator.h"
 #include "../Test/test.h"
 
-//vector de punteros a funcion para ejecutar cada comando
-static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator, playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync};
+static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator,
+ playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command};
 
-//buffer de lo que ingresan en la terminal
+static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
+     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "print_mem_status", "test_mm"}
+
 char buffer[BUFF_SIZE]={0};
 
 void shell()
@@ -38,113 +40,98 @@ void resetBuffer() {
 
 
 void findCommand(char * buffer) {
-    if(strcmp(buffer, "help") == 0)
-        return commands[0]();
-    if(strcmp(buffer, "inc") == 0)
-       return commands[1]();
-    if(strcmp(buffer, "dec") == 0)
-        return commands[2]();   
-    if(strcmp(buffer, "time") == 0)
-        return commands[3]();      
-    if(strcmp(buffer, "clean") == 0)
-        return commands[4]();  
-    if(strcmp(buffer, "ioexception") == 0)
-        return commands[5]();  
-    if(strcmp(buffer, "zeroexception") == 0)
-        return commands[6]();  
-    if(strcmp(buffer, "eliminator") == 0)
-        return commands[7]();
-    if(strcmp(buffer, "playsong") == 0)
-        return commands[8]();
-    if(strcmp(buffer, "test_processes") == 0)
-        return commands[9]();
-    if(strcmp(buffer, "test_priority") == 0)
-        return commands[10]();    
-    if(strcmp(buffer, "ps") == 0)
-        return commands[11]();
-    if(strcmp(buffer, "test_sync") == 0)
-        return commands[12]();
-    if(strcmp(buffer, "test_no_sync") == 0)
-        return commands[13]();
-    else {
-        printErr("\nPlease type a valid command.\n\n");
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
+        if (strcmp(buffer, commands_names[i]) == 0) {
+            return commands[i];
+        }
     }
+    printErr("\nPlease type a valid command.\n\n");
 }
 
 
 void help() {
-    printf("\n\n");
-    printf("The available commands are:\n\n");
+    printf("\n");
+    printf("The available commands are:\n");
 
     setColor(250, 255, 0);
-    printf("help \n\n");
+    printf("help \n");
     setColor(255, 255, 255);
-    printf("--> Displays a menu with all the comands\n\n");
+    printf("--> Displays a menu with all the comands\n");
 
     setColor(250, 255, 0);
-    printf("inc \n\n");
+    printf("inc \n");
     setColor(255, 255, 255);
-    printf("--> Increases text size on the screen\n\n");
+    printf("--> Increases text size on the screen\n");
 
     setColor(250, 255, 0);
-    printf("dec \n\n");
+    printf("dec \n");
     setColor(255, 255, 255);
-    printf("--> Decreases text size on the screen\n\n");
+    printf("--> Decreases text size on the screen\n");
 
     setColor(250, 255, 0);
-    printf("eliminator \n\n");
+    printf("eliminator \n");
     setColor(255, 255, 255);
-    printf("--> Starts a new game of Eliminator \n\n");
+    printf("--> Starts a new game of Eliminator \n");
     
     setColor(250, 255, 0);
-    printf("time \n\n");
+    printf("time \n");
     setColor(255, 255, 255);
-    printf("--> Displays current time in hh:mm:ss format\n\n");
+    printf("--> Displays current time in hh:mm:ss format\n");
 
     setColor(250, 255, 0);
-    printf("clean \n\n");
+    printf("clean \n");
     setColor(255, 255, 255);
-    printf("--> Erases the content on the screen\n\n");
+    printf("--> Erases the content on the screen\n");
 
     setColor(250, 255, 0);
-    printf("ioexception \n\n");
+    printf("ioexception \n");
     setColor(255, 255, 255);
-    printf("--> Produces an invalid opcode exception\n\n");
+    printf("--> Produces an invalid opcode exception\n");
 
     setColor(250, 255, 0);
-    printf("zeroexception \n\n");
+    printf("zeroexception \n");
     setColor(255, 255, 255);
-    printf("--> Produces a zero division exception\n\n");
+    printf("--> Produces a zero division exception\n");
 
     setColor(250, 255, 0);
-    printf("playsong \n\n");
+    printf("playsong \n");
     setColor(255, 255, 255);
-    printf("--> Shares a list of songs for playing\n\n");
+    printf("--> Shares a list of songs for playing\n");
 
     setColor(250, 255, 0);
-    printf("test_processes \n\n");
+    printf("test_processes \n");
     setColor(255, 255, 255);
-    printf("--> Checks the management of multiple processes\n\n");
+    printf("--> Checks the management of multiple processes\n");
 
     setColor(250, 255, 0);
-    printf("test_priority \n\n");
+    printf("test_priority \n");
     setColor(255, 255, 255);
-    printf("--> Checks the management of multiple priorities\n\n");
+    printf("--> Checks the management of multiple priorities\n");
 
     setColor(250, 255, 0);
-    printf("test_sync \n\n");
+    printf("test_sync \n");
     setColor(255, 255, 255);
-    printf("--> Checks the syncronization between processes\n\n");
+    printf("--> Checks the syncronization between processes\n");
 
     setColor(250, 255, 0);
-    printf("test_no_sync \n\n");
+    printf("test_no_sync \n");
     setColor(255, 255, 255);
-    printf("--> Checks the result withouth sync between processes\n\n");
+    printf("--> Checks the result withouth sync between processes\n");
+
+    setColor(250, 255, 0);
+    printf("test_mm \n");
+    setColor(255, 255, 255);
+    printf("--> Checks the memory management\n");
+
+    setColor(250, 255, 0);
+    printf("prnt_mem_status \n");
+    setColor(255, 255, 255);
+    printf("--> Prints the memory status\n");
 
     setColor(133, 21, 199);
-    printf("registers \n\n");
+    printf("registers \n");
     setColor(255, 255, 255);
-    printf("--> To see the current state of the processor registers, please press CTRL + R\n\n");
+    printf("--> To see the current state of the processor registers, please press CTRL + R\n");
 }
 
 void zoomIn() {
@@ -241,6 +228,20 @@ void testing_no_sync() {
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
     create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
+
+void print_mem_status_command(){
+    print_mem_status();
+}
+
+int test_mm_command(){
+    char*param[1];
+    param[0] = MEMORY_SIZE;
+    char* argv[] = {1, param};
+    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
+    create_process((Main)test_mm, argv, "test_mm", 1, fds);
+}
+
+
 
 
  

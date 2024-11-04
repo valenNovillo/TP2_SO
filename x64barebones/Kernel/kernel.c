@@ -57,7 +57,11 @@ void * initializeKernelBinary()
 }
 
 int main() {	
-	my_mm_init(startFreeMemoryAddress);
+	#ifdef BUDDY_MODE 
+		my_mm_init(startFreeMemoryAddress, 268435456);	//256MB
+	#else
+    	my_mm_init(startFreeMemoryAddress);
+	#endif
 	stack_init(stacks);
 	semaphore_init(semaphores);
 	initialize_scheduler();

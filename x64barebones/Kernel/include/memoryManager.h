@@ -10,9 +10,15 @@ typedef struct MemoryStatus {
     uint64_t free;
 } MemoryStatus;
 
-void my_mm_init(void* ptr);
+#ifdef BUDDY_MODE 
+    void my_mm_init(void* ptr, uint64_t size);
+#else
+    void my_mm_init(void* ptr);
+#endif
+
 void* my_malloc(uint64_t size);
 void my_free(void * ptr);
+void print_mem_status();
 
 extern void _cli(void);
 extern void _sti(void);
