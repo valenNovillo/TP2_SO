@@ -48,7 +48,7 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
 
     pcb->waiting_pid = -1; //TO-DO: REVISE!!!!
     pcb->p_state = READY;
-    pcb->ret = NULL;
+    pcb->ret = 0;
 
     for(int i = 0; i<MAX_PROCESSES; i++) {
         pcb->children[i] = 0;
@@ -82,7 +82,7 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
 
     pcb->argv = args_array;
     pcb->argv[pcb->argc] = NULL;
-    pcb->rsp = initialize_stack(pcb->rbp, pcb->argc, pcb->argv, main_func, main_wraper); 
+    pcb->rsp = initialize_stack(pcb->rbp, pcb->argc, pcb->argv, main_func, (Main_wrapper)main_wraper); 
     return 0;
 }
 
@@ -179,12 +179,12 @@ void ps() {
 
         putString(STDOUT, "\tRSP: ", 6);
         char string_rsp[8];
-        len = decimalToHexadecimal(info_processes[i]->rsp, string_rsp, 8);
+        len = decimalToHexadecimal((uint64_t)(info_processes[i]->rsp), string_rsp, 8);
         putString(STDOUT, string_rsp, len);
 
         putString(STDOUT, "\tRBP: ", 6);
         char string_rbp[8];
-        len = decimalToHexadecimal(info_processes[i]->rbp, string_rbp, 8);
+        len = decimalToHexadecimal((uint64_t)(info_processes[i]->rbp), string_rbp, 8);
         putString(STDOUT, string_rbp, len);
 
         putString(STDOUT, "\tRunning in: ", 13);

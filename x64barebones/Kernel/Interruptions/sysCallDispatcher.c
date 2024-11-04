@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include <sys/types.h>
+#include "../include/syscalls.h"
 #include "../Drivers/include/keyBoardDriver.h"
 #include "../Drivers/include/audioDriver.h"
 #include "../Drivers/include/videoDriver.h"
@@ -132,7 +131,7 @@ static ssize_t sys_call_hlt() {
 }
 
 static ssize_t sys_call_sem_create(uint8_t id, uint64_t value) {
-    return my_sem_create(id, value);
+    return (ssize_t) my_sem_create(id, value);
 }
 
 static ssize_t sys_call_sem_destroy(semaphore* semaphore_ptr) {
@@ -141,50 +140,50 @@ static ssize_t sys_call_sem_destroy(semaphore* semaphore_ptr) {
 }
 
 static ssize_t sys_call_sem_open(uint8_t id){
-    return my_sem_open(id);
+    return (ssize_t) my_sem_open(id);
 }
 
 static ssize_t sys_call_sem_post(semaphore* semaphore_ptr){
-    return my_sem_post(semaphore_ptr);
+    return (ssize_t) my_sem_post(semaphore_ptr);
 }
 
 static ssize_t sys_call_sem_wait(semaphore* semaphore_ptr) {
-    return my_sem_wait(semaphore_ptr);
+    return (ssize_t) my_sem_wait(semaphore_ptr);
 }
 
 
 
-static ssize_t (*syscall_handlers[])(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8) = {
-    sys_call_read, 
-    sys_call_write, 
-    sys_call_beep, 
-    sys_call_seconds_elapsed,
-    sys_call_incSize,
-    sys_call_decSize, 
-    sys_call_seconds,
-    sys_call_minutes, 
-    sys_call_hours, 
-    sys_call_cleanScreen, 
-    sys_call_sleep, 
-    sys_call_setColor, 
-    sys_call_setSize,
-    sys_call_printSquare,
-    sys_call_reading,
-    sys_call_create_process,
-    sys_call_get_pid,
-    sys_call_kill_process,
-    sys_call_set_priority,
-    sys_call_block_process,
-    sys_call_unblock_process,
-    sys_call_yield,
-    sys_call_wait_pid,
-    sys_call_ps,
-    sys_call_hlt,
-    sys_call_sem_create,
-    sys_call_sem_destroy,
-    sys_call_sem_open,
-    sys_call_sem_post,
-    sys_call_sem_wait
+static Syscall syscall_handlers[] = {
+    (Syscall)sys_call_read, 
+    (Syscall) sys_call_write, 
+    (Syscall) sys_call_beep, 
+    (Syscall) sys_call_seconds_elapsed,
+    (Syscall) sys_call_incSize,
+    (Syscall) sys_call_decSize, 
+    (Syscall) sys_call_seconds,
+    (Syscall) sys_call_minutes, 
+    (Syscall) sys_call_hours, 
+    (Syscall) sys_call_cleanScreen, 
+    (Syscall) sys_call_sleep, 
+    (Syscall) sys_call_setColor, 
+    (Syscall) sys_call_setSize,
+    (Syscall) sys_call_printSquare,
+    (Syscall) sys_call_reading,
+    (Syscall) sys_call_create_process,
+    (Syscall) sys_call_get_pid,
+    (Syscall) sys_call_kill_process,
+    (Syscall) sys_call_set_priority,
+    (Syscall) sys_call_block_process,
+    (Syscall) sys_call_unblock_process,
+    (Syscall) sys_call_yield,
+    (Syscall) sys_call_wait_pid,
+    (Syscall) sys_call_ps,
+    (Syscall) sys_call_hlt,
+    (Syscall) sys_call_sem_create,
+    (Syscall) sys_call_sem_destroy,
+    (Syscall) sys_call_sem_open,
+    (Syscall) sys_call_sem_post,
+    (Syscall) sys_call_sem_wait
     };
 
 

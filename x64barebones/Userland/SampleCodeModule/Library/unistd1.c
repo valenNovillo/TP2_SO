@@ -3,11 +3,11 @@
 extern ssize_t sysCall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8);
 
 int read(int fd, char * buff, int count) {
-    return sysCall(0, fd, buff, count, 0, 0);
+    return sysCall(0, fd, (uint64_t)buff, count, 0, 0);
 }
 
 ssize_t write(int fildes, const void *buf, size_t nbyte) {
-    return sysCall(1, fildes, buf, nbyte, 0, 0);
+    return sysCall(1, fildes, (uint64_t)buf, nbyte, 0, 0);
 }
 
 void beep(uint64_t freq , uint64_t duration) {
@@ -55,7 +55,7 @@ void setSize(unsigned int size) {
 }
 
 void printSquare(unsigned char color[3], int x, int y, int length) {
-    sysCall(13, color, x, y, length, 0);
+    sysCall(13, (uint64_t)color, x, y, length, 0);
 }
 
 int reading(unsigned char flag) {
@@ -63,7 +63,7 @@ int reading(unsigned char flag) {
 }
 
 uint16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
-    return sysCall(15, process_main, args, name, priority, fds);
+    return sysCall(15, (uint64_t)process_main, (uint64_t)args, (uint64_t)name, priority, (uint64_t)fds);
 }
 
 uint16_t get_pid(){
@@ -103,23 +103,23 @@ void _hlt(){
 }
 
 sem_ptr my_sem_create(uint8_t id, uint64_t value) {
-    return sysCall(25, id, value, 0, 0, 0);
+    return (sem_ptr)sysCall(25, id, value, 0, 0, 0);
 }
 
 void my_sem_destroy(sem_ptr ptr){
-    sysCall(26, ptr, 0, 0, 0, 0);
+    sysCall(26, (uint64_t)ptr, 0, 0, 0, 0);
 }
 
 sem_ptr my_sem_open(uint8_t id) {
-    return sysCall(27, id, 0, 0, 0, 0);
+    return (sem_ptr)sysCall(27, id, 0, 0, 0, 0);
 }
 
 
 uint8_t my_sem_post(sem_ptr ptr){
-    return sysCall(28, ptr, 0, 0, 0, 0);
+    return sysCall(28, (uint64_t)ptr, 0, 0, 0, 0);
 }
 
 
 uint8_t my_sem_wait(sem_ptr ptr) {
-    return sysCall(29, ptr, 0, 0, 0, 0);
+    return sysCall(29, (uint64_t)ptr, 0, 0, 0, 0);
 }

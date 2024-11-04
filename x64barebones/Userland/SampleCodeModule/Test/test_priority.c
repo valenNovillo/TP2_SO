@@ -34,7 +34,7 @@ void test_prio() {
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
     //pids[i] = my_create_process("endless_loop_print", 0, argv);
-    pids[i] = create_process(endless_loop,argv, "endless_loop", LOWEST, fds);
+    pids[i] = create_process((Main)endless_loop, argv, "endless_loop", LOWEST, fds);
 
   //bussy_wait(WAIT);
   sleep(10000);
