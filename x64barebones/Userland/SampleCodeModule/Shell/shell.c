@@ -217,13 +217,13 @@ void playSong()
 void test_process() {
     char* argv[] = {MAX_PROCESSES, 0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process(test_processes, argv, "test_process", 2, fds);
+    create_process((Main)test_processes, argv, "test_process", 2, fds);
 }
 
 void test_priority() {
     char* argv[] = {0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process(test_prio, argv, "test_priority", 2, fds);
+    create_process((Main)test_prio, argv, "test_priority", 2, fds);
 }
 
 void ps_commmand() {
@@ -233,13 +233,13 @@ void ps_commmand() {
 void testing_sync() {
     char* argv[] = {"3", "1", 0}; //{n, use_sem, 0}
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process(test_sync, argv, "test_sync", 1, fds);
+    create_process((Main)test_sync, argv, "test_sync", 1, fds);
 }
 
 void testing_no_sync() {
     char* argv[] = {"3", "0", 0}; //{n, use_sem, 0}
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process(test_sync, argv, "test_no_sync", 1, fds);
+    create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
 
 

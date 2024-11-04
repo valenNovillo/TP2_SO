@@ -16,7 +16,7 @@ static int unblock_sem_process(LinkedList blocked_processes) {
     if(isEmpty(blocked_processes)) {
         return 0;
     }
-    uint16_t pid = (uint16_t)dequeue(blocked_processes);
+    uint64_t pid = (uint64_t)dequeue(blocked_processes);
     PState state = get_state(pid);
     
     if(state != TERMINATED) {
