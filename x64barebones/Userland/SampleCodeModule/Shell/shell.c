@@ -1,6 +1,8 @@
 #include "include/shell.h"
 #include "include/eliminator.h"
 #include "../Test/test.h"
+#include "../Library/include/stdio1.h"
+#include "../Library/include/unistd1.h"
 
 static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator,
  playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command};
@@ -42,7 +44,8 @@ void resetBuffer() {
 void findCommand(char * buffer) {
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
         if (strcmp(buffer, commands_name[i]) == 0) {
-            return commands[i];
+            commands[i]();
+            return;
         }
     }
     printErr("\nPlease type a valid command.\n\n");
@@ -219,7 +222,7 @@ void ps_commmand() {
 
 void testing_sync() {
     char* argv[] = {"3", "1", 0}; //{n, use_sem, 0}
-    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
+    int16_t fds[] = {STDIN, STDOUT, STDERR};
     create_process((Main)test_sync, argv, "test_sync", 1, fds);
 }
 
@@ -229,14 +232,14 @@ void testing_no_sync() {
     create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
 
-void print_mem_status_command(){
+void print_mem_status_command() {
     print_mem_status();
 }
 
-int test_mm_command(){
+void test_mm_command() {
     char* argv[] = {MEMORY_SIZE, 0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process((Main)test_mm, argv, "test_mm", 1, fds);
+    create_process((Main)test_mm, argv, "test_mm", 5, fds);
 }
 
 

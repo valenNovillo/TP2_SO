@@ -11,7 +11,7 @@ typedef struct MemoryStatus {
 } MemoryStatus;
 
 #ifdef BUDDY_MODE 
-    void my_mm_init(void* ptr, uint64_t size);
+    void my_mb_init(void* ptr, uint64_t size);
 #else
     void my_mm_init(void* ptr);
 #endif

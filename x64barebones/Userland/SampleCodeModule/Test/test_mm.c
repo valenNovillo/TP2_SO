@@ -3,11 +3,13 @@
 #include "test.h"
 #include "../Library/include/stdio1.h"
 #include "../Library/include/unistd1.h"
+#include "../Library/include/lib.h"
 
 #ifdef BUDDY_MODE 
   #define MAX_BLOCKS 262144
 #else
-  #define MAX_BLOCKS 128
+  #define MAX_BLOCKS 8192
+  #define BLOCK_SIZE 2048
 #endif
 
 typedef struct MM_rq {
@@ -33,16 +35,39 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     total = 0;
 
     // Request as many blocks as we can
-    while (rq < MAX_BLOCKS && total < max_memory) {
-      mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-      mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
+    #ifdef BUDDY_MODE 
+      while (rq < MAX_BLOCKS && total < max_memory) {
+        mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
+        mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
 
-      if (mm_rqs[rq].address) {
-        total += mm_rqs[rq].size;
-        rq++;
+        if (mm_rqs[rq].address) {
+          total += mm_rqs[rq].size;
+         rq++;
+        }
       }
-    }
+    #else
+      while (rq < MAX_BLOCKS) {
+        mm_rqs[rq].size = GetUniform(BLOCK_SIZE - 1) + 1;
+        mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
 
+        if (mm_rqs[rq].address) {
+          total += mm_rqs[rq].size;
+         rq++;
+        }
+      }
+    #endif
+
+    /*while (rq < MAX_BLOCKS && total < max_memory) {
+        mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
+        mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
+
+        if (mm_rqs[rq].address) {
+          total += mm_rqs[rq].size;
+         rq++;
+        }
+      }
+    */
+    
     // Set
     uint32_t i;
     for (i = 0; i < rq; i++)

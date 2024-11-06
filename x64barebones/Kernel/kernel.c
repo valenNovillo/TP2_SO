@@ -58,7 +58,7 @@ void * initializeKernelBinary()
 
 int main() {	
 	#ifdef BUDDY_MODE 
-		my_mm_init(startFreeMemoryAddress, 268435456);	//256MB
+		my_mb_init(startFreeMemoryAddress, 268435456);	//256MB
 	#else
     	my_mm_init(startFreeMemoryAddress);
 	#endif
