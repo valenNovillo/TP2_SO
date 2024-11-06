@@ -12,8 +12,11 @@ OBJECTS_LIBS=$(SOURCES_LIBS:.c=.o)
 OBJECTS_TESTS=$(SOURCES_TESTS:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 LOADERSRC=_loader.c
-
 LOADEROBJECT=$(LOADERSRC:.c=.o)
+
+ifdef BUDDY_MODE
+    GCCFLAGS += -DBUDDY_MODE
+endif
 
 all: $(MODULE)
 
@@ -30,8 +33,10 @@ $(MODULE): $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_SHELL) $(OBJECTS_LIBS) $(OBJECTS
 $(LOADEROBJECT):
 	$(GCC) $(GCCFLAGS) $(LOADERSRC) -c -o $(LOADEROBJECT)
 
+buddy:
+	$(MAKE) BUDDY_MODE=1 all
+
 clean:
-#	rm -rf Shell/*.o Library/*.o *.o
 	find . -name "*.o" -delete
 
-.PHONY: all clean
+.PHONY: all clean buddy

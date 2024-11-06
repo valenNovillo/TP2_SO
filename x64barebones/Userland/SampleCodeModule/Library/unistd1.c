@@ -124,15 +124,15 @@ uint8_t my_sem_wait(sem_ptr ptr) {
     return sysCall(29, (uint64_t)ptr, 0, 0, 0, 0);
 }
 
-int print_mem_status(){
+int print_mem_status() {
     return sysCall(30, 0, 0, 0, 0, 0);
 }
 
-void* my_malloc(uint64_t size){
-    return sysCall(31, 0, 0, 0, 0, 0);
+void* my_malloc(uint64_t size) {
+    return (void*)sysCall(31, size, 0, 0, 0, 0);
 }
 
-void my_free(void * ptr){
-    return sysCall(32, 0, 0, 0, 0, 0);
+void my_free(void * ptr) {
+    sysCall(32, (uint64_t)ptr, 0, 0, 0, 0);
 }
 

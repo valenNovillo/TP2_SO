@@ -32,7 +32,7 @@ static int get_index(uint64_t size){
     return i;
 }
 
-void my_mm_init(void* ptr, uint64_t size) {
+void my_mb_init(void* ptr, uint64_t size) {
     if(size < MIN_BLOCK_SIZE)
         return;
 

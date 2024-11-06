@@ -3,11 +3,13 @@ include Makefile.inc
 SAMPLE_DATA=0001-sampleDataModule.bin
 
 all: sampleCodeModule sampleDataModule
-buddy: CFLAGS += -DBUDDY_MODE
-buddy: sampleCodeModule sampleDataModule
+buddy: sampleCodeModuleBuddy sampleDataModule
 
 sampleCodeModule:
 	cd SampleCodeModule; make
+
+sampleCodeModuleBuddy:
+	cd SampleCodeModule; make buddy
 
 sampleDataModule:
 	printf "This is sample data." >> $(SAMPLE_DATA) && dd if=/dev/zero bs=1 count=1 >> $(SAMPLE_DATA)
@@ -19,4 +21,4 @@ clean:
 	find . -name "*.bin" -delete
 
 
-.PHONY: sampleCodeModule all buddy clean
+.PHONY: sampleCodeModule sampleCodeModuleBuddy all buddy clean
