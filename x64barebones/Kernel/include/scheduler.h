@@ -29,6 +29,7 @@ int32_t kill_process(uint16_t pid, int32_t ret);
 void set_creating(uint8_t creating);
 InfoProcess** processes_info();
 PState get_state(int16_t pid);
+void kill_FG();
 
 
 #endif //SCHEDULER_H

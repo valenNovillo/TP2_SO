@@ -2,27 +2,41 @@
 #include "../include/semaphore.h"
 #include "../include/processes.h"
 #include "../include/memoryManager.h"
+#include "../include/lib.h"
+#include "../Drivers/include/fileDescriptors.h"
+#include "../include/scheduler.h"
+#include "../Drivers/include/videoDriver.h"
+
 #define BUFF_SIZE 128
+#define MAX_PIPES 2048
+#define WRITER 'w'
+#define READER 'r'
+#define SEM_READ 0
+#define SEM_WRITE 1
+#define SEM_MUTEX 2
+
 
 typedef struct PipeCDT {
-    int16_t id;
+    int16_t id; //cada pipe se identifica por su posición en el array de pipes
     int16_t pipe_idx; 
     int16_t fd_read;
     int16_t fd_write; 
     unsigned char buff[BUFF_SIZE];
-    unsigned char readIdx;
-    unsigned char writeIdx;
+    unsigned char read_idx;
+    unsigned char write_idx;
     unsigned char used;
-    //semaphore* read;
-    //semaphore* write;
-    semaphore* characters; 
+    semaphore* read;
+    semaphore* write;
+    //semaphore* characters; 
     semaphore* mutex;
     int16_t writer_pid; 
     int16_t reader_pid; 
 } PipeCDT;
 
 typedef PipeCDT *Pipe;
-static Pipe pipes[MAX_PIPES];
+static Pipe pipes[MAX_PIPES] = {0};
+int16_t count_pipes = 0;
+int16_t next_pipe_idx = 0; 
 
 
 /*static int find_free_pipe_idx() {
@@ -34,119 +48,173 @@ static Pipe pipes[MAX_PIPES];
     return -1;
 }*/
 
-static int find_indx(int16_t id){
-    return pipes[id] == NULL;
+static Pipe find_by_id(int16_t id){
+
+    if(id < 0 || id >= MAX_PIPES){
+        return NULL;
+    }
+
+    for(int i = 0; i < MAX_PIPES; i++){
+        if(pipes[id] != NULL){
+            return pipes[id];
+        }
+    }
+
+    return NULL;
+}
+
+static int16_t get_next_index(){
+    if(count_pipes >= MAX_PIPES){
+        return -1;
+    }
+
+    while(pipes[next_pipe_idx] != NULL){
+        next_pipe_idx = (int16_t)((next_pipe_idx + 1) % MAX_PIPES);
+    }
+
+    return next_pipe_idx;
+}
+
+static Pipe init_pipe(){
+    int16_t new_pipe_idx = get_next_idx();
+    if(new_pipe_idx == -1){
+        return NULL;
+    }
+
+    Pipe new_pipe = my_malloc(sizeof(Pipe));
+    if(new_pipe == NULL){
+        return NULL;
+    }
+
+    pipes[new_pipe_idx] = new_pipe;
+    new_pipe->pipe_idx = new_pipe_idx;
+    memset(new_pipe->buff, 0, BUFF_SIZE);
+    new_pipe->read_idx = 0;
+    new_pipe->write_idx = 0;
+    new_pipe->writer_pid = -1;
+    new_pipe->reader_pid = -1;
+
+    my_sem_create(SEM_MUTEX, 1);
+    my_sem_create(SEM_READ, 0);
+    my_sem_create(SEM_WRITE, BUFF_SIZE);
+
+    return new_pipe;
+} 
+
+int16_t create_pipe(int16_t id){
+    if(count_pipes >= MAX_PIPES || id >= MAX_PIPES){
+        return -1;
+    }
+
+    Pipe pipe = find_by_id(id);
+    if(pipe == NULL){
+        pipe = init_pipe();
+        if(pipe == NULL){
+            return -1;
+        }
+        pipe->id = id;
+        return pipe;
+    }
+
+    return -1;
+}
+
+int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
+    Pipe pipe = find_by_id(id);
+    if(id == NULL){
+        int16_t idx;
+        if((idx = create_pipe(id)) == -1){
+            return -1;
+        }
+
+        id = find_by_id(idx);
+    }
+
+    if((pipe->writer_pid != -1 && mode==WRITER) || (pipe->reader_pid != -1 && mode==READER)){
+        return -1;
+    }
+
+    if(mode == WRITER){
+        pipe->writer_pid = pid;
+    }else if(mode == READER){
+        pipe->reader_pid = pid;
+    }else{
+        return -1;
+    }
+
+    return pipe->pipe_idx;
+}
+
+static void init_fds(){
+    my_sem_create(SEM_MUTEX, 1);
+    open_pipe_for_pid(STDIN, 0, 'w');
+    open_pipe_for_pid(STDOUT, 0, 'r');
+    open_pipe_for_pid(STDERR, 0, 'r');
+}
+
+static void clear_stdin(){
+    Pipe stdin = pipes[0];
+    stdin->read_idx = stdin->write_idx;
+    for(int i = 0; i < stdin->used; i++){
+        my_sem_wait(stdin->read);
+    }
+    stdin->used = 0;
+}
+
+static void change_fd_writer(int16_t id, int16_t new_pid){
+    Pipe obj_id = find_by_id(id);
+    if(obj_id == NULL){
+        return;
+    }
+    obj_id->writer_pid = new_pid;
 }
 
 
-int pipe(int pipe_fd[DOS], int16_t id, char mode) {
-
-    if(id >= MAX_PIPES)
-    {return -1;}
-
-    if(!find_inx(id))
-    {
-        
-    }
-
-    int pipe_idx = find_free_pipe_idx();
-    if (pipe_idx == -1) {
-        return -1; // No hay pipes disponibles
-    }
-
-    // Asignamos memoria para el nuevo pipe
-    pipes[pipe_idx] = (Pipe) my_malloc(sizeof(PipeCDT));
-    if (pipes[pipe_idx] == NULL) {
-        return -1; // Error al asignar memoria
-    }
-
-    Pipe p = pipes[pipe_idx];
-    p->pipe_idx = pipe_idx;
-
-    // Asignación de los descriptores de archivo de lectura y escritura
-    pipe_fd[0] = pipe_idx * 3;      // Descriptor de lectura
-    pipe_fd[1] = pipe_idx * 3 + 1;  // Descriptor de escritura
-
-    p->fd_read = pipe_fd[0];
-    p->fd_write = pipe_fd[1];
-
-    p->readIdx = 0;
-    p->writeIdx = 0;
-    p->used = 0;
-
-    // Inicializamos semáforos para sincronización
-    p->read = my_sem_create(pipe_fd[0], 0); // Inicialmente vacío
-    p->write = my_sem_create(pipe_fd[1], BUFF_SIZE); // Espacio libre en el buffer
-    p->mutex = my_sem_create(pipe_idx * 3 + DOS, 1); // Mutex para acceso exclusivo
-
-    return 0;
+static free_pipe(Pipe pipe){
+    my_sem_destroy(pipe->mutex);
+    my_sem_destroy(pipe->read);
+    my_sem_destroy(pipe->write);
+    pipes[pipe->pipe_idx] = NULL;
+    count_pipes--;
+    my_free(pipe);
 }
 
-int write_pipe(int fd, const void *buffer, size_t count) {
-    int pipe_idx = fd / 3;
-    if (pipe_idx < 0 || pipe_idx >= MAX_PIPES || pipes[pipe_idx] == NULL) {
-        return -1; // Pipe inválido
+void close_pipe_for_pid(int16_t id, int16_t pid){
+    Pipe pipe = find_by_id(id);
+    if(pipe == NULL){
+        return;
     }
 
-    Pipe p = pipes[pipe_idx];
-    const unsigned char *data = (const unsigned char *)buffer;
-
-    for (size_t i = 0; i < count; i++) {
-        my_sem_wait(p->write);  // Espera si el buffer está lleno
-        my_sem_wait(p->mutex);  // Acceso exclusivo al buffer
-
-        // Escribimos el byte en el buffer
-        p->buff[p->writeIdx] = data[i];
-        p->writeIdx = (p->writeIdx + 1) % BUFF_SIZE;
-
-        my_sem_post(p->mutex);  // Liberamos el acceso exclusivo
-        my_sem_post(p->read);   // Notificamos que hay datos disponibles
+    if(pipe->writer_pid == pid){
+        pipe->reader_pid = -1;
     }
 
-    return (int)count;
+    if(pipe->reader_pid == -1 && pipe->writer_pid == -1){
+        free_pipe(pipe);
+    }
 }
 
-int read_pipe(int fd, void *buffer, size_t count) {
-    int pipe_idx = fd / DOS;
-    if (pipe_idx < 0 || pipe_idx >= MAX_PIPES || pipes[pipe_idx] == NULL) {
-        return -1; // Pipe inválido
+int write_on_file(int16_t id, unsigned char *buff, unsigned long len){
+    Pipe pipe = find_by_id(id);
+    if(id == NULL || pipe->reader_pid != get_pid()){
+        return -1;
     }
-
-    Pipe p = pipes[pipe_idx];
-    unsigned char *data = (unsigned char *)buffer;
-
-    for (size_t i = 0; i < count; i++) {
-        my_sem_wait(p->read);   // Espera si no hay datos para leer
-        my_sem_wait(p->mutex);  // Acceso exclusivo al buffer
-
-        // Leemos el byte del buffer
-        data[i] = p->buff[p->readIdx];
-        p->readIdx = (p->readIdx + 1) % BUFF_SIZE;
-
-        my_sem_post(p->mutex);  // Liberamos el acceso exclusivo
-        my_sem_post(p->write);  // Notificamos que hay espacio libre en el buffer
+    switch(pipe->pipe_idx){
+        case STDOUT:
+            my_sem_wait(pipe->mutex);
+            putString(STDOUT,(char*) buff, len);
+            my_sem_post(pipe->mutex);
+            break;
+        case STDERR:
+            my_sem_wait(pipe->mutex);
+            //FALTA TERMINARRRR
+            //Luego lo tengo que meter como syscall y usar en la shell
     }
-
-    return (int)count;
 }
 
-int close_pipe(int pipe_idx) {
-    if (pipe_idx < 0 || pipe_idx >= MAX_PIPES || pipes[pipe_idx] == NULL) {
-        return -1; // Pipe inválido
-    }
-
-    Pipe p = pipes[pipe_idx];
-
-    // Destruimos los semáforos asociados al pipe
-    my_sem_destroy(p->read);
-    my_sem_destroy(p->write);
-    my_sem_destroy(p->mutex);
-
-    // Liberamos la memoria del pipe
-    my_free(p);
-    pipes[pipe_idx] = NULL;
-
-    return 0;
+int read_on_file(int16_t fd_idx, unsigned char *target, unsigned long len){
+    //FALTA TERMINARRRR
+    //Luego lo tengo que meter como syscall
 }
 
 

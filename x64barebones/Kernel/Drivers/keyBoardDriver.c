@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include "include/videoDriver.h"
+#include "../include/pipe.h"
+#include "../include/scheduler.h"
 
 //=========================================================================FUNCIONES AUXILIARES==================================================================================================
 
@@ -113,6 +115,14 @@ void keyboardHandler(uint64_t infoRegs){
     } else if (reading && key <= 0x53) {
         buffer[writeIdx] = getStringFromCode(key);
         writeIdx = (writeIdx+1)%SIZE_BUFF;
+    }else if(ctrl_enabled){
+        if(key == 0x2E){ //CTRL+C
+           clear_stdin();
+           kill_FG();
+        }else if(key == 0x20){//CTRL+D
+           char eof_buf[2] = {EOF, 0};
+           putString(STDIN, eof_buf, 2);
+        }
     }
 }
 

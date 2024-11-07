@@ -259,3 +259,9 @@ int unblock_process(uint16_t pid) {
     }    
     return 0;
 }
+
+void kill_FG(){
+    if(scheduler->foreground_pid > 2){
+        kill_process(scheduler->foreground_pid, -1);
+    }
+}
