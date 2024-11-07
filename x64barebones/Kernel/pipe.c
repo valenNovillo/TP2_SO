@@ -45,8 +45,8 @@ static Pipe find_by_id(int16_t id){
     }
 
     for(int i = 0; i < MAX_PIPES; i++){
-        if(pipes[id] != NULL){
-            return pipes[id];
+        if(pipes[i] != NULL && pipes[i]->id == id){
+            return pipes[i];
         }
     }
 
@@ -66,12 +66,12 @@ static int16_t get_next_index(){
 }
 
 static Pipe init_pipe(){
-    int16_t new_pipe_idx = get_next_idx();
+    int16_t new_pipe_idx = get_next_index();
     if(new_pipe_idx == -1){
         return NULL;
     }
 
-    Pipe new_pipe = my_malloc(sizeof(Pipe));
+    Pipe new_pipe = my_malloc(sizeof(PipeCDT));
     if(new_pipe == NULL){
         return NULL;
     }
@@ -84,9 +84,11 @@ static Pipe init_pipe(){
     new_pipe->writer_pid = -1;
     new_pipe->reader_pid = -1;
 
-    my_sem_create(SEM_MUTEX, 1);
-    my_sem_create(SEM_READ, 0);
-    my_sem_create(SEM_WRITE, BUFF_SIZE);
+    new_pipe->mutex = my_sem_create(SEM_MUTEX, 1);
+    new_pipe->read = my_sem_create(SEM_READ, 0);
+    new_pipe->write = my_sem_create(SEM_WRITE, BUFF_SIZE);
+
+
 
     return new_pipe;
 } 
@@ -210,7 +212,7 @@ int write_on_file(int16_t id, unsigned char *buff, unsigned long len){
 
 
 int read_on_file(int16_t id, unsigned char *target, unsigned long len){
-    Pipe pipe find_by_id(id);
+    Pipe pipe = find_by_id(id);
 
     if(pipe == NULL || pipe->reader_pid != getPid() || len == 0){
         return -1;

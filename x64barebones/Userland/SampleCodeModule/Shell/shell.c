@@ -36,6 +36,15 @@ void shell()
     }   
 }
 
+static int hasPipe(int argc){
+    for (int i = 0; i < argc; i++) {
+        if (strCmp(arguments[i], "|") == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void resetBuffer() {
     for(int i=0; i<BUFF_SIZE; i++) {
         buffer[i] = 0;
