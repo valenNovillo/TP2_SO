@@ -38,16 +38,6 @@ static Pipe pipes[MAX_PIPES] = {0};
 int16_t count_pipes = 0;
 int16_t next_pipe_idx = 0; 
 
-
-/*static int find_free_pipe_idx() {
-    for (int i = 0; i < MAX_PIPES; i++) {
-        if (pipes[i] == NULL) {
-            return i;
-        }
-    }
-    return -1;
-}*/
-
 static Pipe find_by_id(int16_t id){
 
     if(id < 0 || id >= MAX_PIPES){
@@ -101,33 +91,29 @@ static Pipe init_pipe(){
     return new_pipe;
 } 
 
-int16_t create_pipe(int16_t id){
+int16_t create_pipe(int16_t id, Pipe pipe){
     if(count_pipes >= MAX_PIPES || id >= MAX_PIPES){
         return -1;
     }
-
-    Pipe pipe = find_by_id(id);
+    
+    pipe = init_pipe();
     if(pipe == NULL){
-        pipe = init_pipe();
-        if(pipe == NULL){
-            return -1;
-        }
-        pipe->id = id;
-        return pipe;
+        return -1;
     }
 
-    return -1;
+    count_pipes++;
+
+    pipe->id = id;
+    return pipe->pipe_idx;
 }
 
 int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
     Pipe pipe = find_by_id(id);
-    if(id == NULL){
+    if(pipe == NULL){
         int16_t idx;
-        if((idx = create_pipe(id)) == -1){
+        if((idx = create_pipe(id, pipe)) == -1){
             return -1;
         }
-
-        id = find_by_id(idx);
     }
 
     if((pipe->writer_pid != -1 && mode==WRITER) || (pipe->reader_pid != -1 && mode==READER)){
@@ -145,28 +131,28 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
     return pipe->pipe_idx;
 }
 
-static void init_fds(){
+/*static void init_fds(){
     my_sem_create(SEM_MUTEX, 1);
     open_pipe_for_pid(STDIN, 0, 'w');
     open_pipe_for_pid(STDOUT, 0, 'r');
     open_pipe_for_pid(STDERR, 0, 'r');
-}
+}*/
 
-static void clear_stdin(){
+/*static void clear_stdin(){
     Pipe stdin = pipes[0];
     stdin->read_idx = stdin->write_idx;
     for(int i = 0; i < stdin->used; i++){
         my_sem_wait(stdin->read);
     }
     stdin->used = 0;
-}
+}*/
 
 static void change_fd_writer(int16_t id, int16_t new_pid){
-    Pipe obj_id = find_by_id(id);
-    if(obj_id == NULL){
+    Pipe obj = find_by_id(id);
+    if(obj == NULL){
         return;
     }
-    obj_id->writer_pid = new_pid;
+    obj->writer_pid = new_pid;
 }
 
 
@@ -196,25 +182,22 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
 
 int write_on_file(int16_t id, unsigned char *buff, unsigned long len){
     Pipe pipe = find_by_id(id);
-    if(id == NULL || pipe->reader_pid != get_pid()){
+    if(pipe == NULL || len == 0){
         return -1;
     }
-    switch(pipe->pipe_idx){
-        case STDOUT:
-            my_sem_wait(pipe->mutex);
-            putString(STDOUT,(char*) buff, len);
-            my_sem_post(pipe->mutex);
-            break;
-        case STDERR:
-            my_sem_wait(pipe->mutex);
-            //FALTA TERMINARRRR
-            //Luego lo tengo que meter como syscall y usar en la shell
-    }
+
+    
+    
+    return (int)len;
 }
 
-int read_on_file(int16_t fd_idx, unsigned char *target, unsigned long len){
-    //FALTA TERMINARRRR
-    //Luego lo tengo que meter como syscall
+
+int read_on_file(int16_t id, unsigned char *target, unsigned long len){
+    Pipe pipe find_by_id(id);
+
+    if(pipe == NULL || pipe->reader_pid != getPid()){
+        return -1;
+    }
 }
 
 
