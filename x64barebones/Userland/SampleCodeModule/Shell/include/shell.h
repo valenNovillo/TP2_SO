@@ -7,8 +7,6 @@
 
 #define BUFF_SIZE 100
 
-typedef enum PState {RUNNING, BLOCKED, READY, ZOMBIE, TERMINATED} PState;
-
 extern void test_io_exception();
 
 //===================================================================================== PROTOTIPOS ===================================================================================================================
@@ -53,7 +51,7 @@ void print_mem_status_command();
 
 void loop_command();
 
-void kill_command();
+void kill_command(char *args[]);
 
 void nice_command(char *args[]);
 

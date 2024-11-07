@@ -37,8 +37,7 @@ void shell()
 }
 
 void resetBuffer() {
-    for(int i=0; i<BUFF_SIZE; i++)
-    {
+    for(int i=0; i<BUFF_SIZE; i++) {
         buffer[i] = 0;
     }
 }
@@ -291,71 +290,15 @@ void loop_command() {
 }
 
 void kill_command(char *args[]) {
-    if (args[0] == NULL) {
-        printf("\nPlease specify a process ID to kill.\n");
-        return;
-    }
-
-    int pid = stringToInt(args[0]); 
-
-    if(kill_process(pid) < 0) {
-        printf("\nCould not kill process %d.\n", pid);
-        return;
-    }
-
-    printf("\nProcess %d has been killed.\n", pid);
+    kill(args);
 }
 
 void nice_command(char *args[]) {
-    if (args[0] == NULL) {
-        printf("\nPlease specify the process ID you want to change its priority.\n");
-        return;
-    }
-
-    if (args[1] == NULL) {
-        printf("\nPlease specify the new PRIORITY you want to set.\n");
-        return;
-    }
-
-    int pid = stringToInt(args[0]); 
-    int priority = stringToInt(args[1]); 
-
-    if(set_priority(pid, priority) < 0) {
-        printf("\nCould not change process %d priority to %d.\n", pid, priority);
-        return;
-    }
-
-    printf("\nProcess %d now has priority %d.\n", pid, priority);
+    nice(args);
 }
 
 void block_command(char *args[]) {
-    if (args[0] == NULL) {
-        printf("\nPlease specify the process ID you want to change its state\n");
-        return;
-    }
-
-    int pid = stringToInt(args[0]); 
-
-    PState state = get_state(pid);
-    int ret = 0;
-
-    if(state == BLOCKED) {
-        ret = unblock_process(pid);
-    } else if (state == READY || state == RUNNING) {
-        ret = block_process(pid);
-    } else {
-        printf("\nCould not change process %d state\n", pid);
-        return;
-    } 
-
-    if(ret == -1) {
-        printf("\nCould not change process %d state\n", pid);
-        return;
-    }
-      
-    PState new_state = get_state(pid);  
-
-    printf("\nProcess %d changed to state %s \n", pid, new_state == BLOCKED ? "BLOCKED" : (new_state == READY ? "READY" : "RUNNING"));
+   block(args);
 }
 
 
