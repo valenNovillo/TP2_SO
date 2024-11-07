@@ -101,19 +101,19 @@ static void my_free_rec(void* ptr){
 
     uint64_t adrress_diff_from_base = ptr - start_heap;
     Block* buddy = (Block *) (get_buddy(adrress_diff_from_base, i) + (uint64_t ) start_heap);
-    Block** current = &free_lists[i];
+    Block* current = free_lists[i];
 
-    while (*current != NULL && *current != buddy) {
-        current = &((*current)->next);
+    while (current != NULL && current != buddy) {
+        current = current->next;
     }
 
-    if(*current != buddy){
+    if(current != buddy){
         ((Block *)ptr)->next = free_lists[i];
         free_lists[i] = ptr;
         mem_status.reserved -= block_size(i);
         mem_status.free += block_size(i);
     }else{
-        *current = buddy->next;
+        current = buddy->next;
 
         if(ptr > (void *)buddy){
             buddy->size = block_size(i + 1);
