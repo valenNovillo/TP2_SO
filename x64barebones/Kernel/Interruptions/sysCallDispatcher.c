@@ -11,10 +11,20 @@
 #include "../include/pipe.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
-static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) {
+/*static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) {
     if(fd != STDIN)
         return -1;
     return fillBuf(buff, count);
+}*/
+
+static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8){
+    if(fd == STDIN){
+        fillBuf(buff, count);
+    }else if(fd > STDIN){
+        return read_on_file(fd, buff, count);
+    }
+
+    return -1;
 }
 
 //Devuelve la cantidad de caracteres que pudo escribir

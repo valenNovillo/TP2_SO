@@ -172,6 +172,10 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
     }
 
     if(pipe->writer_pid == pid){
+        pipe->writer_pid = -1;
+    }
+
+    if(pipe->reader_pid == pid){
         pipe->reader_pid = -1;
     }
 
@@ -186,18 +190,48 @@ int write_on_file(int16_t id, unsigned char *buff, unsigned long len){
         return -1;
     }
 
-    
-    
-    return (int)len;
+    int bytes_written = 0;
+
+    for (unsigned long i = 0; i < len; i++) {
+        my_sem_wait(pipe->write); 
+        my_sem_wait(pipe->mutex);  
+
+        pipe->buff[pipe->write_idx] = buff[i];
+        pipe->write_idx = (pipe->write_idx + 1) % BUFF_SIZE;
+
+        my_sem_post(pipe->mutex);  
+        my_sem_post(pipe->read);   
+
+        bytes_written++;
+    }
+
+    return bytes_written;
 }
 
 
 int read_on_file(int16_t id, unsigned char *target, unsigned long len){
     Pipe pipe find_by_id(id);
 
-    if(pipe == NULL || pipe->reader_pid != getPid()){
+    if(pipe == NULL || pipe->reader_pid != getPid() || len == 0){
         return -1;
     }
+
+    int bytes_read = 0;
+
+    for (unsigned long i = 0; i < len; i++) {
+        my_sem_wait(pipe->read);  
+        my_sem_wait(pipe->mutex); 
+
+        buff[i] = pipe->buff[pipe->read_idx];
+        pipe->read_idx = (pipe->read_idx + 1) % BUFF_SIZE;
+
+        my_sem_post(pipe->mutex); 
+        my_sem_post(pipe->write);
+
+        bytes_read++;
+    }
+
+    return bytes_read;
 }
 
 
