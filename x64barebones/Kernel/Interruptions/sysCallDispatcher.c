@@ -166,8 +166,12 @@ static ssize_t sys_call_my_free(void* ptr){
     return 0;
 }
 
+static ssize_t sys_call_get_state(uint16_t pid){
+    return get_state(pid);
+}
+
 static Syscall syscall_handlers[] = {
-    (Syscall)sys_call_read, 
+    (Syscall) sys_call_read, 
     (Syscall) sys_call_write, 
     (Syscall) sys_call_beep, 
     (Syscall) sys_call_seconds_elapsed,
@@ -199,7 +203,8 @@ static Syscall syscall_handlers[] = {
     (Syscall) sys_call_sem_wait,
     (Syscall) sys_call_print_mem_status,
     (Syscall) sys_call_my_malloc,
-    (Syscall) sys_call_my_free
+    (Syscall) sys_call_my_free,
+    (Syscall) sys_call_get_state
     };
 
 

@@ -44,5 +44,6 @@ uint8_t my_sem_wait(sem_ptr ptr);
 int print_mem_status();
 void* my_malloc(uint64_t size);
 void my_free(void * ptr);
+uint16_t get_state(uint16_t pid);
 
 #endif //UNISTD1_H

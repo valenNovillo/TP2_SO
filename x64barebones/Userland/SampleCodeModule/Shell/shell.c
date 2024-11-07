@@ -8,10 +8,10 @@
 #include <stddef.h>
 
 static void (*commands[])(char *args[]) = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator,
- playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command, loop_command, kill_command};
+ playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command, loop_command, kill_command, nice_command, block_command};
 
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
-     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill"};
+     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block"};
 
 char buffer[BUFF_SIZE]={0};
 
@@ -163,6 +163,16 @@ void help() {
     setColor(255, 255, 255);
     printf("--> Kills the process <ID> \n");
 
+    setColor(250, 255, 0);
+    printf("nice <ID> <PRIORITY> \n");
+    setColor(255, 255, 255);
+    printf("--> Changes the process <ID> priority to <PRIORITY> \n");
+
+    setColor(250, 255, 0);
+    printf("block <ID> \n");
+    setColor(255, 255, 255);
+    printf("--> Changes the process <ID> state between blocked and ready\n");
+
     setColor(133, 21, 199);
     printf("registers \n");
     setColor(255, 255, 255);
@@ -282,18 +292,64 @@ void loop_command() {
 
 void kill_command(char *args[]) {
     if (args[0] == NULL) {
-        printf("Please specify a process ID to kill.\n");
+        printf("\nPlease specify a process ID to kill.\n");
         return;
     }
 
     int pid = stringToInt(args[0]); 
-    if (pid <= 0) {
-        printf("Invalid process ID.\n");
+
+    if(kill_process(pid) < 0) {
+        printf("\nCould not kill process %d.\n", pid);
         return;
     }
 
-    kill_process(pid);
     printf("\nProcess %d has been killed.\n", pid);
+}
+
+void nice_command(char *args[]) {
+    if (args[0] == NULL) {
+        printf("\nPlease specify the process ID you want to change its priority.\n");
+        return;
+    }
+
+    if (args[1] == NULL) {
+        printf("\nPlease specify the new PRIORITY you want to set.\n");
+        return;
+    }
+
+    int pid = stringToInt(args[0]); 
+    int priority = stringToInt(args[1]); 
+
+    if(set_priority(pid, priority) < 0) {
+        printf("\nCould not change process %d priority to %d.\n", pid, priority);
+        return;
+    }
+
+    printf("\nProcess %d now has priority %d.\n", pid, priority);
+}
+
+void block_command(char *args[]) {
+    if (args[0] == NULL) {
+        printf("\nPlease specify the process ID you want to change its state\n");
+        return;
+    }
+
+    int pid = stringToInt(args[0]); 
+
+    PState state = get_state(pid);
+
+    if(state == BLOCKED) {
+        unblock_process(pid);
+    } else if (state == READY || state == RUNNING) {
+        block_process(pid);
+    } else {
+        printf("\nCould not change process %d state\n", pid);
+        return;
+    } 
+      
+    PState new_state = get_state(pid);  
+
+    printf("\nProcess %d changed to state %s \n", pid, new_state == BLOCKED ? "BLOCKED" : (new_state == READY ? "READY" : "RUNNING"));
 }
 
 

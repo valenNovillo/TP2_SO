@@ -79,7 +79,7 @@ PState get_state(int16_t pid)
 
 int32_t set_priority(uint16_t pid, uint8_t new_p) {
     Node* node = scheduler->processes[pid];
-    if (node == NULL || pid == DEFAULT_PID || new_p > MAX_PRIORITY) {
+    if (node == NULL || pid == DEFAULT_PID || pid >= MAX_PROCESSES || new_p < MIN_PRIORITY || new_p > MAX_PRIORITY) {
         return -1;
     }
     PCB* pcb = (PCB*)node->data;
@@ -190,13 +190,14 @@ void yield(){
 }
 
 int32_t kill_process(uint16_t pid, int32_t ret){
-    Node* process_to_kill = scheduler->processes[pid];
-    if(pid <= UNO){ //if pid = 0 or pid = 1 it's default or shell
+    if(pid <= UNO || pid >= MAX_PROCESSES){ //if pid = 0 or pid = 1 it's default or shell
         return -1;
     }
 
+    Node* process_to_kill = scheduler->processes[pid];
+
     if(process_to_kill == NULL){
-        return 0;
+        return -1;
     }
 
     PCB* pcb_to_kill = (PCB*)(process_to_kill->data);
