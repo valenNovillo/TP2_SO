@@ -337,15 +337,21 @@ void block_command(char *args[]) {
     int pid = stringToInt(args[0]); 
 
     PState state = get_state(pid);
+    int ret = 0;
 
     if(state == BLOCKED) {
-        unblock_process(pid);
+        ret = unblock_process(pid);
     } else if (state == READY || state == RUNNING) {
-        block_process(pid);
+        ret = block_process(pid);
     } else {
         printf("\nCould not change process %d state\n", pid);
         return;
     } 
+
+    if(ret == -1) {
+        printf("\nCould not change process %d state\n", pid);
+        return;
+    }
       
     PState new_state = get_state(pid);  
 
