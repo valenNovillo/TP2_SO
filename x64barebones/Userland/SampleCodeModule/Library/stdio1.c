@@ -167,3 +167,31 @@ void intToString(int n, char* s) {
         s[i - j - 1] = temp;
     }
 }
+
+int stringToInt(char* str) {
+    int result = 0;     // Almacenará el número resultante
+    int sign = 1;       // Para manejar números negativos
+
+    // Si el primer carácter es un signo negativo, ajustamos el signo
+    if (*str == '-') {
+        sign = -1;
+        str++; // Avanzamos al siguiente carácter
+    }
+
+    // Recorremos cada carácter de la cadena
+    while (*str != '\0') {
+        // Aseguramos que el carácter sea un dígito
+        if (*str < '0' || *str > '9') {
+            return 0; // Si encontramos un carácter no válido, devolvemos 0
+        }
+
+        // Convertimos el carácter a su valor numérico
+        result = result * 10 + (*str - '0');
+
+        // Avanzamos al siguiente carácter
+        str++;
+    }
+
+    // Retornamos el resultado multiplicado por el signo
+    return result * sign;
+}

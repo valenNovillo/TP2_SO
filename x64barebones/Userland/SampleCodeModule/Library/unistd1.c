@@ -78,7 +78,7 @@ int32_t set_priority(uint16_t pid, uint8_t new_p) {
     return sysCall(18, pid, new_p, 0, 0, 0);
 }
 
-int block_process(uint16_t pid){
+int block_process(uint16_t pid) {
     return sysCall(19,pid, 0, 0, 0, 0);
 }
 
@@ -136,3 +136,6 @@ void my_free(void * ptr) {
     sysCall(32, (uint64_t)ptr, 0, 0, 0, 0);
 }
 
+uint16_t get_state(uint16_t pid) {
+    return sysCall(33, pid, 0, 0, 0, 0);
+}

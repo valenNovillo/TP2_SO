@@ -3,12 +3,15 @@
 #include "../Test/test.h"
 #include "../Library/include/stdio1.h"
 #include "../Library/include/unistd1.h"
+#include "../Library/include/string.h"
+#include "../Library/include/applications.h"
+#include <stddef.h>
 
-static void (*commands[])() = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator,
- playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command};
+static void (*commands[])(char *args[]) = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator,
+ playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command, loop_command, kill_command, nice_command, block_command};
 
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
-     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "print_mem_status", "test_mm"};
+     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block"};
 
 char buffer[BUFF_SIZE]={0};
 
@@ -34,17 +37,30 @@ void shell()
 }
 
 void resetBuffer() {
-    for(int i=0; i<BUFF_SIZE; i++)
-    {
+    for(int i=0; i<BUFF_SIZE; i++) {
         buffer[i] = 0;
     }
 }
 
 
-void findCommand(char * buffer) {
+void findCommand(char * input) {
+    char *args[10] = {NULL}; 
+    char *token = strtok(input, " ");
+    int arg_count = 0;
+
+    while (token != NULL && arg_count < 10) {
+        args[arg_count++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    if (arg_count == 0) {
+        printErr("\nNo command entered.\n\n");
+        return;
+    }
+
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
-        if (strcmp(buffer, commands_name[i]) == 0) {
-            commands[i]();
+        if (strcmp(args[0], commands_name[i]) == 0) {
+            commands[i](args + 1); 
             return;
         }
     }
@@ -127,9 +143,34 @@ void help() {
     printf("--> Checks the memory management\n");
 
     setColor(250, 255, 0);
-    printf("prnt_mem_status \n");
+    printf("mem \n");
     setColor(255, 255, 255);
     printf("--> Prints the memory status\n");
+
+    setColor(250, 255, 0);
+    printf("ps \n");
+    setColor(255, 255, 255);
+    printf("--> Prints list of all current processes with their properties\n");
+
+    setColor(250, 255, 0);
+    printf("loop \n");
+    setColor(255, 255, 255);
+    printf("--> Prints current process ID with a greeting\n");
+
+    setColor(250, 255, 0);
+    printf("kill <ID> \n");
+    setColor(255, 255, 255);
+    printf("--> Kills the process <ID> \n");
+
+    setColor(250, 255, 0);
+    printf("nice <ID> <PRIORITY> \n");
+    setColor(255, 255, 255);
+    printf("--> Changes the process <ID> priority to <PRIORITY> \n");
+
+    setColor(250, 255, 0);
+    printf("block <ID> \n");
+    setColor(255, 255, 255);
+    printf("--> Changes the process <ID> state between blocked and ready\n");
 
     setColor(133, 21, 199);
     printf("registers \n");
@@ -240,6 +281,24 @@ void test_mm_command() {
     char* argv[] = {MEMORY_SIZE, 0};
     int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
     create_process((Main)test_mm, argv, "test_mm", 5, fds);
+}
+
+void loop_command() {
+    char* argv[] = {0};
+    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
+    create_process((Main)loop, argv, "loop", 3, fds);
+}
+
+void kill_command(char *args[]) {
+    kill(args);
+}
+
+void nice_command(char *args[]) {
+    nice(args);
+}
+
+void block_command(char *args[]) {
+   block(args);
 }
 
 

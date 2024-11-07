@@ -31,7 +31,7 @@ void playEliminator();
 
 void playSong();
 
-void findCommand(char * buffer);
+void findCommand(char * input);
 
 void resetBuffer();
 
@@ -48,6 +48,14 @@ void testing_no_sync();
 void test_mm_command();
 
 void print_mem_status_command();
+
+void loop_command();
+
+void kill_command(char *args[]);
+
+void nice_command(char *args[]);
+
+void block_command(char *args[]);
 
 //========================================================================================================================================================================================================================
 

@@ -15,4 +15,8 @@ size_t strlen(const char *cadena);
 // - un valor > 0 si la cadena1 es mayor que la cadena2
 int strcmp(const char *cadena1, const char *cadena2);
 
+char* my_strchr(const char* str, char character);
+
+char* strtok(char* str, const char* delim);
+
 #endif

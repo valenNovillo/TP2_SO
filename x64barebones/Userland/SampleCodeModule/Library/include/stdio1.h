@@ -32,4 +32,7 @@ int readByDelim(int fd, char * buff, int count, char delim);
 //función que convierte un entero n a una cadena de caracteres y la almacena en el buffer s.
 void intToString(int n, char* s);
 
+//funcion que retorna a conversion del string str a un numero entero
+int stringToInt(char* str);
+
 #endif //STDIO_H
