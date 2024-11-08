@@ -8,7 +8,7 @@
 #ifdef BUDDY_MODE 
   #define MAX_BLOCKS 262144
 #else
-  #define MAX_BLOCKS 256
+  #define MAX_BLOCKS 128
   #define BLOCK_SIZE 2048
 #endif
 

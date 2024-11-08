@@ -16,7 +16,7 @@ static MemoryStatus mem_status;
 static void* start_heap;
 
 static uint64_t block_size(int i) {
-    return (uint64_t) ((i << i) * MIN_BLOCK_SIZE);
+    return (uint64_t) ((1 << i) * MIN_BLOCK_SIZE);
 }
 
 static uint64_t get_buddy(int b, int i) {
