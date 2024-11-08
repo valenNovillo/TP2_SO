@@ -19,7 +19,7 @@ static uint64_t block_size(int i) {
     return (uint64_t) ((1 << i) * MIN_BLOCK_SIZE);
 }
 
-static uint64_t get_buddy(int b, int i) {
+static uint64_t get_buddy(uint64_t b, int i) {
     return (uint64_t) (b ^ block_size(i)); 
 }
 
@@ -43,7 +43,7 @@ void my_mb_init(void* ptr, uint64_t size) {
     int i = get_index(size);
 
     start_heap = ptr;
-    free_lists[i] = ptr;
+    free_lists[i] = (Block*)ptr;
     free_lists[i]->next = NULL;
     free_lists[i]->size = block_size(i);
     mem_status.total = free_lists[i]->size;
@@ -70,8 +70,8 @@ static Block* my_malloc_rec(uint64_t size){
     Block* block = my_malloc_rec(block_size(i + 1));
     
     if(block != NULL){
-        uint64_t address_diff_from_base = (void*)block - start_heap;
-        Block *buddy = (Block *)(get_buddy(address_diff_from_base, i) + (uint64_t)start_heap);
+        uint64_t address_diff_from_base = (uint64_t)((void*)block - start_heap);
+        Block* buddy = (Block*)((get_buddy(address_diff_from_base, i)) + (uint64_t)start_heap);
 
         buddy->size = block_size(i);
         buddy->next = free_lists[i];
@@ -99,8 +99,8 @@ static void my_free_rec(void* ptr){
     uint64_t size = ((Block*)ptr)->size;
     int i = get_index(size);
 
-    uint64_t adrress_diff_from_base = ptr - start_heap;
-    Block* buddy = (Block *) (get_buddy(adrress_diff_from_base, i) + (uint64_t ) start_heap);
+    uint64_t address_diff_from_base = (uint64_t)ptr - (uint64_t)start_heap;
+    Block* buddy = (Block*)((get_buddy(address_diff_from_base, i)) + (uint64_t)start_heap);
     Block* current = free_lists[i];
 
     while (current != NULL && current != buddy) {
