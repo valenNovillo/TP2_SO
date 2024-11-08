@@ -1,5 +1,4 @@
 #include "include/shell.h"
-#include "include/eliminator.h"
 #include "../Test/test.h"
 #include "../Library/include/stdio1.h"
 #include "../Library/include/unistd1.h"
@@ -7,11 +6,13 @@
 #include "../Library/include/applications.h"
 #include <stddef.h>
 
-static void (*commands[])(char *args[]) = {help, zoomIn, zoomOut, time, clean, ioexception, zeroexception, playEliminator,
- playSong, test_process,test_priority, ps_commmand, testing_sync, testing_no_sync, print_mem_status_command, test_mm_command, loop_command, kill_command, nice_command, block_command};
+static Commands commands[] = {(Commands)help_command, (Commands)zoomIn, (Commands)zoomOut, (Commands)time_command, (Commands)clean, (Commands)ioexception, (Commands)zeroexception, (Commands)playEliminator,
+ (Commands)playSong,(Commands) test_process,(Commands)test_priority, (Commands)ps_commmand, (Commands)testing_sync, (Commands)testing_no_sync, (Commands)print_mem_status_command, (Commands)test_mm_command, (Commands)loop_command, (Commands)kill_command, (Commands)nice_command, (Commands)block_command};
 
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
      "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block"};
+
+static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexception", "eliminator"};
 
 char buffer[BUFF_SIZE]={0};
 
@@ -31,19 +32,11 @@ void shell()
         printf("\n\n:$> ");
         setColor(255, 255, 255);
         scanf1("%s",buffer);
-        findCommand(buffer);
+        processCommand(buffer);
         resetBuffer();
     }   
 }
 
-static int hasPipe(int argc){
-    for (int i = 0; i < argc; i++) {
-        if (strCmp(arguments[i], "|") == 0) {
-            return i;
-        }
-    }
-    return -1;
-}
 
 void resetBuffer() {
     for(int i=0; i<BUFF_SIZE; i++) {
@@ -52,7 +45,70 @@ void resetBuffer() {
 }
 
 
-void findCommand(char * input) {
+void processCommand(char * input) {
+
+    if(my_strchr(input, '|') != NULL){
+        char * izq = strtok(input, "|");
+        char * der = strtok(NULL, "|");
+        
+        izq[strlen(izq)-1] = '\0';
+        der += 1;
+        
+        if (izq == NULL || der == NULL) {
+            printErr("\nInvalid command entered.\n\n");
+            return;
+        }
+
+        for (int i = 0; i < sizeof(no_pipe_command) / sizeof(char*); i++) {
+            if (strcmp(izq, no_pipe_command[i]) == 0 || strcmp(der, no_pipe_command[i]) == 0) {
+                printErr("\nImpossible to pipe one of the commands\n");
+                return;
+            }
+        }
+
+        int r_pipe_fd = open_pipe(SHELL_PIPE_ID, 'r');
+        int w_pipe_fd = open_pipe(SHELL_PIPE_ID, 'w'); 
+
+        if (r_pipe_fd == -1 || w_pipe_fd == -1) {
+            printErr("Error while creating pipe");
+            return;
+        }
+
+        int16_t fds_readers[3] = {r_pipe_fd, STDOUT, STDERR};
+        int16_t fds_writers[3] = {STDIN, w_pipe_fd, STDERR};
+
+        uint16_t pid_reader = findCommand(izq, fds_readers);
+        uint16_t pid_writer = findCommand(der, fds_writers);
+
+        if (pid_reader == -1) {
+            kill_process(pid_writer);
+            close_pipe_for_pid(SHELL_PIPE_ID, pid_writer);
+            return;
+            
+        } else if (pid_writer == -1) {
+            kill_process(pid_reader);
+            close_pipe_for_pid(SHELL_PIPE_ID, pid_reader);
+            return;
+        }
+
+        wait_pid(pid_writer);
+        close_pipe_for_pid(SHELL_PIPE_ID, pid_writer);
+        wait_pid(pid_reader);
+        close_pipe_for_pid(SHELL_PIPE_ID, pid_reader);
+    }
+    else {
+        int16_t fds[3] = {STDIN, STDOUT, STDERR};
+        findCommand(input, fds);
+    }
+}
+
+
+uint16_t findCommand(char * input, int16_t fds[]) {
+    if(input[0] == '&') {
+        fds[0] = NO_INPUT;
+        input += 1;
+    }
+    
     char *args[10] = {NULL}; 
     char *token = strtok(input, " ");
     int arg_count = 0;
@@ -64,145 +120,42 @@ void findCommand(char * input) {
 
     if (arg_count == 0) {
         printErr("\nNo command entered.\n\n");
-        return;
+        return -1;
     }
 
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
         if (strcmp(args[0], commands_name[i]) == 0) {
-            commands[i](args + 1); 
-            return;
+            return commands[i](fds, args + 1);
         }
     }
     printErr("\nPlease type a valid command.\n\n");
+    return -1;
 }
 
 
-void help() {
-    printf("\n");
-    printf("The available commands are:\n");
-
-    setColor(250, 255, 0);
-    printf("help \n");
-    setColor(255, 255, 255);
-    printf("--> Displays a menu with all the comands\n");
-
-    setColor(250, 255, 0);
-    printf("inc \n");
-    setColor(255, 255, 255);
-    printf("--> Increases text size on the screen\n");
-
-    setColor(250, 255, 0);
-    printf("dec \n");
-    setColor(255, 255, 255);
-    printf("--> Decreases text size on the screen\n");
-
-    setColor(250, 255, 0);
-    printf("eliminator \n");
-    setColor(255, 255, 255);
-    printf("--> Starts a new game of Eliminator \n");
-    
-    setColor(250, 255, 0);
-    printf("time \n");
-    setColor(255, 255, 255);
-    printf("--> Displays current time in hh:mm:ss format\n");
-
-    setColor(250, 255, 0);
-    printf("clean \n");
-    setColor(255, 255, 255);
-    printf("--> Erases the content on the screen\n");
-
-    setColor(250, 255, 0);
-    printf("ioexception \n");
-    setColor(255, 255, 255);
-    printf("--> Produces an invalid opcode exception\n");
-
-    setColor(250, 255, 0);
-    printf("zeroexception \n");
-    setColor(255, 255, 255);
-    printf("--> Produces a zero division exception\n");
-
-    setColor(250, 255, 0);
-    printf("playsong \n");
-    setColor(255, 255, 255);
-    printf("--> Shares a list of songs for playing\n");
-
-    setColor(250, 255, 0);
-    printf("test_processes \n");
-    setColor(255, 255, 255);
-    printf("--> Checks the management of multiple processes\n");
-
-    setColor(250, 255, 0);
-    printf("test_priority \n");
-    setColor(255, 255, 255);
-    printf("--> Checks the management of multiple priorities\n");
-
-    setColor(250, 255, 0);
-    printf("test_sync \n");
-    setColor(255, 255, 255);
-    printf("--> Checks the syncronization between processes\n");
-
-    setColor(250, 255, 0);
-    printf("test_no_sync \n");
-    setColor(255, 255, 255);
-    printf("--> Checks the result withouth sync between processes\n");
-
-    setColor(250, 255, 0);
-    printf("test_mm \n");
-    setColor(255, 255, 255);
-    printf("--> Checks the memory management\n");
-
-    setColor(250, 255, 0);
-    printf("mem \n");
-    setColor(255, 255, 255);
-    printf("--> Prints the memory status\n");
-
-    setColor(250, 255, 0);
-    printf("ps \n");
-    setColor(255, 255, 255);
-    printf("--> Prints list of all current processes with their properties\n");
-
-    setColor(250, 255, 0);
-    printf("loop \n");
-    setColor(255, 255, 255);
-    printf("--> Prints current process ID with a greeting\n");
-
-    setColor(250, 255, 0);
-    printf("kill <ID> \n");
-    setColor(255, 255, 255);
-    printf("--> Kills the process <ID> \n");
-
-    setColor(250, 255, 0);
-    printf("nice <ID> <PRIORITY> \n");
-    setColor(255, 255, 255);
-    printf("--> Changes the process <ID> priority to <PRIORITY> \n");
-
-    setColor(250, 255, 0);
-    printf("block <ID> \n");
-    setColor(255, 255, 255);
-    printf("--> Changes the process <ID> state between blocked and ready\n");
-
-    setColor(133, 21, 199);
-    printf("registers \n");
-    setColor(255, 255, 255);
-    printf("--> To see the current state of the processor registers, please press CTRL + R\n");
+uint16_t help_command(int16_t fds[]) {
+    char* argv[] = {0};
+    return create_process((Main)help, argv, "help", 2, fds);
 }
 
-void zoomIn() {
+int zoomIn() {
     sizeInc();
+    return 0;
 }
     
-void zoomOut() {
+int zoomOut() {
     sizeDec();
+    return 0;
 }
 
-void time() {
-    char time[10];
-    getTime(time);
-    printf("\n\n%s\n", time);
+uint16_t time_command(int16_t fds[]) {
+    char* argv[] = {0};
+    return create_process((Main)time, argv, "time", 2, fds);
 }
 
-void clean() {
+int clean() {
     cleanScreen();
+    return 0;
 }
 
 void ioexception() {
@@ -212,102 +165,68 @@ void ioexception() {
 void zeroexception() {
     int i = 5;
     i /= 0;
-    return;
+    return;    
 }
 
-void playEliminator() {
-    reading(0);
-    eliminator();
-    reading(1);
+uint16_t playEliminator(int16_t fds[]) {
+  char* argv[] = {0};
+  return create_process((Main)play_eliminator, argv, "play_eliminator", 2, fds);
 }
 
-void playSong()
-{
-    printf("\n\n");
-    printf("Choose a song by number:\n\n");
-
-    setColor(0, 255, 255);
-    printf("0: Himno Argentino (which is not actually Himno Argentino) \n\n");
-
-    printf("1: startUpMusic\n\n");
-
-    printf("2: Mario Brothers song \n\n");
-
-    printf("3: Happy Birthday \n\n");
-
-    printf("4: Arrorro mi Nino \n\n");
-
-    printf("5: Smoke On Water  \n\n");
-
-    printf("6: Try of Seven Nation Army (Almost) \n\n");
-
-    printf("7: Game Music \n\n");
-
-    setColor(255, 255, 255);
-
-    int song;
-    scanf1("%d",&song);
-    if(song<0 || song>=MAX_SONGS) {
-        printErr("\n\nPlease choose a valid song.\n\n");
-        return;
-    }
-    musicDispatcher(song);
+uint16_t playSong(int16_t fds[]) {
+    char* argv[] = {0};
+    return create_process((Main)play_song, argv, "play_song", 2, fds);
 }
 
-void test_process() {
+uint16_t test_process(int16_t fds[]) {
     char* argv[] = {MAX_PROCESSES, 0};
-    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process((Main)test_processes, argv, "test_process", 2, fds);
+    return create_process((Main)test_processes, argv, "test_process", 2, fds);
 }
 
-void test_priority() {
+uint16_t test_priority(int16_t fds[]) {
     char* argv[] = {0};
-    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process((Main)test_prio, argv, "test_priority", 2, fds);
+    return create_process((Main)test_prio, argv, "test_priority", 2, fds);
 }
 
-void ps_commmand() {
-    ps();
+uint16_t ps_commmand(int16_t fds[]) {
+    char* argv[] = {0};
+    return create_process((Main)ps, argv, "print_mem_status", 1, fds);
 }
 
-void testing_sync() {
+uint16_t testing_sync(int16_t fds[]) {
     char* argv[] = {"3", "1", 0}; //{n, use_sem, 0}
-    int16_t fds[] = {STDIN, STDOUT, STDERR};
-    create_process((Main)test_sync, argv, "test_sync", 1, fds);
+    return create_process((Main)test_sync, argv, "test_sync", 1, fds);
 }
 
-void testing_no_sync() {
+uint16_t testing_no_sync(int16_t fds[]) {
     char* argv[] = {"3", "0", 0}; //{n, use_sem, 0}
-    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
+    return create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
 
-void print_mem_status_command() {
-    print_mem_status();
-}
-
-void test_mm_command() {
-    char* argv[] = {MEMORY_SIZE, 0};
-    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process((Main)test_mm, argv, "test_mm", 5, fds);
-}
-
-void loop_command() {
+uint16_t print_mem_status_command(int16_t fds[]) {
     char* argv[] = {0};
-    int16_t fds[] = {NO_INPUT, STDOUT, STDERR};
-    create_process((Main)loop, argv, "loop", 3, fds);
+    return create_process((Main)print_mem_status, argv, "print_mem_status", 1, fds);
 }
 
-void kill_command(char *args[]) {
-    kill(args);
+uint16_t test_mm_command(int16_t fds[]) {
+    char* args[] = {MEMORY_SIZE, 0};
+    return create_process((Main)test_mm, args, "test_mm", 5, fds);
 }
 
-void nice_command(char *args[]) {
-    nice(args);
+uint16_t loop_command(int16_t  fds[], char *args[]) {
+   return create_process((Main)loop, args, "loop", 3, fds);
 }
 
-void block_command(char *args[]) {
-   block(args);
+uint16_t kill_command(int16_t fds[], char *args[]) {
+    return create_process((Main)kill, args, "kill", 3, fds);
+}
+
+uint16_t nice_command(int16_t fds[], char *args[]) {
+    return create_process((Main)nice, args, "nice", 3, fds);
+}
+
+uint16_t block_command(int16_t fds[],char *args[]) {
+    return create_process((Main)block, args, "block", 3, fds);
 }
 
 

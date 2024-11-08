@@ -83,7 +83,8 @@ static Pipe init_pipe(){
     new_pipe->write_idx = 0;
     new_pipe->writer_pid = -1;
     new_pipe->reader_pid = -1;
-
+    new_pipe->fd_read = new_pipe_idx *2;
+    new_pipe->fd_write = new_pipe_idx * 2 + 1;
     new_pipe->mutex = my_sem_create(SEM_MUTEX, 1);
     new_pipe->read = my_sem_create(SEM_READ, 0);
     new_pipe->write = my_sem_create(SEM_WRITE, BUFF_SIZE);
@@ -109,6 +110,26 @@ int16_t create_pipe(int16_t id, Pipe pipe){
     return pipe->pipe_idx;
 }
 
+
+int16_t open_pipe(int16_t id, char mode){
+    Pipe pipe = find_by_id(id);
+    if(pipe == NULL){
+        int16_t idx;
+        if((idx = create_pipe(id, pipe)) == -1){
+            return -1;
+        }
+    }
+
+    if(mode == WRITER){
+        return pipe->fd_write;
+    }else if(mode == READER){
+        return pipe->fd_read;
+    }else{
+        return -1;
+    }
+}
+
+//Sirve para cuando un proceso se quiere pipear a si mismo.
 int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
     Pipe pipe = find_by_id(id);
     if(pipe == NULL){
@@ -133,32 +154,16 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
     return pipe->pipe_idx;
 }
 
-/*static void init_fds(){
-    my_sem_create(SEM_MUTEX, 1);
-    open_pipe_for_pid(STDIN, 0, 'w');
-    open_pipe_for_pid(STDOUT, 0, 'r');
-    open_pipe_for_pid(STDERR, 0, 'r');
-}*/
-
-/*static void clear_stdin(){
-    Pipe stdin = pipes[0];
-    stdin->read_idx = stdin->write_idx;
-    for(int i = 0; i < stdin->used; i++){
-        my_sem_wait(stdin->read);
-    }
-    stdin->used = 0;
-}*/
-
-static void change_fd_writer(int16_t id, int16_t new_pid){
-    Pipe obj = find_by_id(id);
-    if(obj == NULL){
-        return;
-    }
-    obj->writer_pid = new_pid;
-}
+// static void change_fd_writer(int16_t id, int16_t new_pid){
+//     Pipe obj = find_by_id(id);
+//     if(obj == NULL){
+//         return;
+//     }
+//     obj->writer_pid = new_pid;
+// }
 
 
-static free_pipe(Pipe pipe){
+static void free_pipe(Pipe pipe){
     my_sem_destroy(pipe->mutex);
     my_sem_destroy(pipe->read);
     my_sem_destroy(pipe->write);
@@ -186,9 +191,17 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
     }
 }
 
-int write_on_file(int16_t id, unsigned char *buff, unsigned long len){
+int write_on_file(int16_t fd, char* buff, unsigned long len){
+    int16_t id = (fd-1)/2;
     Pipe pipe = find_by_id(id);
     if(pipe == NULL || len == 0){
+        return -1;
+    }
+
+    int16_t running_pid = get_running_process_pid();
+    if (pipe->writer_pid == -1) {
+        pipe->writer_pid = pipe->writer_pid;
+    } else if(pipe->writer_pid != running_pid) {
         return -1;
     }
 
@@ -211,10 +224,18 @@ int write_on_file(int16_t id, unsigned char *buff, unsigned long len){
 }
 
 
-int read_on_file(int16_t id, unsigned char *target, unsigned long len){
+int read_on_file(int16_t fd,char* target, unsigned long len){
+    int16_t id = fd/2;
     Pipe pipe = find_by_id(id);
 
-    if(pipe == NULL || pipe->reader_pid != getPid() || len == 0){
+    if(pipe == NULL || pipe->reader_pid != get_pid() || len == 0){
+        return -1;
+    }
+
+    int16_t running_pid = get_running_process_pid();
+    if (pipe->reader_pid == -1) {
+        pipe->reader_pid = pipe->reader_pid;
+    } else if(pipe->reader_pid != running_pid) {
         return -1;
     }
 
@@ -224,7 +245,7 @@ int read_on_file(int16_t id, unsigned char *target, unsigned long len){
         my_sem_wait(pipe->read);  
         my_sem_wait(pipe->mutex); 
 
-        buff[i] = pipe->buff[pipe->read_idx];
+        target[i] = pipe->buff[pipe->read_idx];
         pipe->read_idx = (pipe->read_idx + 1) % BUFF_SIZE;
 
         my_sem_post(pipe->mutex); 

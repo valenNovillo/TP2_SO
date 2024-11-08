@@ -2,10 +2,14 @@
 #define SHELL_H
 
 #include "../../Library/include/string.h"
-#include "../../Library/include/time.h"
 #include "music.h"
+#include "../../Library/include/stdio1.h"
+
 
 #define BUFF_SIZE 100
+#define SHELL_PIPE_ID 1234
+
+typedef uint16_t (*Commands)(int16_t fds[3], char *args[]);
 
 extern void test_io_exception();
 
@@ -13,49 +17,51 @@ extern void test_io_exception();
 
 void shell();
 
-void help();
+uint16_t help_command(int16_t fds[]);
 
-void zoomIn();
+int zoomIn();
 
-void zoomOut();
+int zoomOut();
 
-void time();
+uint16_t time_command(int16_t fds[]);
 
-void clean();
+int clean();
 
 void ioexception();
 
 void zeroexception();
 
-void playEliminator();
+uint16_t playEliminator(int16_t  fds[]);
 
-void playSong();
+uint16_t playSong(int16_t  fds[]);
 
-void findCommand(char * input);
+void processCommand(char * input);
+
+uint16_t findCommand(char * input, int16_t fds[]);
 
 void resetBuffer();
 
-void test_process();
+uint16_t test_process(int16_t fds[]);
 
-void ps_commmand();
+uint16_t ps_commmand(int16_t  fds[]) ;
 
-void test_priority();
+uint16_t test_priority(int16_t fds[]);
 
-void testing_sync();
+uint16_t testing_sync(int16_t  fds[]);
 
-void testing_no_sync();
+uint16_t testing_no_sync(int16_t fds[]);
 
-void test_mm_command();
+uint16_t test_mm_command(int16_t  fds[]) ;
 
-void print_mem_status_command();
+uint16_t print_mem_status_command(int16_t  fds[]);
 
-void loop_command();
+uint16_t loop_command(int16_t fds[], char *args[]);
 
-void kill_command(char *args[]);
+uint16_t kill_command(int16_t fds[], char *args[]);
 
-void nice_command(char *args[]);
+uint16_t nice_command(int16_t fds[], char *args[]);
 
-void block_command(char *args[]);
+uint16_t block_command(int16_t fds[],char *args[]);
 
 //========================================================================================================================================================================================================================
 

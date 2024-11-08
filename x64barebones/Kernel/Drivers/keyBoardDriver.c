@@ -117,7 +117,6 @@ void keyboardHandler(uint64_t infoRegs){
         writeIdx = (writeIdx+1)%SIZE_BUFF;
     }else if(ctrl_enabled){
         if(key == 0x2E){ //CTRL+C
-           clear_stdin();
            kill_FG();
         }else if(key == 0x20){//CTRL+D
            char eof_buf[2] = {EOF, 0};

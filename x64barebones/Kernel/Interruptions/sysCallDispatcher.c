@@ -11,12 +11,6 @@
 #include "../include/pipe.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
-/*static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8) {
-    if(fd != STDIN)
-        return -1;
-    return fillBuf(buff, count);
-}*/
-
 static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8){
     if(fd == STDIN){
         fillBuf(buff, count);
@@ -183,6 +177,18 @@ static ssize_t sys_call_get_state(uint16_t pid){
     return get_state(pid);
 }
 
+static ssize_t sys_call_open_pipe_for_pid(int16_t id, int16_t pid, char mode){
+    return open_pipe_for_pid(id, pid, mode);
+}
+
+static ssize_t sys_call_open_pipe(int16_t id, char mode){
+    return open_pipe(id, mode);
+}
+
+static ssize_t sys_call_close_pipe_for_pid(int16_t id, int16_t pid){
+    return open_pipe(id, pid);
+}
+
 static Syscall syscall_handlers[] = {
     (Syscall) sys_call_read, 
     (Syscall) sys_call_write, 
@@ -217,7 +223,10 @@ static Syscall syscall_handlers[] = {
     (Syscall) sys_call_print_mem_status,
     (Syscall) sys_call_my_malloc,
     (Syscall) sys_call_my_free,
-    (Syscall) sys_call_get_state
+    (Syscall) sys_call_get_state,
+    (Syscall) sys_call_open_pipe_for_pid,
+    (Syscall) sys_call_open_pipe,
+    (Syscall) sys_call_close_pipe_for_pid
     };
 
 
