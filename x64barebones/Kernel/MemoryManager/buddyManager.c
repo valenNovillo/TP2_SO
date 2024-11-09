@@ -5,30 +5,31 @@
 
 #define MIN_BLOCK_SIZE 1024
 #define MAX_2_POW 19
+#define BLOCKSIZE(i) ((unsigned long long)(1 << (i)) * MIN_BLOCK_SIZE) 
+#define GET_BUDDY(b, i) ((((unsigned long long )(b)) ^ (BLOCKSIZE(i))))
 
 typedef struct Block {
-    uint64_t size;
-    struct Block* next;
+    unsigned long long size;
+    struct Block *next; 
 } Block;
 
 static Block* free_lists[MAX_2_POW +1];
 static MemoryStatus mem_status;
 static void* start_heap;
 
-static uint64_t block_size(int i) {
+/*static uint64_t block_size(int i) {
     return (uint64_t) ((1 << i) * MIN_BLOCK_SIZE);
 }
 
 static uint64_t get_buddy(uint64_t b, int i) {
     return (uint64_t) (b ^ block_size(i)); 
-}
+}*/
 
 static int get_index(uint64_t size){
     int i = 0;
-    while(block_size(i) < size && i < MAX_2_POW){
+    while (BLOCKSIZE(i) < size) {
         i++;
     }
-
     return i;
 }
 
@@ -42,49 +43,56 @@ void my_mb_init(void* ptr, uint64_t size) {
     
     int i = get_index(size);
 
-    start_heap = ptr;
+
+
+    if (i > MAX_2_POW) {
+        i = MAX_2_POW;
+    }
+
+    Block *aligned_start_ptr = (Block *)(((unsigned long long)ptr + 7) & ~7);
+    start_heap = aligned_start_ptr;
     free_lists[i] = (Block*)ptr;
     free_lists[i]->next = NULL;
-    free_lists[i]->size = block_size(i);
+    free_lists[i]->size = BLOCKSIZE(i);
     mem_status.total = free_lists[i]->size;
     mem_status.free = free_lists[i]->size;
     mem_status.reserved = 0;
 }
 
-static Block* my_malloc_rec(uint64_t size){
-    if (size > block_size(MAX_2_POW)) {
+static Block* my_malloc_rec(unsigned long size){
+    int i = get_index(size);
+
+     if (i > MAX_2_POW) {
         return NULL;
     }
-    
-    int i = get_index(size);
 
     if(free_lists[i] != NULL){
         Block* block = free_lists[i];
         free_lists[i] = free_lists[i]->next;
-        block->size = block_size(i);
+        block->size = BLOCKSIZE(i);
         mem_status.reserved += block->size;
         mem_status.free -= block->size;
         return block;
     }
 
-    Block* block = my_malloc_rec(block_size(i + 1));
+    Block* block = my_malloc_rec(BLOCKSIZE(i + 1));
     
     if(block != NULL){
-        uint64_t address_diff_from_base = (uint64_t)((void*)block - start_heap);
-        Block* buddy = (Block*)((get_buddy(address_diff_from_base, i)) + (uint64_t)start_heap);
+        unsigned long long address_diff_from_base = (void *)block - start_heap;
+        Block* buddy = (Block*)((GET_BUDDY(address_diff_from_base, i)) + (unsigned long long)start_heap);
 
-        buddy->size = block_size(i);
+        buddy->size = BLOCKSIZE(i);
         buddy->next = free_lists[i];
         free_lists[i] = buddy;
 
-        block->size = block_size(i);
+        block->size = BLOCKSIZE(i);
     }
 
     return block;
 }
 
 
-void * my_malloc(uint64_t size) {
+void * my_malloc(unsigned long size) {
     if(size == 0) {
         return NULL;
     }
@@ -96,30 +104,30 @@ void * my_malloc(uint64_t size) {
 }
 
 static void my_free_rec(void* ptr){
-    uint64_t size = ((Block*)ptr)->size;
+    unsigned long size = ((Block*)ptr)->size;
     int i = get_index(size);
 
-    uint64_t address_diff_from_base = (uint64_t)ptr - (uint64_t)start_heap;
-    Block* buddy = (Block*)((get_buddy(address_diff_from_base, i)) + (uint64_t)start_heap);
-    Block* current = free_lists[i];
+    unsigned long long address_diff_from_base = ptr - start_heap;
+    Block* buddy = (Block*)((GET_BUDDY(address_diff_from_base, i)) + (unsigned long long)start_heap);
+    Block** current = &free_lists[i];
 
-    while (current != NULL && current != buddy) {
-        current = current->next;
+    while (*current != NULL && *current != buddy) {
+        current = &((*current)->next);
     }
 
-    if(current != buddy){
+    if(*current != buddy){
         ((Block *)ptr)->next = free_lists[i];
         free_lists[i] = ptr;
-        mem_status.reserved -= block_size(i);
-        mem_status.free += block_size(i);
+        mem_status.reserved -= BLOCKSIZE(i);
+        mem_status.free += BLOCKSIZE(i);
     }else{
-        current = buddy->next;
+        *current = buddy->next;
 
         if(ptr > (void *)buddy){
-            buddy->size = block_size(i + 1);
+            buddy->size = BLOCKSIZE(i + 1);
             my_free_rec(buddy);
         }else{
-            ((Block *)ptr)->size = block_size(i + 1);
+            ((Block *)ptr)->size = BLOCKSIZE(i + 1);
             my_free_rec(ptr);
         }
     }

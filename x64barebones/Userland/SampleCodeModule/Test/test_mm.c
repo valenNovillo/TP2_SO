@@ -6,7 +6,7 @@
 #include "../Library/include/lib.h"
 
 #ifdef BUDDY_MODE 
-  #define MAX_BLOCKS 262144
+  #define MAX_BLOCKS 128
 #else
   #define MAX_BLOCKS 128
   #define BLOCK_SIZE 2048
@@ -31,7 +31,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     return -1;
 
   while (1) {
-    printf("Volvi\n");
     rq = 0;
     total = 0;
 
@@ -48,7 +47,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       }
     #else
       while (rq < MAX_BLOCKS) {
-        //printf("%d\n", rq);
         mm_rqs[rq].size = GetUniform(BLOCK_SIZE - 1) + 1;
         mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
 
