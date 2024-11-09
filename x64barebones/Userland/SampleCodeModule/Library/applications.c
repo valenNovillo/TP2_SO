@@ -5,7 +5,7 @@
 #include "../Library/include/time.h"
 #include <stddef.h>
 
-void loop() {
+void loop(uint64_t argc, char *argv[]) {
     int pid = get_pid(); 
 
     while (1) {
@@ -14,35 +14,36 @@ void loop() {
     }
 }
 
-void kill(char *args[]) {
-    if (args[0] == NULL) {
+int kill(uint64_t argc, char *argv[]) {
+    if (argv[0] == NULL) {
         printf("\nPlease specify a process ID to kill.\n");
-        return;
+        return -1;
     }
 
-    int pid = stringToInt(args[0]); 
+    int pid = stringToInt(argv[0]); 
 
     if(kill_process(pid) < 0) {
         printf("\nCould not kill process %d.\n", pid);
-        return;
+        return -1;
     }
 
     printf("\nProcess %d has been killed.\n", pid);
+    return 0;
 }
 
-void nice(char *args[]) {
-    if (args[0] == NULL) {
+void nice(uint64_t argc, char *argv[]) {
+    if (argv[0] == NULL) {
         printf("\nPlease specify the process ID you want to change its priority.\n");
         return;
     }
 
-    if (args[1] == NULL) {
+    if (argv[1] == NULL) {
         printf("\nPlease specify the new PRIORITY you want to set.\n");
         return;
     }
 
-    int pid = stringToInt(args[0]); 
-    int priority = stringToInt(args[1]); 
+    int pid = stringToInt(argv[0]); 
+    int priority = stringToInt(argv[1]); 
 
     if(set_priority(pid, priority) < 0) {
         printf("\nCould not change process %d priority to %d.\n", pid, priority);
@@ -52,19 +53,19 @@ void nice(char *args[]) {
     printf("\nProcess %d now has priority %d.\n", pid, priority);
 }
 
-void block(char *args[]) {
-    if (args[0] == NULL) {
+void block(uint64_t argc, char *argv[]) {
+    if (argv[0] == NULL) {
         printf("\nPlease specify the process ID you want to change its state\n");
         return;
     }
 
     
-    if(stringToInt(args[0]) == SHELL_PID) {
-        printf("\nCould not change process %d state\n", args[0]);
+    if(stringToInt(argv[0]) == SHELL_PID) {
+        printf("\nCould not change process %d state\n", argv[0]);
         return;
     }
 
-    int pid = stringToInt(args[0]); 
+    int pid = stringToInt(argv[0]); 
 
     PState state = get_state(pid);
     int ret = 0;
@@ -88,7 +89,7 @@ void block(char *args[]) {
     printf("\nProcess %d changed to state %s \n", pid, new_state == BLOCKED ? "BLOCKED" : (new_state == READY ? "READY" : "RUNNING"));
 }
 
-void play_song() {
+void play_song(uint64_t argc, char *argv[]) {
     printf("\n\n");
     printf("Choose a song by number:\n\n");
 
@@ -120,19 +121,19 @@ void play_song() {
     musicDispatcher(song);
 }
 
-void play_eliminator() {
+void play_eliminator(uint64_t argc, char *argv[]) {
     reading(0);
     eliminator();
     reading(1);
 }
 
-void time() {
+void time(uint64_t argc, char *argv[]) {
     char time[10];
     getTime(time);
     printf("\n\n%s\n", time);
 }
 
-void help() {
+void help(uint64_t argc, char *argv[]) {
     printf("\n");
     printf("The available commands are:\n");
 
