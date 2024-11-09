@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "memoryManager.h"
+#include "memoryManagerBu.h"
 
 #define MAX_BLOCKS 128
 
@@ -32,7 +32,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-      mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = memAlloc(mm_rqs[rq].size);
 
       if (mm_rqs[rq].address) {
         total += mm_rqs[rq].size;
@@ -57,15 +57,15 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
-        my_free(mm_rqs[i].address);
+        memFree(mm_rqs[i].address);
   }
 }
 
 int main() {
-    char mem[BLOCK_COUNT * BLOCK_SIZE];
-    my_mm_init((void*)mem);
+    char mem[16777216];
+    memInit((void*)mem, 16777216);
     char*param[1];
-    param[0] = MEMORY_SIZE;
+    param[0] = "16777216";
     test_mm(1, param);
     
     return 0;

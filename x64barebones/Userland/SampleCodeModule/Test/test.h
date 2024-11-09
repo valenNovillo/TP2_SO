@@ -6,7 +6,7 @@
 #define MAX_PROCESSES "10"
 
 #ifdef BUDDY_MODE 
- #define MEMORY_SIZE "268435456"
+ #define MEMORY_SIZE "134217728"
 #else
   #define MEMORY_SIZE "16777216"
 #endif

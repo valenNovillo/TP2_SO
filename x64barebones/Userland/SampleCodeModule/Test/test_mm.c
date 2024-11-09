@@ -6,9 +6,9 @@
 #include "../Library/include/lib.h"
 
 #ifdef BUDDY_MODE 
-  #define MAX_BLOCKS 262144
+  #define MAX_BLOCKS 128
 #else
-  #define MAX_BLOCKS 8192
+  #define MAX_BLOCKS 128
   #define BLOCK_SIZE 2048
 #endif
 
@@ -20,7 +20,7 @@ typedef struct MM_rq {
 uint64_t test_mm(uint64_t argc, char *argv[]) {
 
   mm_rq mm_rqs[MAX_BLOCKS];
-  uint8_t rq;
+  uint64_t rq;
   uint32_t total;
   uint64_t max_memory;
 
@@ -42,7 +42,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 
         if (mm_rqs[rq].address) {
           total += mm_rqs[rq].size;
-         rq++;
+          rq++;
         }
       }
     #else
@@ -52,7 +52,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 
         if (mm_rqs[rq].address) {
           total += mm_rqs[rq].size;
-         rq++;
+          rq++;
         }
       }
     #endif
@@ -69,6 +69,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     */
     
     // Set
+    printf("Sali\n");
     uint32_t i;
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
