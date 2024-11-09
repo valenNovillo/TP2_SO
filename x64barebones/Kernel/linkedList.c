@@ -49,7 +49,7 @@ void push(LinkedList list, Node *node) {
 }
 
 void remove(LinkedList list, Node *node){
-    if (list==NULL || node == NULL) return;
+    if (list==NULL || node == NULL || list->len == 0) return;
 
     if(node->prev != NULL){
         node->prev->next = node->next;

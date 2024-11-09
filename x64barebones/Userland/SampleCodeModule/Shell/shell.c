@@ -97,7 +97,7 @@ void processCommand(char * input) {
         close_pipe_for_pid(SHELL_PIPE_ID, pid_reader);
     }
     else {
-        int16_t fds[3] = {NO_INPUT, STDOUT, STDERR};
+        int16_t fds[3] = {STDIN, STDOUT, STDERR};
         findCommand(input, fds);
     }
 }

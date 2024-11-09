@@ -145,6 +145,10 @@ int get_processes_count() {
     return scheduler->process_count;
 }
 
+Node * get_process(uint16_t pid) {
+    return scheduler->processes[pid];
+}
+
 LinkedList get_ready_list() {
     return scheduler->ready_processes;
 }
@@ -184,9 +188,13 @@ InfoProcess** processes_info() {
     return to_return;
 }
 
-void yield(){
+void yield() {
     scheduler->pending_rounds = 0;
     call_timer_tick();
+}
+
+void yield_no_timer_tick() {
+    scheduler->pending_rounds = 0;
 }
 
 int32_t kill_process(uint16_t pid, int32_t ret){
@@ -214,7 +222,11 @@ int32_t kill_process(uint16_t pid, int32_t ret){
         PCB* parent_process_pcb = (PCB*)parent_process->data;
         if(is_waiting(parent_process_pcb, pcb_to_kill->pid)){
             set_state(pcb_to_kill->parent_pid, READY);
-            ((PCB*)parent_process->data)->ret = ret;
+            parent_process_pcb->ret = ret;
+            if (pcb_to_kill->run_mode == FOREGROUND) {
+                parent_process_pcb->run_mode = FOREGROUND;
+                set_foreground(pcb_to_kill->parent_pid);
+            }
         }
         if(pcb_to_kill->run_mode){
             scheduler->foreground_pid = parent_process_pcb->pid;

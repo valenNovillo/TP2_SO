@@ -25,17 +25,26 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
         parent_PCB->children[parent_PCB->childrenCount] = pcb->pid;
         parent_PCB->childrenCount++;
 
-        if (fds[0] == STDIN) {
+        if (fds[STDIN] == STDIN) {
             if(parent_PCB->run_mode == FOREGROUND) {
-                parent_PCB->fds[STDIN] = NO_INPUT; //TO-DO: REVISE
+                parent_PCB->fds[STDIN] = NO_INPUT;
                 parent_PCB->run_mode = BACKGROUND;
-                set_foreground(pcb->pid); 
+                set_foreground(pcb->pid);
+                parent_PCB->waiting_pid = pcb->pid;
+                parent_PCB->p_state = BLOCKED;
+                remove(get_ready_list(), get_process(parent_PCB->pid));
+                pcb->run_mode = FOREGROUND;
+                yield_no_timer_tick();
             } else {
                 set_creating(0);
                 return -1;
             }
+        } else {
+            pcb->run_mode = BACKGROUND;
         }
-    }     
+    } else {
+        pcb->run_mode = FOREGROUND;
+    }
     
     pcb->priority = priority;
 
@@ -58,13 +67,7 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
     for(int i = 0; i < FDS; i++) {
         pcb->fds[i] = fds[i];
     }
-
-    if(fds[STDIN] == STDIN) {
-        pcb->run_mode = FOREGROUND; //if process interacts with user stdin then is running in foreground!
-    } else {
-        pcb->run_mode = BACKGROUND;
-    }
-    
+        
     //Arguments configuration
     pcb->argc = count_args((void*)args);
     int args_len[pcb->argc];
