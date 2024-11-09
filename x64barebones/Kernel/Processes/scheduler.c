@@ -154,7 +154,7 @@ void set_creating(uint8_t creating) {
 }
 
 uint64_t wait_pid(int16_t pid) {
-    if (scheduler->processes[pid] != NULL) {
+    if (pid != DEFAULT_PID && pid != SHELL_PID && scheduler->processes[pid] != NULL) {
         ((PCB*)scheduler->processes[scheduler->running_pid]->data)->waiting_pid = pid;
         set_state(scheduler->running_pid, BLOCKED);
         return ((PCB*)scheduler->processes[scheduler->running_pid]->data)->ret;

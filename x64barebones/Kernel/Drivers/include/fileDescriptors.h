@@ -6,6 +6,6 @@
 #define STDERR 2
 #define NO_INPUT -1
 
-#define FDS 4
+#define FDS 3
 
 #endif //FILE_DESC_H

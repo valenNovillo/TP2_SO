@@ -3,9 +3,10 @@
 #include "../Library/include/unistd1.h"
 #include "../Shell/include/eliminator.h"
 #include "../Library/include/time.h"
+#include "./include/lib.h"
 #include <stddef.h>
 
-void loop(uint64_t argc, char *argv[]) {
+int loop(uint64_t argc, char *argv[]) {
     int pid = get_pid(); 
 
     while (1) {
@@ -14,24 +15,23 @@ void loop(uint64_t argc, char *argv[]) {
     }
 }
 
-int kill(uint64_t argc, char *argv[]) {
+void kill(int16_t fds[], char *argv[]) {
     if (argv[0] == NULL) {
         printf("\nPlease specify a process ID to kill.\n");
-        return -1;
+        return;
     }
 
     int pid = stringToInt(argv[0]); 
 
     if(kill_process(pid) < 0) {
         printf("\nCould not kill process %d.\n", pid);
-        return -1;
+        return;
     }
 
     printf("\nProcess %d has been killed.\n", pid);
-    return 0;
 }
 
-void nice(uint64_t argc, char *argv[]) {
+void nice(int16_t fds[], char *argv[]) {
     if (argv[0] == NULL) {
         printf("\nPlease specify the process ID you want to change its priority.\n");
         return;
@@ -45,6 +45,16 @@ void nice(uint64_t argc, char *argv[]) {
     int pid = stringToInt(argv[0]); 
     int priority = stringToInt(argv[1]); 
 
+    if(stringToInt(argv[0]) == SHELL_PID) {
+        printf("\nCould not change process %d priority to %d.\n", pid , priority);
+        return;
+    }
+
+     if(stringToInt(argv[0]) == DEFAULT) {
+        printf("\nCould not change process %d priority to %d.\n", pid, priority);
+        return;
+    }
+
     if(set_priority(pid, priority) < 0) {
         printf("\nCould not change process %d priority to %d.\n", pid, priority);
         return;
@@ -53,19 +63,18 @@ void nice(uint64_t argc, char *argv[]) {
     printf("\nProcess %d now has priority %d.\n", pid, priority);
 }
 
-void block(uint64_t argc, char *argv[]) {
+void block(int16_t fds[],char *argv[]) {
     if (argv[0] == NULL) {
         printf("\nPlease specify the process ID you want to change its state\n");
         return;
     }
 
+    int pid = stringToInt(argv[0]); 
     
     if(stringToInt(argv[0]) == SHELL_PID) {
-        printf("\nCould not change process %d state\n", argv[0]);
+        printf("\nCould not change process %d state\n", pid);
         return;
     }
-
-    int pid = stringToInt(argv[0]); 
 
     PState state = get_state(pid);
     int ret = 0;
@@ -89,7 +98,7 @@ void block(uint64_t argc, char *argv[]) {
     printf("\nProcess %d changed to state %s \n", pid, new_state == BLOCKED ? "BLOCKED" : (new_state == READY ? "READY" : "RUNNING"));
 }
 
-void play_song(uint64_t argc, char *argv[]) {
+int play_song(uint64_t argc, char *argv[]) {
     printf("\n\n");
     printf("Choose a song by number:\n\n");
 
@@ -115,25 +124,27 @@ void play_song(uint64_t argc, char *argv[]) {
     int song;
     scanf1("%d",&song);
     if(song<0 || song>=MAX_SONGS) {
-        printErr("\n\nPlease choose a valid song.\n\n");
-        return;
+        printf("\n\nPlease choose a valid song.\n\n");
+        return -1;
     }
     musicDispatcher(song);
+    return 0;
 }
 
-void play_eliminator(uint64_t argc, char *argv[]) {
+int play_eliminator(uint64_t argc, char *argv[]) {
     reading(0);
     eliminator();
     reading(1);
+    return 0;
 }
 
-void time(uint64_t argc, char *argv[]) {
+void time(int16_t fds[]) {
     char time[10];
     getTime(time);
     printf("\n\n%s\n", time);
 }
 
-void help(uint64_t argc, char *argv[]) {
+void help(int16_t fds[]) {
     printf("\n");
     printf("The available commands are:\n");
 
@@ -242,3 +253,32 @@ void help(uint64_t argc, char *argv[]) {
     setColor(255, 255, 255);
     printf("--> To see the current state of the processor registers, please press CTRL + R\n"); 
 }
+
+/*int cat(uint64_t argc, char *argv[]) {
+    char buffer[MAX_BUFF];
+	while(1) {
+        scanf1("%s",buffer);
+        printf("%d\n", buffer);
+    }
+}*/
+
+int cat(uint64_t argc, char *argv[]) {
+    char buffer[MAX_BUFFER_SIZE];
+    int index = 0;
+    char c;
+
+    while ((c = getChar()) != EOF) {
+        // Si el carácter es Enter, imprime el contenido del buffer y reinícialo
+        if (c == '\n') {
+            buffer[index] = '\0';  // Agrega el carácter nulo para marcar el fin de la cadena
+            printf("%s",buffer);          // Imprime el buffer
+            index = 0;             // Reinicia el índice para la próxima línea
+        } else if (index < MAX_BUFFER_SIZE - 1) {
+            // Almacena el carácter en el buffer si no se ha excedido el tamaño máximo
+            buffer[index++] = c;
+        }
+    }
+
+    return 0;
+}
+

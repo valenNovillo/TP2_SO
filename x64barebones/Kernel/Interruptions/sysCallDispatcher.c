@@ -17,7 +17,6 @@ static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t 
     }else if(fd > STDIN){
         return read_on_file(fd, buff, count);
     }
-
     return -1;
 }
 
@@ -189,6 +188,10 @@ static ssize_t sys_call_close_pipe_for_pid(int16_t id, int16_t pid){
     return open_pipe(id, pid);
 }
 
+static ssize_t sys_call_get_fds(){
+    return (ssize_t)get_fds();
+}
+
 static Syscall syscall_handlers[] = {
     (Syscall) sys_call_read, 
     (Syscall) sys_call_write, 
@@ -226,7 +229,8 @@ static Syscall syscall_handlers[] = {
     (Syscall) sys_call_get_state,
     (Syscall) sys_call_open_pipe_for_pid,
     (Syscall) sys_call_open_pipe,
-    (Syscall) sys_call_close_pipe_for_pid
+    (Syscall) sys_call_close_pipe_for_pid,
+    (Syscall) sys_call_get_fds
     };
 
 

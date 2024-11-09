@@ -7,12 +7,12 @@
 #include <stddef.h>
 
 static Commands commands[] = {(Commands)help_command, (Commands)zoomIn, (Commands)zoomOut, (Commands)time_command, (Commands)clean, (Commands)ioexception, (Commands)zeroexception, (Commands)playEliminator,
- (Commands)playSong,(Commands) test_process,(Commands)test_priority, (Commands)ps_commmand, (Commands)testing_sync, (Commands)testing_no_sync, (Commands)print_mem_status_command, (Commands)test_mm_command, (Commands)loop_command, (Commands)kill_command, (Commands)nice_command, (Commands)block_command};
+ (Commands)playSong,(Commands) test_process,(Commands)test_priority, (Commands)ps_commmand, (Commands)testing_sync, (Commands)testing_no_sync, (Commands)print_mem_status_command, (Commands)test_mm_command, (Commands)loop_command, (Commands)kill_command, (Commands)nice_command, (Commands)block_command, (Commands)cat_command};
 
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
-     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block"};
+     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block", "cat"};
 
-static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexception", "eliminator"};
+static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexception", "eliminator", "playSong"};
 
 char buffer[BUFF_SIZE]={0};
 
@@ -134,8 +134,8 @@ uint16_t findCommand(char * input, int16_t fds[]) {
 
 
 uint16_t help_command(int16_t fds[]) {
-    char* argv[] = {0};
-    return create_process((Main)help, argv, "help", 2, fds);
+    help(fds);
+    return 0;
 }
 
 int zoomIn() {
@@ -149,8 +149,8 @@ int zoomOut() {
 }
 
 uint16_t time_command(int16_t fds[]) {
-    char* argv[] = {0};
-    return create_process((Main)time, argv, "time", 2, fds);
+    time(fds);
+    return 0;
 }
 
 int clean() {
@@ -188,9 +188,8 @@ uint16_t test_priority(int16_t fds[]) {
     return create_process((Main)test_prio, argv, "test_priority", 2, fds);
 }
 
-uint16_t ps_commmand(int16_t fds[]) {
-    char* argv[] = {0};
-    return create_process((Main)ps, argv, "print_mem_status", 1, fds);
+uint16_t ps_commmand() {
+    return ps();
 }
 
 uint16_t testing_sync(int16_t fds[]) {
@@ -203,9 +202,10 @@ uint16_t testing_no_sync(int16_t fds[]) {
     return create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
 
-uint16_t print_mem_status_command(int16_t fds[]) {
-    char* argv[] = {0};
-    return create_process((Main)print_mem_status, argv, "print_mem_status", 1, fds);
+uint16_t print_mem_status_command() {
+    //char* argv[] = {0};
+    //return create_process((Main)print_mem_status, argv, "print_mem_status", 1, fds);
+    return print_mem_status();
 }
 
 uint16_t test_mm_command(int16_t fds[]) {
@@ -218,18 +218,27 @@ uint16_t loop_command(int16_t  fds[], char *args[]) {
 }
 
 uint16_t kill_command(int16_t fds[], char *args[]) {
-    return create_process((Main)kill, args, "kill", 3, fds);
+    //return create_process((Main)kill, args, "kill", 3, fds);
+    kill(fds,args);
+    return 0;
 }
 
 uint16_t nice_command(int16_t fds[], char *args[]) {
-    return create_process((Main)nice, args, "nice", 3, fds);
+    //return create_process((Main)nice, args, "nice", 3, fds);
+   nice(fds,args);
+   return 0;
 }
 
 uint16_t block_command(int16_t fds[],char *args[]) {
-    return create_process((Main)block, args, "block", 3, fds);
+    block(fds,args);
+    return 0;
+    //return create_process((Main)block, args, "block", 3, fds);
 }
 
-
+uint16_t cat_command(int16_t fds[]) {
+    char* argv[] = {0};
+    return create_process((Main)cat, argv, "cat", 2, fds);
+}
 
 
  

@@ -48,5 +48,6 @@ uint16_t get_state(uint16_t pid);
 int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode);
 int16_t open_pipe(int16_t id, char mode);
 void close_pipe_for_pid(int16_t id, int16_t pid);
+int16_t* get_fds();
 
 #endif //UNISTD1_H

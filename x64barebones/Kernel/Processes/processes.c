@@ -154,6 +154,9 @@ InfoProcess* process_info_load(PCB* pcb) {
     return aux;
 }
 
+int16_t * get_fds() {
+    return get_running_process()->fds;
+}
 
 void ps() {
     char* foreground[2] = {"Background", "foreground"};

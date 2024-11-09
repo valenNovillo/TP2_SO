@@ -9,6 +9,7 @@
 #define BACKGROUND 0
 #define FOREGROUND 1
 #define DEFAULT_PID 0
+#define SHELL_PID 1
 #define MAX_PRIORITY 5
 #define MIN_PRIORITY 0
 #define UNO 1

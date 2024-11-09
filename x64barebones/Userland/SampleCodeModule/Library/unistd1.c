@@ -132,7 +132,7 @@ void* my_malloc(uint64_t size) {
     return (void*)sysCall(31, size, 0, 0, 0, 0);
 }
 
-void my_free(void * ptr) {
+void my_free(void* ptr) {
     sysCall(32, (uint64_t)ptr, 0, 0, 0, 0);
 }
 
@@ -140,14 +140,18 @@ uint16_t get_state(uint16_t pid) {
     return sysCall(33, pid, 0, 0, 0, 0);
 }
 
-int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
+int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode) {
     return sysCall(34, id, pid, mode, 0, 0);
 }
 
-int16_t open_pipe(int16_t id, char mode){
+int16_t open_pipe(int16_t id, char mode) {
     return sysCall(35, id, mode, 0, 0, 0);
 }
 
-void close_pipe_for_pid(int16_t id, int16_t pid){
+void close_pipe_for_pid(int16_t id, int16_t pid) {
     sysCall(36, id, pid, 0, 0, 0);
+}
+
+int16_t* get_fds() {
+    return (int16_t*)sysCall(37, 0, 0, 0, 0, 0);
 }

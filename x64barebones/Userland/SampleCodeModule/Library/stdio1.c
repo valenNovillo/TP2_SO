@@ -3,47 +3,55 @@
 void intToString(int n, char* s);
 int readByDelim(int fd, char * buff, int count, char delim);
 
-int getChar() {
+static int get_char_fd(int16_t fd) {
     char c = 0;
     int count = 0;
     while(count == 0) 
-        count = read(0, &c, 1);
+        count = read(fd, &c, 1);
     return count == 1 ? c : -1;
 }
 
-int putChar(int ch) {
+static int put_char_fd(int16_t fd, int ch) {
     int n;
-    n = write(1, &ch, 1);
+    n = write(fd, &ch, 1);
     return n == -1 ? -1 : (unsigned char)ch;
+}
+
+int getChar() {
+    return get_char_fd(get_fds()[STDIN]);
+}
+
+int putChar(int ch) {
+    return put_char_fd(get_fds()[STDOUT], ch);
 }
 
 int scanf1(char* format, ...) {
     va_list args;
-    va_start(args, format); //Inicializa args para que apunte al primer argumento variable después de format
+    va_start(args, format);
 
-    int readChars = 0;//Esta variable contará el número de caracteres leídos.
-    int length; // para almacenar la longitud de la cadena leída.
-    char buffer[100]; //para almacenar la entrada leida
+    int readChars = 0;
+    int length;
+    char buffer[100];
 
-    int* argD;      //Puntero a argumentos enteros
-    char* sPointer; //Puntero a argumentos de cadena
+    int* argD;
+    char* sPointer;
 
-    int i = 0; //Indice para recorrer la cadena format
+    int i = 0;
     while( format[i] != 0 ){
         if( format[i] == '%') {
             i++;
 
-            length = readByDelim(0, buffer, 100, '\n');//Lee por entrada estandar y lo almacena en el buffer//OJO!(PODRIA SER FD = 1?)
-            buffer[length] = 0;//Para terminar la cadena
-            readChars += length;//Actualizo la cantidad de caracteres leidos hasta el momento
+            length = readByDelim(0, buffer, 100, '\n');
+            buffer[length] = 0;
+            readChars += length;
 
-            putChar(' ');//Imprime un espacio en la salida estándar.
+            putChar(' ');
 
             switch (format[i]) {
                 case 'd':
-                    argD = va_arg(args, int*); //obtiene el siguiente argumento de la lista (args) como un puntero a int (argD).
+                    argD = va_arg(args, int*);
                     *argD = 0;
-                    for (int j = 0; buffer[j] != 0; ++j) //Convierte la cadena buffer a un entero, almacenando el resultado en argD
+                    for (int j = 0; buffer[j] != 0; ++j)
                         *argD = *argD * 10 + (buffer[j] - '0');
                     break;
 
@@ -62,53 +70,64 @@ int scanf1(char* format, ...) {
     return readChars;//retorna la cantidad de caracteres leídos
 }
 
-void printf(char * string, ...) {
-    va_list argPointer; // se utilizará para acceder a los argumentos variables.
-    va_start(argPointer,string);  //Inicializa argPointer para que apunte al primer argumento variable después de string.
+void fprintf(int16_t fd, char * string, ...) {
+    va_list argPointer; 
+    va_start(argPointer,string);
 
-    int i=0; //indice para recorrer la cadena string.
+    int i=0;
     while(string[i]!=0){ 
-        if(string[i] == '%'){   // si tenemos un '%', se trata de un especificador de formato
-            char buffInt[20];//para almacenar la representación en cadena de un entero
+        if(string[i] == '%'){ 
+            char buffInt[20];
             char * str; 
 
-            //switch para manejar el carácter siguiente al % en string, que indica el tipo de formato.
             switch (string[i+1]) { 
-                case 'd':    // indicador de formato para enteros
-                    intToString(va_arg(argPointer, int), buffInt);  // Llama a va_arg para obtener el siguiente argumento de tipo int y convierte este entero a una cadena usando intToString, almacenando el resultado en buffInt
-                    printf(buffInt);   //llamado recursivo para imprimir la cadena buffInt
+                case 'd':
+                    intToString(va_arg(argPointer, int), buffInt);
+                    fprintf(fd, buffInt);
                     break;
-                case 's':  // indicador de formato para cadenas
-                    str = va_arg(argPointer, char*); //Llama a va_arg para obtener el siguiente argumento de tipo char* y lo almacena en str.
-                    printf(str);  // llamado recursivo para imprimir la cadena str
+                case 's':
+                    str = va_arg(argPointer, char*);
+                    fprintf(fd, str);
                     break;
             }
-            i+=2;// incrementa i en 2 para saltar el % y el carácter del formato.
-        }else if(string[i]=='\\') {  //Si el carácter actual es una barra invertida (\\), maneja caracteres especiales (\n, \t, \\)
+            i+=2;
+        }else if(string[i]=='\\') {
             switch (string[i+1]) {
                 case 'n':
-                    putChar('\n'); break; //Si el carácter siguiente es n, imprime un salto de línea ('\n').
+                    put_char_fd(fd, '\n'); break;
                 case 't':
-                    putChar('\t'); break;//Si el carácter siguiente es t, imprime una tabulación ('\t')
+                    put_char_fd(fd, '\t'); break;
                 case '\\':
-                    putChar('\\'); break;//Si el carácter siguiente es \\, imprime una barra invertida ('\\').
+                    put_char_fd(fd, '\\'); break;
+
             }
-            i+=2; //incrementa i en 2 para saltar la barra invertida y el carácter especial.
+            i+=2;
         }else
-            putChar(string[i++]);//i no se encuentra un % o una barra invertida (\\), imprime el carácter actual y luego incrementa i en 1.
+            put_char_fd(fd, string[i++]);
     }
 
-    va_end(argPointer);//Llama a va_end para limpiar la lista de argumentos variables.
+    va_end(argPointer);
 }
 
 
-void printErr(char * buff) {
-    write(2, buff, strlen(buff));
+void printf(char * string, ...) {
+    va_list args;
+    va_start(args, string);
+    fprintf(get_fds()[STDOUT], string, args);
+    va_end(args);
+}
+
+
+void printErr(char * buff, ...) {
+    va_list args;
+    va_start(args, buff);
+    fprintf(get_fds()[STDERR], buff, args);
+    va_end(args);
 }
 
 
 int readByDelim(int fd, char * buff, int count, char delim) {
-    if(fd != 0){ //Si no es entrada estándar no hay nada que hacer
+    if(fd != 0){
         return 0;
     }
 

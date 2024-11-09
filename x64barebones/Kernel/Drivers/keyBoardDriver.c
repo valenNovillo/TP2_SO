@@ -102,7 +102,8 @@ void keyboardHandler(uint64_t infoRegs){
     }else if(key==BLOQ_MAYUSQ){
         bloqMayusq_enabled = !bloqMayusq_enabled;
     } else if (ctrl_enabled && key == 0x13) {
-        save();
+        if(key == 0x13){
+             save();
         cleanScreen();
         printRegs(*regsPointer);
         putString(2, "Press ESC to go back to shell\n", 30);
@@ -112,16 +113,19 @@ void keyboardHandler(uint64_t infoRegs){
         load();
         ctrl_enabled =! ctrl_enabled;
         removeLastFromBuff();
-    } else if (reading && key <= 0x53) {
-        buffer[writeIdx] = getStringFromCode(key);
-        writeIdx = (writeIdx+1)%SIZE_BUFF;
-    }else if(ctrl_enabled){
-        if(key == 0x2E){ //CTRL+C
+        }else if(key == 0x2E){ //CTRL+C
            kill_FG();
+           removeLastFromBuff();
+           putString(STDIN, "^C\n", 3);
         }else if(key == 0x20){//CTRL+D
            char eof_buf[2] = {EOF, 0};
            putString(STDIN, eof_buf, 2);
+           removeLastFromBuff();
+           putString(STDIN, "^D\n", 3);
         }
+    } else if (reading && key <= 0x53) {
+        buffer[writeIdx] = getStringFromCode(key);
+        writeIdx = (writeIdx+1)%SIZE_BUFF;
     }
 }
 
@@ -143,6 +147,9 @@ int fillBuf(char * buf, int count) {
     int i;
     for(i = 0; (i < count) && hasNext(); i++) { 
         buf[i] = next();
+        if(buf[i] == EOF){ 
+            break;
+        }
     }
     return i;
 }
