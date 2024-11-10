@@ -78,8 +78,8 @@ void processCommand(char * input) {
         int16_t fds_readers[3] = {r_pipe_fd, STDOUT, STDERR};
         int16_t fds_writers[3] = {STDIN, w_pipe_fd, STDERR};
 
-        uint16_t pid_reader = findCommand(der, fds_readers);
         uint16_t pid_writer = findCommand(izq, fds_writers);
+        uint16_t pid_reader = findCommand(der, fds_readers);
 
         if (pid_reader == -1) {
             kill_process(pid_writer);
