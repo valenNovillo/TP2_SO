@@ -78,8 +78,8 @@ void processCommand(char * input) {
         int16_t fds_readers[3] = {r_pipe_fd, STDOUT, STDERR};
         int16_t fds_writers[3] = {STDIN, w_pipe_fd, STDERR};
 
-        uint16_t pid_reader = findCommand(izq, fds_readers);
-        uint16_t pid_writer = findCommand(der, fds_writers);
+        uint16_t pid_reader = findCommand(der, fds_readers);
+        uint16_t pid_writer = findCommand(izq, fds_writers);
 
         if (pid_reader == -1) {
             kill_process(pid_writer);
@@ -189,8 +189,8 @@ uint16_t test_priority(int16_t fds[]) {
     return create_process((Main)test_prio, argv, "test_priority", 2, fds);
 }
 
-uint16_t ps_commmand() {
-    return ps();
+uint16_t ps_commmand(int16_t fds[]) {
+    return ps(fds);
 }
 
 uint16_t testing_sync(int16_t fds[]) {
@@ -204,8 +204,6 @@ uint16_t testing_no_sync(int16_t fds[]) {
 }
 
 uint16_t print_mem_status_command() {
-    //char* argv[] = {0};
-    //return create_process((Main)print_mem_status, argv, "print_mem_status", 1, fds);
     return print_mem_status();
 }
 
@@ -219,13 +217,11 @@ uint16_t loop_command(int16_t  fds[], char *args[]) {
 }
 
 uint16_t kill_command(int16_t fds[], char *args[]) {
-    //return create_process((Main)kill, args, "kill", 3, fds);
     kill(fds,args);
     return 0;
 }
 
 uint16_t nice_command(int16_t fds[], char *args[]) {
-    //return create_process((Main)nice, args, "nice", 3, fds);
    nice(fds,args);
    return 0;
 }
@@ -233,7 +229,6 @@ uint16_t nice_command(int16_t fds[], char *args[]) {
 uint16_t block_command(int16_t fds[],char *args[]) {
     block(fds,args);
     return 0;
-    //return create_process((Main)block, args, "block", 3, fds);
 }
 
 uint16_t cat_command(int16_t fds[]) {

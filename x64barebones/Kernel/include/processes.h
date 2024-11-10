@@ -10,6 +10,6 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
 void free_process_memory(PCB * pcb);
 InfoProcess* process_info_load(PCB* pcb);
 int16_t * get_fds();
-void ps();
+void ps(int16_t fds[]);
 
 #endif

@@ -34,7 +34,7 @@ int block_process(uint16_t pid);
 int unblock_process(uint16_t pid);
 void yield();
 uint64_t wait_pid(int16_t pid);
-int ps();
+int ps(int16_t fds[]);
 void _hlt();
 sem_ptr my_sem_create(uint8_t id, uint64_t value);
 void my_sem_destroy(sem_ptr ptr);

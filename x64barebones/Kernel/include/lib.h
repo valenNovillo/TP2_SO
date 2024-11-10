@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <sys/types.h>
 
 typedef	unsigned long size_t;
 
@@ -15,5 +16,6 @@ int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize);
 void reverseString(char* str, int length);
 size_t strlen(const char *cadena);
 int count_args(void **array);
+ssize_t write(int16_t fd, char* buff, uint64_t count);
 
 #endif

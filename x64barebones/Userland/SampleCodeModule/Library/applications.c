@@ -141,7 +141,7 @@ int play_eliminator(uint64_t argc, char *argv[]) {
 void time(int16_t fds[]) {
     char time[10];
     getTime(time);
-    printf("\n\n%s\n", time);
+    fprintf(fds[STDOUT],"\n\n%s\n", time);
 }
 
 void help(int16_t fds[]) {
@@ -249,19 +249,19 @@ void help(int16_t fds[]) {
     fprintf(fds[STDOUT],"--> Changes the process <ID> state between blocked and ready\n");
 
     setColor(250, 255, 0);
-    printf("cat \n");
+    fprintf(fds[STDOUT],"cat \n");
     setColor(255, 255, 255);
-    printf("--> Prints the stdin as it receives it \n");
+    fprintf(fds[STDOUT],"--> Prints the stdin as it receives it \n");
 
     setColor(250, 255, 0);
-    printf("wc \n");
+    fprintf(fds[STDOUT],"wc \n");
     setColor(255, 255, 255);
-    printf("--> Counts the amount of lines that input has \n");
+    fprintf(fds[STDOUT],"--> Counts the amount of lines that input has \n");
 
     setColor(250, 255, 0);
-    printf("filter \n");
+    fprintf(fds[STDOUT],"filter \n");
     setColor(255, 255, 255);
-    printf("--> Filter vocals of input \n");
+    fprintf(fds[STDOUT],"--> Filter vocals of input \n");
 
     setColor(133, 21, 199);
     fprintf(fds[STDOUT],"registers \n");

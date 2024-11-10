@@ -94,8 +94,8 @@ uint64_t wait_pid(int16_t pid) {
     return sysCall(22, pid, 0, 0, 0, 0);
 }
 
-int ps(){
-    return sysCall(23, 0, 0, 0, 0, 0);
+int ps(int16_t fds[]){
+    return sysCall(23, (uint64_t)fds, 0, 0, 0, 0);
 }
 
 void _hlt(){

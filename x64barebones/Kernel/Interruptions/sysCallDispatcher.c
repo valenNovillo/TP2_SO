@@ -9,6 +9,7 @@
 #include "../include/semaphore.h"
 #include "../include/memoryManager.h"
 #include "../include/pipe.h"
+#include "../include/lib.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
 static ssize_t sys_call_read(int16_t fd, char * buff, uint64_t count){
@@ -22,12 +23,7 @@ static ssize_t sys_call_read(int16_t fd, char * buff, uint64_t count){
 
 //Devuelve la cantidad de caracteres que pudo escribir
 static ssize_t sys_call_write(int16_t fd, char* buff, uint64_t count) { 
-    if (fd == STDOUT || fd == STDERR) {
-        putString(fd, buff, count);
-    }else if(fd > STDERR){
-        return write_on_file(fd, buff, count);
-    }
-    return -1;
+   return write(fd, buff, count);
 }
 
 //Genera un beep
@@ -127,8 +123,8 @@ static ssize_t sys_call_wait_pid(int16_t pid) {
     return wait_pid(pid);
 }
 
-static ssize_t sys_call_ps(){ 
-    ps();
+static ssize_t sys_call_ps(int16_t fds[]){ 
+    ps(fds);
     return 0;
 }
 

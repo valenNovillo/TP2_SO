@@ -1,6 +1,9 @@
 #include <stdint.h>
 
 #include "include/lib.h"
+#include "../Drivers/include/fileDescriptors.h"
+#include "../Drivers/include/videoDriver.h"
+#include "include/pipe.h"
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -139,4 +142,13 @@ int count_args(void **array){
         count++;
     }
     return count;
+}
+
+ssize_t write(int16_t fd, char* buff, uint64_t count){
+      if (fd == STDOUT || fd == STDERR) {
+        putString(fd, buff, count);
+    }else if(fd > STDERR){
+        return write_on_file(fd, buff, count);
+    }
+    return -1;
 }

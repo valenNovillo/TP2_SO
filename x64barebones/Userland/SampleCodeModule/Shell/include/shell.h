@@ -43,7 +43,7 @@ void resetBuffer();
 
 uint16_t test_process(int16_t fds[]);
 
-uint16_t ps_commmand();
+uint16_t ps_commmand(int16_t fds[]);
 
 uint16_t test_priority(int16_t fds[]);
 
