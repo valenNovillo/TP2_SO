@@ -195,7 +195,8 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
 
 int write_on_file(int16_t fd, char* buff, unsigned long len){
     int16_t id = ((fd -1)/2) - 2; 
-    Pipe pipe = find_by_id(id);
+    //Pipe pipe = find_by_id(id);
+    Pipe pipe = pipes[id];
     if(pipe == NULL || len == 0){
         return -1;
     }
@@ -228,7 +229,8 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
 
 int read_on_file(int16_t fd,char* target, unsigned long len){
     int16_t id = (fd/2) - 2;
-    Pipe pipe = find_by_id(id);
+    //Pipe pipe = find_by_id(id);
+    Pipe pipe = pipes[id];
 
     if(pipe == NULL || pipe->reader_pid != get_pid() || len == 0){
         return -1;
