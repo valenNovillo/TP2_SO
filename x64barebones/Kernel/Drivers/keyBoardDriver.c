@@ -102,7 +102,7 @@ void keyboardHandler(uint64_t infoRegs){
     }else if(key==BLOQ_MAYUSQ){
         bloqMayusq_enabled = !bloqMayusq_enabled;
     } else if (ctrl_enabled) {
-        if(key == 0x13){
+        if(key == 0x13){ //CTRL+R
              save();
         cleanScreen();
         printRegs(*regsPointer);
@@ -114,8 +114,6 @@ void keyboardHandler(uint64_t infoRegs){
         ctrl_enabled =! ctrl_enabled;
         removeLastFromBuff();
         }else if(key == 0x2E){ //CTRL+C
-            ctrl_enabled =! ctrl_enabled;
-            //removeLastFromBuff();
             putString(STDOUT, "^C\n", 3);
             if (kill_FG() == -1) {
                 buffer[writeIdx] = EOF;
@@ -123,10 +121,8 @@ void keyboardHandler(uint64_t infoRegs){
                 set_state(get_foreground_pid(), READY);
             };
         }else if(key == 0x20){//CTRL+D
-            //removeLastFromBuff();
             buffer[writeIdx] = EOF;
             writeIdx = (writeIdx+1)%SIZE_BUFF;
-            ctrl_enabled =! ctrl_enabled;
             putString(STDOUT, "^D\n", 3);
             set_state(get_foreground_pid(), READY);
         }
