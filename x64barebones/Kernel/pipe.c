@@ -83,8 +83,8 @@ static Pipe init_pipe(){
     new_pipe->write_idx = 0;
     new_pipe->writer_pid = -1;
     new_pipe->reader_pid = -1;
-    new_pipe->fd_read = new_pipe_idx *2;
-    new_pipe->fd_write = new_pipe_idx * 2 + 1;
+    new_pipe->fd_read = (new_pipe_idx + 2) *2; 
+    new_pipe->fd_write = (new_pipe_idx + 2) * 2 + 1;   
     new_pipe->mutex = my_sem_create(SEM_MUTEX, 1);
     new_pipe->read = my_sem_create(SEM_READ, 0);
     new_pipe->write = my_sem_create(SEM_WRITE, BUFF_SIZE);
@@ -118,6 +118,8 @@ int16_t open_pipe(int16_t id, char mode){
         if((idx = create_pipe(id, pipe)) == -1){
             return -1;
         }
+
+        pipe = pipes[idx];
     }
 
     if(mode == WRITER){
@@ -192,7 +194,7 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
 }
 
 int write_on_file(int16_t fd, char* buff, unsigned long len){
-    int16_t id = (fd-1)/2;
+    int16_t id = ((fd -1)/2) - 2; 
     Pipe pipe = find_by_id(id);
     if(pipe == NULL || len == 0){
         return -1;
@@ -225,7 +227,7 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
 
 
 int read_on_file(int16_t fd,char* target, unsigned long len){
-    int16_t id = fd/2;
+    int16_t id = (fd/2) - 2;
     Pipe pipe = find_by_id(id);
 
     if(pipe == NULL || pipe->reader_pid != get_pid() || len == 0){
