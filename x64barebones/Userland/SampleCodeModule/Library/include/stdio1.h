@@ -11,6 +11,8 @@
 #define STDERR 2
 #define NO_INPUT -1
 
+#define EOF -1
+
 //función que lee un caracter por entrada estándar
 int getChar();
 
@@ -29,7 +31,7 @@ void printf(char * string, ...);
 void printErr(char * buff, ...);
 
 //función que lee caracteres desde el fd hasta que aparezca un cierto caracter 
-int readByDelim(int fd, char * buff, int count, char delim);
+int readByDelim(int16_t* fd, char * buff, int count, char delim);
 
 //función que convierte un entero n a una cadena de caracteres y la almacena en el buffer s.
 void intToString(int n, char* s);
