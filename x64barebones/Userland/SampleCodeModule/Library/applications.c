@@ -248,19 +248,26 @@ void help(int16_t fds[]) {
     setColor(255, 255, 255);
     fprintf(fds[STDOUT],"--> Changes the process <ID> state between blocked and ready\n");
 
+    setColor(250, 255, 0);
+    printf("cat \n");
+    setColor(255, 255, 255);
+    printf("--> Prints the stdin as it receives it \n");
+
+    setColor(250, 255, 0);
+    printf("wc \n");
+    setColor(255, 255, 255);
+    printf("--> Counts the amount of lines that input has \n");
+
+    setColor(250, 255, 0);
+    printf("filter \n");
+    setColor(255, 255, 255);
+    printf("--> Filter vocals of input \n");
+
     setColor(133, 21, 199);
     fprintf(fds[STDOUT],"registers \n");
     setColor(255, 255, 255);
     fprintf(fds[STDOUT],"--> To see the current state of the processor registers, please press CTRL + R\n"); 
 }
-
-/*int cat(uint64_t argc, char *argv[]) {
-    char buffer[MAX_BUFF];
-	while(1) {
-        scanf1("%s",buffer);
-        printf("%d\n", buffer);
-    }
-}*/
 
 int cat(uint64_t argc, char *argv[]) {
     char buffer[MAX_BUFFER_SIZE];
@@ -270,9 +277,9 @@ int cat(uint64_t argc, char *argv[]) {
     while ((c = getChar()) != EOF) {
         if (c == '\n') {
             printf("\n");
-            buffer[index] = '\0';  // Agrega el carácter nulo para marcar el fin de la cadena
-            printf("%s\n", buffer);          // Imprime el buffer
-            index = 0;             // Reinicia el índice para la próxima línea
+            buffer[index] = '\0'; 
+            printf("%s\n", buffer);          
+            index = 0;            
         } else if (index < MAX_BUFFER_SIZE - 1) {
             putChar(c);
             buffer[index++] = c;
@@ -282,3 +289,45 @@ int cat(uint64_t argc, char *argv[]) {
     return 0;
 }
 
+int wc(uint64_t argc, char *argv[]) {
+    char c;
+    int lines = 0;
+    printf("\n");
+    while ((c = getChar()) != EOF) {
+        putChar(c);  // Imprime el carácter en tiempo real
+        if (c == '\n') {
+            lines++;
+        }
+    }
+
+    printf("\nTotal lines: %d\n", lines);
+    return 0;
+}
+
+int filter(uint64_t argc, char *argv[]) {
+    char buffer[MAX_BUFFER_SIZE];
+    int index = 0;
+    int c;
+    printf("\n");
+    while ((c = getChar()) != EOF) {
+        if (c == '\n') {
+            printf("\n");  
+            buffer[index] = '\0';      
+            for (int i = 0; i < index; i++) {
+                char ch = buffer[i];
+                if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u' &&
+                    ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U') {
+                    putChar(ch);  
+                }
+            }
+            printf("\n");  
+
+            index = 0; 
+        } else if (index < MAX_BUFFER_SIZE - 1) {
+            putChar(c);  
+            buffer[index++] = c;  
+        }
+    }
+
+    return 0;
+}

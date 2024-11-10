@@ -17,4 +17,6 @@ int play_eliminator(uint64_t argc, char *argv[]);
 void time(int16_t fds[]);
 void help(int16_t fds[]);
 int cat(uint64_t argc, char *argv[]);
+int wc(uint64_t argc, char *argv[]);
+int filter(uint64_t argc, char *argv[]);
 #endif
