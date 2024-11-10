@@ -145,113 +145,113 @@ void time(int16_t fds[]) {
 }
 
 void help(int16_t fds[]) {
-    fprintf(get_fds()[STDIN],"\n");
-    fprintf(get_fds()[STDIN],"The available commands are:\n");
+    fprintf(fds[STDOUT],"\n");
+    fprintf(fds[STDOUT],"The available commands are:\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"help \n");
+    fprintf(fds[STDOUT],"help \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Displays a menu with all the comands\n");
+    fprintf(fds[STDOUT],"--> Displays a menu with all the comands\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"inc \n");
+    fprintf(fds[STDOUT],"inc \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Increases text size on the screen\n");
+    fprintf(fds[STDOUT],"--> Increases text size on the screen\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"dec \n");
+    fprintf(fds[STDOUT],"dec \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Decreases text size on the screen\n");
+    fprintf(fds[STDOUT],"--> Decreases text size on the screen\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"eliminator \n");
+    fprintf(fds[STDOUT],"eliminator \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Starts a new game of Eliminator \n");
+    fprintf(fds[STDOUT],"--> Starts a new game of Eliminator \n");
     
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"time \n");
+    fprintf(fds[STDOUT],"time \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Displays current time in hh:mm:ss format\n");
+    fprintf(fds[STDOUT],"--> Displays current time in hh:mm:ss format\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"clean \n");
+    fprintf(fds[STDOUT],"clean \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Erases the content on the screen\n");
+    fprintf(fds[STDOUT],"--> Erases the content on the screen\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"ioexception \n");
+    fprintf(fds[STDOUT],"ioexception \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Produces an invalid opcode exception\n");
+    fprintf(fds[STDOUT],"--> Produces an invalid opcode exception\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"zeroexception \n");
+    fprintf(fds[STDOUT],"zeroexception \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Produces a zero division exception\n");
+    fprintf(fds[STDOUT],"--> Produces a zero division exception\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"playsong \n");
+    fprintf(fds[STDOUT],"playsong \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Shares a list of songs for playing\n");
+    fprintf(fds[STDOUT],"--> Shares a list of songs for playing\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"test_processes \n");
+    fprintf(fds[STDOUT],"test_processes \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Checks the management of multiple processes\n");
+    fprintf(fds[STDOUT],"--> Checks the management of multiple processes\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"test_priority \n");
+    fprintf(fds[STDOUT],"test_priority \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Checks the management of multiple priorities\n");
+    fprintf(fds[STDOUT],"--> Checks the management of multiple priorities\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"test_sync \n");
+    fprintf(fds[STDOUT],"test_sync \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Checks the syncronization between processes\n");
+    fprintf(fds[STDOUT],"--> Checks the syncronization between processes\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"test_no_sync \n");
+    fprintf(fds[STDOUT],"test_no_sync \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Checks the result withouth sync between processes\n");
+    fprintf(fds[STDOUT],"--> Checks the result withouth sync between processes\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"test_mm \n");
+    fprintf(fds[STDOUT],"test_mm \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Checks the memory management\n");
+    fprintf(fds[STDOUT],"--> Checks the memory management\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"mem \n");
+    fprintf(fds[STDOUT],"mem \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Prints the memory status\n");
+    fprintf(fds[STDOUT],"--> Prints the memory status\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"ps \n");
+    fprintf(fds[STDOUT],"ps \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Prints list of all current processes with their properties\n");
+    fprintf(fds[STDOUT],"--> Prints list of all current processes with their properties\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"loop \n");
+    fprintf(fds[STDOUT],"loop \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Prints current process ID with a greeting\n");
+    fprintf(fds[STDOUT],"--> Prints current process ID with a greeting\n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"kill <ID> \n");
+    fprintf(fds[STDOUT],"kill <ID> \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Kills the process <ID> \n");
+    fprintf(fds[STDOUT],"--> Kills the process <ID> \n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"nice <ID> <PRIORITY> \n");
+    fprintf(fds[STDOUT],"nice <ID> <PRIORITY> \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Changes the process <ID> priority to <PRIORITY> \n");
+    fprintf(fds[STDOUT],"--> Changes the process <ID> priority to <PRIORITY> \n");
 
     setColor(250, 255, 0);
-    fprintf(get_fds()[STDIN],"block <ID> \n");
+    fprintf(fds[STDOUT],"block <ID> \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> Changes the process <ID> state between blocked and ready\n");
+    fprintf(fds[STDOUT],"--> Changes the process <ID> state between blocked and ready\n");
 
     setColor(133, 21, 199);
-    fprintf(get_fds()[STDIN],"registers \n");
+    fprintf(fds[STDOUT],"registers \n");
     setColor(255, 255, 255);
-    fprintf(get_fds()[STDIN],"--> To see the current state of the processor registers, please press CTRL + R\n"); 
+    fprintf(fds[STDOUT],"--> To see the current state of the processor registers, please press CTRL + R\n"); 
 }
 
 /*int cat(uint64_t argc, char *argv[]) {
