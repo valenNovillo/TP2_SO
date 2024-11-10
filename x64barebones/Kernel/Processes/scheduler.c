@@ -129,16 +129,20 @@ void* schedule(void* last_rsp){
 
 }
 
-void set_foreground(uint16_t pid) {
-    scheduler->foreground_pid = pid;
-}
-
 uint16_t get_running_process_pid() {
     return scheduler->running_pid;
 }
 
 PCB* get_running_process() {
     return (PCB*)(scheduler->processes[scheduler->running_pid]->data);
+}
+
+void set_foreground(uint16_t pid) {
+    scheduler->foreground_pid = pid;
+}
+
+uint16_t get_foreground_pid() {
+    return scheduler->foreground_pid;
 }
 
 int get_processes_count() {
@@ -271,8 +275,9 @@ int unblock_process(uint16_t pid) {
     return 0;
 }
 
-void kill_FG(){
+int32_t kill_FG() {
     if(scheduler->foreground_pid > 1){
-        kill_process(scheduler->foreground_pid, -1);
+        return kill_process(scheduler->foreground_pid, -1);
     }
+    return -1;
 }
