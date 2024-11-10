@@ -223,14 +223,12 @@ int32_t kill_process(uint16_t pid, int32_t ret){
         if(is_waiting(parent_process_pcb, pcb_to_kill->pid)){
             set_state(pcb_to_kill->parent_pid, READY);
             parent_process_pcb->ret = ret;
+            parent_process_pcb->waiting_pid = -1;
+            parent_process_pcb->fds[STDIN] = STDIN;
             if (pcb_to_kill->run_mode == FOREGROUND) {
                 parent_process_pcb->run_mode = FOREGROUND;
                 set_foreground(pcb_to_kill->parent_pid);
             }
-        }
-        if(pcb_to_kill->run_mode){
-            scheduler->foreground_pid = parent_process_pcb->pid;
-            parent_process_pcb->run_mode = 1;
         }
     }
 
@@ -274,7 +272,7 @@ int unblock_process(uint16_t pid) {
 }
 
 void kill_FG(){
-    if(scheduler->foreground_pid > 2){
+    if(scheduler->foreground_pid > 1){
         kill_process(scheduler->foreground_pid, -1);
     }
 }

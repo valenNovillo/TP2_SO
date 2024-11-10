@@ -101,7 +101,7 @@ void keyboardHandler(uint64_t infoRegs){
         shift_enabled=!shift_enabled;
     }else if(key==BLOQ_MAYUSQ){
         bloqMayusq_enabled = !bloqMayusq_enabled;
-    } else if (ctrl_enabled && key == 0x13) {
+    } else if (ctrl_enabled) {
         if(key == 0x13){
              save();
         cleanScreen();
@@ -115,11 +115,13 @@ void keyboardHandler(uint64_t infoRegs){
         removeLastFromBuff();
         }else if(key == 0x2E){ //CTRL+C
            kill_FG();
+           ctrl_enabled =! ctrl_enabled;
            removeLastFromBuff();
            putString(STDIN, "^C\n", 3);
         }else if(key == 0x20){//CTRL+D
            char eof_buf[2] = {EOF, 0};
            putString(STDIN, eof_buf, 2);
+           ctrl_enabled =! ctrl_enabled;
            removeLastFromBuff();
            putString(STDIN, "^D\n", 3);
         }

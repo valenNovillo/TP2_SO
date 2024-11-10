@@ -70,59 +70,63 @@ int scanf1(char* format, ...) {
     return readChars;//retorna la cantidad de caracteres leídos
 }
 
-void fprintf(int16_t fd, char * string, ...) {
-    va_list argPointer; 
-    va_start(argPointer,string);
-
-    int i=0;
-    while(string[i]!=0){ 
-        if(string[i] == '%'){ 
+static void vfprintf(int16_t fd, char *string, va_list argPointer) {
+    int i = 0;
+    while (string[i] != 0) {
+        if (string[i] == '%') {
             char buffInt[20];
-            char * str; 
+            char *str;
 
-            switch (string[i+1]) { 
+            switch (string[i + 1]) {
                 case 'd':
                     intToString(va_arg(argPointer, int), buffInt);
-                    fprintf(fd, buffInt);
+                    vfprintf(fd, buffInt, argPointer);
                     break;
                 case 's':
-                    str = va_arg(argPointer, char*);
-                    fprintf(fd, str);
+                    str = va_arg(argPointer, char *);
+                    vfprintf(fd, str, argPointer);
                     break;
             }
-            i+=2;
-        }else if(string[i]=='\\') {
-            switch (string[i+1]) {
+            i += 2;
+        } else if (string[i] == '\\') {
+            switch (string[i + 1]) {
                 case 'n':
-                    put_char_fd(fd, '\n'); break;
+                    put_char_fd(fd, '\n');
+                    break;
                 case 't':
-                    put_char_fd(fd, '\t'); break;
+                    put_char_fd(fd, '\t');
+                    break;
                 case '\\':
-                    put_char_fd(fd, '\\'); break;
-
+                    put_char_fd(fd, '\\');
+                    break;
             }
-            i+=2;
-        }else
+            i += 2;
+        } else {
             put_char_fd(fd, string[i++]);
+        }
     }
+}
 
+void fprintf(int16_t fd, char *string, ...) {
+    va_list argPointer;
+    va_start(argPointer, string);
+    vfprintf(fd, string, argPointer);
+    va_end(argPointer);
+}
+
+void printf(char *string, ...) {
+    va_list argPointer;
+    va_start(argPointer, string);
+    vfprintf(get_fds()[STDOUT], string, argPointer);
     va_end(argPointer);
 }
 
 
-void printf(char * string, ...) {
-    va_list args;
-    va_start(args, string);
-    fprintf(get_fds()[STDOUT], string, args);
-    va_end(args);
-}
-
-
 void printErr(char * buff, ...) {
-    va_list args;
-    va_start(args, buff);
-    fprintf(get_fds()[STDERR], buff, args);
-    va_end(args);
+    va_list argPointer;
+    va_start(argPointer, buff);
+    vfprintf(get_fds()[STDERR], buff, argPointer);
+    va_end(argPointer);
 }
 
 

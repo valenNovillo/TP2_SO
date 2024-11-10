@@ -11,7 +11,7 @@
 #include "../include/pipe.h"
 
 //Devuelve la cantidad de caracteres que pudo leer y -1 si hubo un error
-static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t r10, uint64_t r8){
+static ssize_t sys_call_read(int16_t fd, char * buff, uint64_t count){
     if(fd == STDIN){
         return fillBuf(buff, count);
     }else if(fd > STDIN){
@@ -21,7 +21,7 @@ static ssize_t sys_call_read(uint64_t fd, char * buff, uint64_t count, uint64_t 
 }
 
 //Devuelve la cantidad de caracteres que pudo escribir
-static ssize_t sys_call_write(uint64_t fd, char* buff, uint64_t count, uint64_t r10, uint64_t r8) { 
+static ssize_t sys_call_write(int16_t fd, char* buff, uint64_t count) { 
     if (fd == STDOUT || fd == STDERR) {
         putString(fd, buff, count);
     }else if(fd > STDERR){

@@ -34,7 +34,7 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
                 parent_PCB->p_state = BLOCKED;
                 remove(get_ready_list(), get_process(parent_PCB->pid));
                 pcb->run_mode = FOREGROUND;
-                yield_no_timer_tick();
+                //yield_no_timer_tick();
             } else {
                 set_creating(0);
                 return -1;
@@ -123,6 +123,9 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
     
     set_pid_on_array(process_pcb->pid, process_node);
     set_creating(0);
+    if(process_pcb->run_mode == FOREGROUND) {
+        yield();
+    }
     return process_pcb->pid; 
 }
 

@@ -265,16 +265,16 @@ void help(int16_t fds[]) {
 int cat(uint64_t argc, char *argv[]) {
     char buffer[MAX_BUFFER_SIZE];
     int index = 0;
-    char c;
-
+    int c;
+    printf("\n");
     while ((c = getChar()) != EOF) {
-        // Si el carácter es Enter, imprime el contenido del buffer y reinícialo
         if (c == '\n') {
+            printf("\n");
             buffer[index] = '\0';  // Agrega el carácter nulo para marcar el fin de la cadena
-            printf("%s",buffer);          // Imprime el buffer
+            printf("%s\n", buffer);          // Imprime el buffer
             index = 0;             // Reinicia el índice para la próxima línea
         } else if (index < MAX_BUFFER_SIZE - 1) {
-            // Almacena el carácter en el buffer si no se ha excedido el tamaño máximo
+            putChar(c);
             buffer[index++] = c;
         }
     }
