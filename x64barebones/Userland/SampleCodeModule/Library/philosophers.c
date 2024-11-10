@@ -7,13 +7,17 @@
 #define MAX_PHILOS 10
 #define THINKING 0
 #define EATING 1
-#define THINKING_TIME 10000
+#define THINKING_TIME 2000
 
-char *philos[MAX_PHILOS] = {
+static char *philos[MAX_PHILOS] = {
     "philo00", "philo01", "philo02", "philo03",
     "philo04", "philo05", "philo06", "philo07",
     "philo08", "philo09"
 };
+
+static sem_ptr forks[MAX_PHILOS] = {NULL};
+
+static sem_ptr modifing;
 
 int philos_pids[MAX_PHILOS];
 int philos_states[MAX_PHILOS];
@@ -21,15 +25,18 @@ int philos_states[MAX_PHILOS];
 int16_t philo_fds[3] = {NO_INPUT, STDOUT, STDERR};
 
 int init_philos_restaurant(uint64_t argc, char *argv[]) {
+    int cant_philos = MIN_PHILOS;
+    modifing = my_sem_create(MAX_PHILOS, 1);
     for (int j = 0; j < MIN_PHILOS; j++) {     
         philos_states[j] = THINKING;
     }
 
-    char* args[3]; //TO-DO: deberia ser con malloc?
+    char* args[3];
     for(int i=0; i < MIN_PHILOS; i++) {
         args[0] = philos[i];
         intToString(i, args[1]);    
         args[2] = 0;
+        forks[i] = my_sem_create(i, 1);
         philos_pids[i] = create_process((Main)philosopher, args, philos[i] , 2, philo_fds);
     }
 

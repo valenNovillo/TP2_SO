@@ -7,7 +7,7 @@
 #include "linkedList.h"
  
 
-#define MAX_SEMAPHORES 16
+#define MAX_SEMAPHORES 1024
 
 typedef struct semaphore {
     uint8_t id;
