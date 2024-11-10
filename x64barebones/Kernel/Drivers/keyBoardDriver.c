@@ -117,13 +117,13 @@ void keyboardHandler(uint64_t infoRegs){
            kill_FG();
            ctrl_enabled =! ctrl_enabled;
            removeLastFromBuff();
-           putString(STDIN, "^C\n", 3);
+           putString(STDOUT, "^C\n", 3);
         }else if(key == 0x20){//CTRL+D
-           char eof_buf[2] = {EOF, 0};
-           putString(STDIN, eof_buf, 2);
+            buffer[writeIdx] = EOF;
+            writeIdx = (writeIdx+1)%SIZE_BUFF;
            ctrl_enabled =! ctrl_enabled;
            removeLastFromBuff();
-           putString(STDIN, "^D\n", 3);
+           putString(STDOUT, "^D\n", 3);
         }
     } else if (reading && key <= 0x53) {
         buffer[writeIdx] = getStringFromCode(key);
