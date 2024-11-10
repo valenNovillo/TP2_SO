@@ -4,14 +4,15 @@
 #include "../Library/include/unistd1.h"
 #include "../Library/include/string.h"
 #include "../Library/include/applications.h"
+#include "../Library/include/philosophers.h"
 #include <stddef.h>
 
 static Commands commands[] = {(Commands)help_command, (Commands)zoomIn, (Commands)zoomOut, (Commands)time_command, (Commands)clean, (Commands)ioexception, (Commands)zeroexception, (Commands)playEliminator,
  (Commands)playSong,(Commands) test_process,(Commands)test_priority, (Commands)ps_commmand, (Commands)testing_sync, (Commands)testing_no_sync, (Commands)print_mem_status_command, (Commands)test_mm_command, 
- (Commands)loop_command, (Commands)kill_command, (Commands)nice_command, (Commands)block_command, (Commands)cat_command, (Commands)wc_command, (Commands)filter_command};
+ (Commands)loop_command, (Commands)kill_command, (Commands)nice_command, (Commands)block_command, (Commands)cat_command, (Commands)wc_command, (Commands)filter_command, (Commands)phylo_command};
 
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
-     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block", "cat", "wc", "filter"};
+     "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block", "cat", "wc", "filter", "phylo"};
 
 static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexception", "eliminator", "playSong"};
 
@@ -251,4 +252,7 @@ uint16_t filter_command(int16_t fds[]) {
     return create_process((Main)filter, argv, "filter", 2, fds);
 }
 
- 
+uint16_t phylo_command(int16_t fds[]) {
+    char* argv[] = {0};
+    return create_process((Main)init_philos_restaurant, argv, "init_philos_restaurant", 2, fds);
+}
