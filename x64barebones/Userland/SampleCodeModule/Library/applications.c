@@ -274,17 +274,27 @@ int cat(uint64_t argc, char *argv[]) {
     int index = 0;
     int c;
     printf("\n");
-    while ((c = getChar()) != EOF) {
-        if (c == '\n') {
-            printf("\n");
-            buffer[index] = '\0'; 
-            printf("%s\n", buffer);          
-            index = 0;            
-        } else if (index < MAX_BUFFER_SIZE - 1) {
-            putChar(c);
-            buffer[index++] = c;
+    if(get_fds()[STDIN] != STDIN){
+        scanf1("%s", buffer);
+        printf("\n");
+    } else {
+        while ((c = getChar()) != EOF)
+        {
+            if (c == '\n')
+            {
+                printf("\n");
+                buffer[index] = '\0';
+                printf("%s\n", buffer);
+                index = 0;
+            }
+            else if (index < MAX_BUFFER_SIZE - 1)
+            {
+                putChar(c);
+                buffer[index++] = c;
+            }
         }
     }
+
 
     return 0;
 }

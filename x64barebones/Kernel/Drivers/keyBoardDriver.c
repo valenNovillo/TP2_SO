@@ -33,7 +33,7 @@ char extended_enabled = 0;
 char ctrl_enabled = 0;
 
 //Define un búfer circular de BUFF_SIZE (64 bytes) para almacenar los códigos de escaneo del teclado 
-unsigned int buffer[SIZE_BUFF] = {0};
+int buffer[SIZE_BUFF] = {0};
 
 //índices para leer y escribir en este búfer.
 static int readIdx = 0;
@@ -84,7 +84,7 @@ static unsigned char getStringFromCode(unsigned char code){
 }
 
 static void removeLastFromBuff() {
-    writeIdx = (writeIdx - 1)%SIZE_BUFF;
+    writeIdx = writeIdx == 0 ? SIZE_BUFF - 1 : (writeIdx - 1)%SIZE_BUFF;
 }
 
 
@@ -102,7 +102,7 @@ void keyboardHandler(uint64_t infoRegs){
     }else if(key==BLOQ_MAYUSQ){
         bloqMayusq_enabled = !bloqMayusq_enabled;
     } else if (ctrl_enabled) {
-        if(key == 0x13){
+        if(key == 0x13){ //CTRL+R
              save();
         cleanScreen();
         printRegs(*regsPointer);
@@ -114,20 +114,22 @@ void keyboardHandler(uint64_t infoRegs){
         ctrl_enabled =! ctrl_enabled;
         removeLastFromBuff();
         }else if(key == 0x2E){ //CTRL+C
-           kill_FG();
-           ctrl_enabled =! ctrl_enabled;
-           removeLastFromBuff();
-           putString(STDOUT, "^C\n", 3);
+            putString(STDOUT, "^C\n", 3);
+            if (kill_FG() == -1) {
+                buffer[writeIdx] = EOF;
+                writeIdx = (writeIdx+1)%SIZE_BUFF;
+                set_state(get_foreground_pid(), READY);
+            };
         }else if(key == 0x20){//CTRL+D
             buffer[writeIdx] = EOF;
             writeIdx = (writeIdx+1)%SIZE_BUFF;
-           ctrl_enabled =! ctrl_enabled;
-           removeLastFromBuff();
-           putString(STDOUT, "^D\n", 3);
+            putString(STDOUT, "^D\n", 3);
+            set_state(get_foreground_pid(), READY);
         }
     } else if (reading && key <= 0x53) {
         buffer[writeIdx] = getStringFromCode(key);
         writeIdx = (writeIdx+1)%SIZE_BUFF;
+        set_state(get_foreground_pid(), READY);
     }
 }
 
@@ -139,8 +141,11 @@ int next(){
     return toReturn;
 }
 
-//Verifica si hay nuevos códigos de escaneo disponibles en el búfer comparando los índices de lectura y escritura. Si no son iguales, hay datos disponibles para leer.
+
 char hasNext(){
+    if (!(readIdx != writeIdx)) {
+        set_state(get_foreground_pid(), BLOCKED);
+    }
     return readIdx != writeIdx;
 }
 

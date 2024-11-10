@@ -12,9 +12,9 @@ typedef struct SchedulerCDT* Scheduler;
 extern void call_timer_tick();
 PState set_state(uint16_t pid, PState new_state);
 void yield();
-void yield_no_timer_tick();
 int32_t set_priority(uint16_t pid, uint8_t new_prio);
 void initialize_scheduler();
+uint16_t get_foreground_pid();
 void set_foreground(uint16_t pid);
 uint16_t get_running_process_pid();
 PCB* get_running_process();
@@ -30,7 +30,7 @@ int32_t kill_process(uint16_t pid, int32_t ret);
 void set_creating(uint8_t creating);
 InfoProcess** processes_info();
 PState get_state(int16_t pid);
-void kill_FG();
+int32_t kill_FG();
 Node * get_process(uint16_t pid);
 
 #endif //SCHEDULER_H

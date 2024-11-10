@@ -1,13 +1,11 @@
 #include "include/stdio1.h"
 
 void intToString(int n, char* s);
-int readByDelim(int fd, char * buff, int count, char delim);
 
 static int get_char_fd(int16_t fd) {
     char c = 0;
     int count = 0;
-    while(count == 0) 
-        count = read(fd, &c, 1);
+    count = read(fd, &c, 1);
     return count == 1 ? c : -1;
 }
 
@@ -25,9 +23,7 @@ int putChar(int ch) {
     return put_char_fd(get_fds()[STDOUT], ch);
 }
 
-int scanf1(char* format, ...) {
-    va_list args;
-    va_start(args, format);
+int vfscanf(int16_t* fd, char* format, va_list args) {
 
     int readChars = 0;
     int length;
@@ -41,11 +37,11 @@ int scanf1(char* format, ...) {
         if( format[i] == '%') {
             i++;
 
-            length = readByDelim(0, buffer, 100, '\n');
+            length = readByDelim(fd, buffer, 100, '\n');
             buffer[length] = 0;
             readChars += length;
 
-            putChar(' ');
+            put_char_fd(fd[STDOUT], ' ');
 
             switch (format[i]) {
                 case 'd':
@@ -66,7 +62,6 @@ int scanf1(char* format, ...) {
 
     }
 
-    va_end(args); //Limpia la lista de argumentos variables
     return readChars;//retorna la cantidad de caracteres leídos
 }
 
@@ -107,6 +102,14 @@ static void vfprintf(int16_t fd, char *string, va_list argPointer) {
     }
 }
 
+int scanf1(char* format, ...) {
+    va_list argPointer;
+    va_start(argPointer, format);
+    int cant = vfscanf(get_fds(), format, argPointer);
+    va_end(argPointer);
+    return cant;
+}
+
 void fprintf(int16_t fd, char *string, ...) {
     va_list argPointer;
     va_start(argPointer, string);
@@ -130,16 +133,13 @@ void printErr(char * buff, ...) {
 }
 
 
-int readByDelim(int fd, char * buff, int count, char delim) {
-    if(fd != 0){
-        return 0;
-    }
+int readByDelim(int16_t* fd, char * buff, int count, char delim) {
 
     int i = 0; //para contabilizar los caracteres leidos
     char c; //para almacenar el caracter leido
 
 
-    while((c = getChar()) != delim){ //mientras que el caracter sea distinto del delimitador, seguimos 
+    while((c = get_char_fd(fd[STDIN])) != delim && c != EOF){ //mientras que el caracter sea distinto del delimitador, seguimos 
         switch (c) {
             case 0: //Si el buffer esta vacío o no se leyó un caracter válido
                 break;
@@ -148,7 +148,7 @@ int readByDelim(int fd, char * buff, int count, char delim) {
                     break;
                 } 
                 //Si no
-                putChar(c); //se imprime el carácter de retroceso y se decrementa i en 1. Esto es para manejar la eliminación de un carácter del buffer.
+                put_char_fd(fd[STDOUT], c); //se imprime el carácter de retroceso y se decrementa i en 1. Esto es para manejar la eliminación de un carácter del buffer.
                 i--;
                 break;
             default://Para cualquier otro carácter (default)
@@ -156,7 +156,7 @@ int readByDelim(int fd, char * buff, int count, char delim) {
                     break;
                 }
                 buff[i++] = c;
-                putChar(c);
+                put_char_fd(fd[STDOUT], c);
         }
     }
    
