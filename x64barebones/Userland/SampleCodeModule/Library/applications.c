@@ -145,113 +145,113 @@ void time(int16_t fds[]) {
 }
 
 void help(int16_t fds[]) {
-    printf("\n");
-    printf("The available commands are:\n");
+    fprintf(get_fds()[STDIN],"\n");
+    fprintf(get_fds()[STDIN],"The available commands are:\n");
 
     setColor(250, 255, 0);
-    printf("help \n");
+    fprintf(get_fds()[STDIN],"help \n");
     setColor(255, 255, 255);
-    printf("--> Displays a menu with all the comands\n");
+    fprintf(get_fds()[STDIN],"--> Displays a menu with all the comands\n");
 
     setColor(250, 255, 0);
-    printf("inc \n");
+    fprintf(get_fds()[STDIN],"inc \n");
     setColor(255, 255, 255);
-    printf("--> Increases text size on the screen\n");
+    fprintf(get_fds()[STDIN],"--> Increases text size on the screen\n");
 
     setColor(250, 255, 0);
-    printf("dec \n");
+    fprintf(get_fds()[STDIN],"dec \n");
     setColor(255, 255, 255);
-    printf("--> Decreases text size on the screen\n");
+    fprintf(get_fds()[STDIN],"--> Decreases text size on the screen\n");
 
     setColor(250, 255, 0);
-    printf("eliminator \n");
+    fprintf(get_fds()[STDIN],"eliminator \n");
     setColor(255, 255, 255);
-    printf("--> Starts a new game of Eliminator \n");
+    fprintf(get_fds()[STDIN],"--> Starts a new game of Eliminator \n");
     
     setColor(250, 255, 0);
-    printf("time \n");
+    fprintf(get_fds()[STDIN],"time \n");
     setColor(255, 255, 255);
-    printf("--> Displays current time in hh:mm:ss format\n");
+    fprintf(get_fds()[STDIN],"--> Displays current time in hh:mm:ss format\n");
 
     setColor(250, 255, 0);
-    printf("clean \n");
+    fprintf(get_fds()[STDIN],"clean \n");
     setColor(255, 255, 255);
-    printf("--> Erases the content on the screen\n");
+    fprintf(get_fds()[STDIN],"--> Erases the content on the screen\n");
 
     setColor(250, 255, 0);
-    printf("ioexception \n");
+    fprintf(get_fds()[STDIN],"ioexception \n");
     setColor(255, 255, 255);
-    printf("--> Produces an invalid opcode exception\n");
+    fprintf(get_fds()[STDIN],"--> Produces an invalid opcode exception\n");
 
     setColor(250, 255, 0);
-    printf("zeroexception \n");
+    fprintf(get_fds()[STDIN],"zeroexception \n");
     setColor(255, 255, 255);
-    printf("--> Produces a zero division exception\n");
+    fprintf(get_fds()[STDIN],"--> Produces a zero division exception\n");
 
     setColor(250, 255, 0);
-    printf("playsong \n");
+    fprintf(get_fds()[STDIN],"playsong \n");
     setColor(255, 255, 255);
-    printf("--> Shares a list of songs for playing\n");
+    fprintf(get_fds()[STDIN],"--> Shares a list of songs for playing\n");
 
     setColor(250, 255, 0);
-    printf("test_processes \n");
+    fprintf(get_fds()[STDIN],"test_processes \n");
     setColor(255, 255, 255);
-    printf("--> Checks the management of multiple processes\n");
+    fprintf(get_fds()[STDIN],"--> Checks the management of multiple processes\n");
 
     setColor(250, 255, 0);
-    printf("test_priority \n");
+    fprintf(get_fds()[STDIN],"test_priority \n");
     setColor(255, 255, 255);
-    printf("--> Checks the management of multiple priorities\n");
+    fprintf(get_fds()[STDIN],"--> Checks the management of multiple priorities\n");
 
     setColor(250, 255, 0);
-    printf("test_sync \n");
+    fprintf(get_fds()[STDIN],"test_sync \n");
     setColor(255, 255, 255);
-    printf("--> Checks the syncronization between processes\n");
+    fprintf(get_fds()[STDIN],"--> Checks the syncronization between processes\n");
 
     setColor(250, 255, 0);
-    printf("test_no_sync \n");
+    fprintf(get_fds()[STDIN],"test_no_sync \n");
     setColor(255, 255, 255);
-    printf("--> Checks the result withouth sync between processes\n");
+    fprintf(get_fds()[STDIN],"--> Checks the result withouth sync between processes\n");
 
     setColor(250, 255, 0);
-    printf("test_mm \n");
+    fprintf(get_fds()[STDIN],"test_mm \n");
     setColor(255, 255, 255);
-    printf("--> Checks the memory management\n");
+    fprintf(get_fds()[STDIN],"--> Checks the memory management\n");
 
     setColor(250, 255, 0);
-    printf("mem \n");
+    fprintf(get_fds()[STDIN],"mem \n");
     setColor(255, 255, 255);
-    printf("--> Prints the memory status\n");
+    fprintf(get_fds()[STDIN],"--> Prints the memory status\n");
 
     setColor(250, 255, 0);
-    printf("ps \n");
+    fprintf(get_fds()[STDIN],"ps \n");
     setColor(255, 255, 255);
-    printf("--> Prints list of all current processes with their properties\n");
+    fprintf(get_fds()[STDIN],"--> Prints list of all current processes with their properties\n");
 
     setColor(250, 255, 0);
-    printf("loop \n");
+    fprintf(get_fds()[STDIN],"loop \n");
     setColor(255, 255, 255);
-    printf("--> Prints current process ID with a greeting\n");
+    fprintf(get_fds()[STDIN],"--> Prints current process ID with a greeting\n");
 
     setColor(250, 255, 0);
-    printf("kill <ID> \n");
+    fprintf(get_fds()[STDIN],"kill <ID> \n");
     setColor(255, 255, 255);
-    printf("--> Kills the process <ID> \n");
+    fprintf(get_fds()[STDIN],"--> Kills the process <ID> \n");
 
     setColor(250, 255, 0);
-    printf("nice <ID> <PRIORITY> \n");
+    fprintf(get_fds()[STDIN],"nice <ID> <PRIORITY> \n");
     setColor(255, 255, 255);
-    printf("--> Changes the process <ID> priority to <PRIORITY> \n");
+    fprintf(get_fds()[STDIN],"--> Changes the process <ID> priority to <PRIORITY> \n");
 
     setColor(250, 255, 0);
-    printf("block <ID> \n");
+    fprintf(get_fds()[STDIN],"block <ID> \n");
     setColor(255, 255, 255);
-    printf("--> Changes the process <ID> state between blocked and ready\n");
+    fprintf(get_fds()[STDIN],"--> Changes the process <ID> state between blocked and ready\n");
 
     setColor(133, 21, 199);
-    printf("registers \n");
+    fprintf(get_fds()[STDIN],"registers \n");
     setColor(255, 255, 255);
-    printf("--> To see the current state of the processor registers, please press CTRL + R\n"); 
+    fprintf(get_fds()[STDIN],"--> To see the current state of the processor registers, please press CTRL + R\n"); 
 }
 
 /*int cat(uint64_t argc, char *argv[]) {
