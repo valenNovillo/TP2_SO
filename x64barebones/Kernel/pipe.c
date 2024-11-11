@@ -11,9 +11,6 @@
 #define MAX_PIPES 2048
 #define WRITER 'w'
 #define READER 'r'
-#define SEM_READ 0
-#define SEM_WRITE 1
-#define SEM_MUTEX 2
 
 
 typedef struct PipeCDT {
@@ -86,9 +83,9 @@ static Pipe init_pipe(){
     new_pipe->reader_pid = -1;
     new_pipe->fd_read = (new_pipe_idx + 2) *2; 
     new_pipe->fd_write = (new_pipe_idx + 2) * 2 + 1;   
-    new_pipe->mutex = my_sem_create(SEM_MUTEX, 1);
-    new_pipe->read = my_sem_create(SEM_READ, 0);
-    new_pipe->write = my_sem_create(SEM_WRITE, BUFF_SIZE);
+    new_pipe->mutex = my_sem_create(new_pipe_idx * 3, 1);
+    new_pipe->read = my_sem_create(new_pipe_idx * 3 + 1, 0);
+    new_pipe->write = my_sem_create(new_pipe_idx * 3 + 2, BUFF_SIZE);
     new_pipe->has_readed = 0;
     new_pipe->has_written = 0;
 
