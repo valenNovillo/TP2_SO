@@ -131,7 +131,9 @@ int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize) {
 
 size_t strlen(const char *cadena) {
     int len = 0;
-    while(cadena[len++] != 0);
+    while(cadena[len] != 0) {
+        len++;
+    }
     return len;
 }
 
