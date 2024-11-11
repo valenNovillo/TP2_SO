@@ -270,7 +270,7 @@ void help(int16_t fds[]) {
 }
 
 int cat(uint64_t argc, char *argv[]) {
-    char buffer[MAX_BUFFER_SIZE];
+    char buffer[MAX_BUFFER_SIZE] = {0};
     int index = 0;
     int c;
     printf("\n");
@@ -322,7 +322,7 @@ int wc(uint64_t argc, char *argv[]) {
 }
 
 int filter(uint64_t argc, char *argv[]) {
-    char buffer[MAX_BUFFER_SIZE];
+    char buffer[MAX_BUFFER_SIZE] = {0};
     int index = 0;
     int c;
 
