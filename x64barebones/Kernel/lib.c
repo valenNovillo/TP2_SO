@@ -5,8 +5,7 @@
 #include "../Drivers/include/videoDriver.h"
 #include "include/pipe.h"
 
-void * memset(void * destination, int32_t c, uint64_t length)
-{
+void * memset(void * destination, int32_t c, uint64_t length){
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
 
@@ -16,8 +15,7 @@ void * memset(void * destination, int32_t c, uint64_t length)
 	return destination;
 }
 
-void * memcpy(void * destination, const void * source, uint64_t length)
-{
+void * memcpy(void * destination, const void * source, uint64_t length){
 	/*
 	* memcpy does not support overlapping buffers, so always do it
 	* forwards. (Don't change this without adjusting memmove.)
@@ -34,16 +32,14 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	if ((uint64_t)destination % sizeof(uint32_t) == 0 &&
 		(uint64_t)source % sizeof(uint32_t) == 0 &&
-		length % sizeof(uint32_t) == 0)
-	{
+		length % sizeof(uint32_t) == 0){
 		uint32_t *d = (uint32_t *) destination;
 		const uint32_t *s = (const uint32_t *)source;
 
 		for (i = 0; i < length / sizeof(uint32_t); i++)
 			d[i] = s[i];
 	}
-	else
-	{
+	else{
 		uint8_t * d = (uint8_t*)destination;
 		const uint8_t * s = (const uint8_t*)source;
 
@@ -55,27 +51,27 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 }
 
 
-int intToString(int n, char* s) {
+int intToString(int n, char* s){
     int i  = 0;
     char flag = 0; //se usará para indicar si el número es negativo.
 
-    if(n < 0)
+    if(n < 0){
         flag = 1;//prendo el flag para indicar que el nro es negativo
-
+    }    
     do{
         s[i++] = n % 10 + '0';  //adds ASCII value
         n = n / 10;
     }while(n != 0);
 
 
-    if(flag) { //Si flag es 1 (es decir, si el número original era negativo), añade un carácter '-' a s y avanza i.
+    if(flag){ //Si flag es 1 (es decir, si el número original era negativo), añade un carácter '-' a s y avanza i.
         s[i++] = '-';
     }
 
     s[i]='\0';//Añade un carácter nulo '\0' al final de s para terminar la cadena.
 
     //Invierte la cadena s
-    for (int j = 0; j < (i/2); j++) {
+    for (int j = 0; j < (i/2); j++){
         char temp = s[j];
         s[j] = s[i-j-1];
         s[i - j - 1] = temp;
@@ -86,10 +82,10 @@ int intToString(int n, char* s) {
 
 
 // Función para invertir una cadena de caracteres
-void reverseString(char* str, int length) {
+void reverseString(char* str, int length){
     int start = 0;
     int end = length - 1;
-    while (start < end) {
+    while (start < end){
         char temp = str[start];
         str[start] = str[end];
         str[end] = temp;
@@ -99,13 +95,13 @@ void reverseString(char* str, int length) {
 }
 
 // Función para convertir un número decimal a hexadecimal
-int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize) {
+int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize){
     const char hexDigits[] = "0123456789ABCDEF";
     int index = 0;
 
     // Manejar el caso cuando el número es 0
-    if (decimal == 0) {
-        if (bufferSize > 1) {
+    if (decimal == 0){
+        if (bufferSize > 1){
             buffer[index++] = '0';
         }
         buffer[index] = '\0';
@@ -113,7 +109,7 @@ int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize) {
     }
 
     // Convertir el número decimal a hexadecimal
-    while (decimal != 0 && index < bufferSize - 1) {
+    while (decimal != 0 && index < bufferSize - 1){
         int remainder = decimal % 16;
         buffer[index++] = hexDigits[remainder];
         decimal /= 16;
@@ -129,9 +125,9 @@ int decimalToHexadecimal(uint64_t decimal, char* buffer, int bufferSize) {
     return index;
 }
 
-size_t strlen(const char *cadena) {
+size_t strlen(const char *cadena){
     int len = 0;
-    while(cadena[len] != 0) {
+    while(cadena[len] != 0){
         len++;
     }
     return len;
@@ -147,7 +143,7 @@ int count_args(void **array){
 }
 
 ssize_t write(int16_t fd, char* buff, uint64_t count){
-      if (fd == STDOUT || fd == STDERR) {
+      if (fd == STDOUT || fd == STDERR){
         putString(fd, buff, count);
     }else if(fd > STDERR){
         return write_on_file(fd, buff, count);

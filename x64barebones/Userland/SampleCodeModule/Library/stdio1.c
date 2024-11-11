@@ -2,28 +2,28 @@
 
 void intToString(int n, char* s);
 
-static int get_char_fd(int16_t fd) {
+static int get_char_fd(int16_t fd){
     char c = 0;
     int count = 0;
     count = read(fd, &c, 1);
     return count == 1 ? c : -1;
 }
 
-static int put_char_fd(int16_t fd, int ch) {
+static int put_char_fd(int16_t fd, int ch){
     int n;
     n = write(fd, &ch, 1);
     return n == -1 ? -1 : (unsigned char)ch;
 }
 
-int getChar() {
+int getChar(){
     return get_char_fd(get_fds()[STDIN]);
 }
 
-int putChar(int ch) {
+int putChar(int ch){
     return put_char_fd(get_fds()[STDOUT], ch);
 }
 
-int vfscanf(int16_t* fd, char* format, va_list args) {
+int vfscanf(int16_t* fd, char* format, va_list args){
 
     int readChars = 0;
     int length;
@@ -34,7 +34,7 @@ int vfscanf(int16_t* fd, char* format, va_list args) {
 
     int i = 0;
     while( format[i] != 0 ){
-        if( format[i] == '%') {
+        if( format[i] == '%'){
             i++;
 
             length = readByDelim(fd, buffer, 100, '\n');
@@ -43,7 +43,7 @@ int vfscanf(int16_t* fd, char* format, va_list args) {
 
             put_char_fd(fd[STDOUT], ' ');
 
-            switch (format[i]) {
+            switch (format[i]){
                 case 'd':
                     argD = va_arg(args, int*);
                     *argD = 0;
@@ -65,14 +65,14 @@ int vfscanf(int16_t* fd, char* format, va_list args) {
     return readChars;//retorna la cantidad de caracteres leídos
 }
 
-static void vfprintf(int16_t fd, char *string, va_list argPointer) {
+static void vfprintf(int16_t fd, char *string, va_list argPointer){
     int i = 0;
-    while (string[i] != 0) {
-        if (string[i] == '%') {
+    while (string[i] != 0){
+        if (string[i] == '%'){
             char buffInt[20];
             char *str;
 
-            switch (string[i + 1]) {
+            switch (string[i + 1]){
                 case 'd':
                     intToString(va_arg(argPointer, int), buffInt);
                     vfprintf(fd, buffInt, argPointer);
@@ -83,8 +83,8 @@ static void vfprintf(int16_t fd, char *string, va_list argPointer) {
                     break;
             }
             i += 2;
-        } else if (string[i] == '\\') {
-            switch (string[i + 1]) {
+        } else if (string[i] == '\\'){
+            switch (string[i + 1]){
                 case 'n':
                     put_char_fd(fd, '\n');
                     break;
@@ -96,13 +96,13 @@ static void vfprintf(int16_t fd, char *string, va_list argPointer) {
                     break;
             }
             i += 2;
-        } else {
+        } else{
             put_char_fd(fd, string[i++]);
         }
     }
 }
 
-int scanf1(char* format, ...) {
+int scanf1(char* format, ...){
     va_list argPointer;
     va_start(argPointer, format);
     int cant = vfscanf(get_fds(), format, argPointer);
@@ -110,14 +110,14 @@ int scanf1(char* format, ...) {
     return cant;
 }
 
-void fprintf(int16_t fd, char *string, ...) {
+void fprintf(int16_t fd, char *string, ...){
     va_list argPointer;
     va_start(argPointer, string);
     vfprintf(fd, string, argPointer);
     va_end(argPointer);
 }
 
-void printf(char *string, ...) {
+void printf(char *string, ...){
     va_list argPointer;
     va_start(argPointer, string);
     vfprintf(get_fds()[STDOUT], string, argPointer);
@@ -125,7 +125,7 @@ void printf(char *string, ...) {
 }
 
 
-void printErr(char * buff, ...) {
+void printErr(char * buff, ...){
     va_list argPointer;
     va_start(argPointer, buff);
     vfprintf(get_fds()[STDERR], buff, argPointer);
@@ -133,7 +133,7 @@ void printErr(char * buff, ...) {
 }
 
 
-int readByDelim(int16_t* fd, char * buff, int count, char delim) {
+int readByDelim(int16_t* fd, char * buff, int count, char delim){
 
     int i = 0; //para contabilizar los caracteres leidos
     char c; //para almacenar el caracter leido
@@ -164,7 +164,7 @@ int readByDelim(int16_t* fd, char * buff, int count, char delim) {
     return i; //Retornamos el numero de caracteres copiados en el buffer
 }
 
-void intToString(int n, char* s) {
+void intToString(int n, char* s){
     int i  = 0;
     char flag = 0; //se usará para indicar si el número es negativo.
 
@@ -177,32 +177,32 @@ void intToString(int n, char* s) {
     }while(n != 0);
 
 
-    if(flag) { //Si flag es 1 (es decir, si el número original era negativo), añade un carácter '-' a s y avanza i.
+    if(flag){ //Si flag es 1 (es decir, si el número original era negativo), añade un carácter '-' a s y avanza i.
         s[i++] = '-';
     }
 
     s[i]='\0';//Añade un carácter nulo '\0' al final de s para terminar la cadena.
 
     //Invierte la cadena s
-    for (int j = 0; j < (i/2); j++) {
+    for (int j = 0; j < (i/2); j++){
         char temp = s[j];
         s[j] = s[i-j-1];
         s[i - j - 1] = temp;
     }
 }
 
-int stringToInt(char* str) {
+int stringToInt(char* str){
     int result = 0;     // Almacenará el número resultante
     int sign = 1;       // Para manejar números negativos
 
     // Si el primer carácter es un signo negativo, ajustamos el signo
-    if (*str == '-') {
+    if (*str == '-'){
         sign = -1;
         str++; // Avanzamos al siguiente carácter
     }
 
     // Recorremos cada carácter de la cadena
-    while (*str != '\0') {
+    while (*str != '\0'){
         // Aseguramos que el carácter sea un dígito
         if (*str < '0' || *str > '9') {
             return 0; // Si encontramos un carácter no válido, devolvemos 0

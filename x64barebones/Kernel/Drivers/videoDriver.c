@@ -32,7 +32,7 @@ static void updateX();
 
 // ========================================================================================================================
 
-struct vbe_mode_info_structure {
+struct vbe_mode_info_structure{
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
 	uint8_t window_a;			// deprecated
 	uint8_t window_b;			// deprecated
@@ -88,7 +88,7 @@ Color backgroundColor = {0, 0, 0};
 Color fontColor = {255, 255, 255};
 
 
-void putPixel(Color hexColor, uint64_t x, uint64_t y) {
+void putPixel(Color hexColor, uint64_t x, uint64_t y){
     Color * framebuffer = (Color *)(uint64_t) VBE_mode_info->framebuffer;
     uint64_t offset = x + y * VBE_mode_info->width;
     framebuffer[offset] = hexColor;
@@ -127,24 +127,23 @@ void putChar(char letter, Color fontColor, Color fontBackColor)
 		}
 }
 
-void putLetter(unsigned char letter, int posX, int posY, Color fontColor, Color fontBackColor)
-{
+void putLetter(unsigned char letter, int posX, int posY, Color fontColor, Color fontBackColor){
 	char * letterBitmap = font8x8_basic[letter];
 	char mask[BITMAP_SIZE] = {1,2,4,8,16,32,64,128}; 
-	for(int row=0; row<BITMAP_SIZE; row++) 
-	{
-		for(int col=0; col<BITMAP_SIZE; col++) // recorro los bits de cada hexa para hacer masks distintas
-		{
+	for(int row=0; row<BITMAP_SIZE; row++){
+		for(int col=0; col<BITMAP_SIZE; col++){ // recorro los bits de cada hexa para hacer masks distintas
 			char current = (letterBitmap[row] & mask[col]); // aplico la mascara para cada bit
-				if(current != 0)
+				if(current != 0){
 					scalePixel(fontColor, posX + col * size,  posY + row * size);
-				else
+				}
+				else{
 					scalePixel(fontBackColor, posX + col * size, posY + row * size);
+				}
 		}
 	}
 }
 
-int putString(uint64_t fd, char * string, int length) {
+int putString(uint64_t fd, char * string, int length){
 
 	Color aux = fontColor;
 
@@ -164,7 +163,7 @@ int putString(uint64_t fd, char * string, int length) {
 	return i;
 }
 
-void addLine() {
+void addLine(){
 	currentX = 0;		//reseteo la pos en x ---> vuelvo al comienzo de linea
 	if(currentY + size*BITMAP_SIZE*2 >= VBE_mode_info->height)	//si al agregar una linea me estoy pasando del largo de la pantalla entonces "scrolleo" una linea
 		scrollPixel(size*BITMAP_SIZE);
@@ -172,7 +171,7 @@ void addLine() {
 		currentY += (size*BITMAP_SIZE);	//me desplazo en el eje y una linea
 }
 
-void deleteChar() {
+void deleteChar(){
 	if(currentX != 0) {
 		currentX -= size*BITMAP_SIZE;
 	} else { 	//currentX==0 --> estoy al comienzo de la linea
@@ -191,11 +190,11 @@ void updateX()
 		addLine();
 } 
 
-void setColor(Color c) {
+void setColor(Color c){
 	fontColor = c;
 }
 
-void printRegs(REGISTERS r) {
+void printRegs(REGISTERS r){
 	char buff[BUFFERSIZE];
 	int length;
 
@@ -295,11 +294,11 @@ void printRegs(REGISTERS r) {
     putString(1,"\n", 1);
 }
 
-void scalePixel(Color hexColor, int x, int y) {
+void scalePixel(Color hexColor, int x, int y){
 	printSquare(hexColor, x, y, size);
 }
 
-void printSquare(Color hexColor, int x, int y, int length) {
+void printSquare(Color hexColor, int x, int y, int length){
 	for(int i=0; i<length; i++)
 	{
 		for(int j=0; j<length; j++)
@@ -309,7 +308,7 @@ void printSquare(Color hexColor, int x, int y, int length) {
 	}
 }
 
-void scrollPixel(int k) {
+void scrollPixel(int k){
     Color * framebuffer = (Color *)((uint64_t) VBE_mode_info->framebuffer);
     uint64_t offset = 0;
     for (int i = 0 ; i < VBE_mode_info->height - k ; i++) {
@@ -327,34 +326,34 @@ void scrollPixel(int k) {
     }
 }
 
-void cleanScreen() {
+void cleanScreen(){
 	scrollPixel(VBE_mode_info->height);
 	currentX = 0;
 	currentY = 0;
 }
 
-void setSize(int newSize) {
+void setSize(int newSize){
 	size = newSize;
 	cleanScreen();
 }
 
-void sizeInc() {
+void sizeInc(){
 	setSize(size+UPDATE_SIZE);
 }
 
-void sizeDec() {
+void sizeDec(){
 	int aux = size - UPDATE_SIZE;
 	if(aux >= 1)
 		setSize(aux);
 }
 
-void save() {
+void save(){
 	memcpy((void *)colorBackUp, (const void *) ((uint64_t)VBE_mode_info->framebuffer), (uint64_t) sizeof(Color) * VBE_mode_info->height * VBE_mode_info->width);
     previousX = currentX;
     previousY = currentY;
 }
 
-void load() {
+void load(){
     memcpy((void *) ((uint64_t)VBE_mode_info->framebuffer),(const void *) colorBackUp, (uint64_t)sizeof(Color) * VBE_mode_info->height * VBE_mode_info->width);
     currentX = previousX;
     currentY = previousY;

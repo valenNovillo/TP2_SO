@@ -2,14 +2,14 @@
 #include "include/memoryManager.h"
 #include "include/processes.h"
 
-typedef struct LinkedListCDT {
+typedef struct LinkedListCDT{
     int len;
     Node *current;
     Node *first;
     Node *last;
 } LinkedListCDT;
 
-LinkedList createLinkedList() {
+LinkedList createLinkedList(){
     LinkedList list = my_malloc(sizeof(LinkedListCDT));
     list->len = 0;
     list->current = NULL;
@@ -18,13 +18,13 @@ LinkedList createLinkedList() {
     return list;
 }
 
-void queue(LinkedList list, Node *node) {
-    if (list->len == 0) {
+void queue(LinkedList list, Node *node){
+    if (list->len == 0){
         list->first = node;
         list->last = node;
         node->prev = NULL;
         node->next = NULL;
-    } else {
+    } else{
         node->prev = list->last;
         node->next = NULL;
         list->last->next = node;
@@ -33,13 +33,13 @@ void queue(LinkedList list, Node *node) {
     list->len++;
 }
 
-void push(LinkedList list, Node *node) {
-    if (list->len == 0) {
+void push(LinkedList list, Node *node){
+    if (list->len == 0){
         list->first = node;
         list->last = node;
         node->prev = NULL;
         node->next = NULL;
-    } else {
+    } else{
         node->next = list->first;
         node->prev = NULL;
         list->first->prev = node;
@@ -49,16 +49,18 @@ void push(LinkedList list, Node *node) {
 }
 
 void remove(LinkedList list, Node *node){
-    if (list==NULL || node == NULL || list->len == 0) return;
+    if (list==NULL || node == NULL || list->len == 0){ 
+        return;
+    }
 
     if(node->prev != NULL){
         node->prev->next = node->next;
-    } else {
+    } else{
         list->first = node->next;
     }
     if (node->next != NULL){
         node->next->prev = node->prev;
-    } else {
+    } else{
         list->last = node->prev;
     }
 
@@ -67,8 +69,8 @@ void remove(LinkedList list, Node *node){
 
 #include <stdlib.h>
 
-void* dequeue(LinkedList list) {
-    if (list->len == 0) {
+void* dequeue(LinkedList list){
+    if (list->len == 0){
         return NULL;
     }
 
@@ -78,9 +80,9 @@ void* dequeue(LinkedList list) {
 
     list->first = firstNode->next;
 
-    if (list->first == NULL) {
+    if (list->first == NULL){
         list->last = NULL;
-    } else {
+    } else{
         list->first->prev = NULL;
     }
 
@@ -91,7 +93,7 @@ void* dequeue(LinkedList list) {
 }
 
 
-int isEmpty(LinkedList list) {
+int isEmpty(LinkedList list){
     if(list == NULL) return 0;
 
     return list->len == 0;
@@ -103,13 +105,13 @@ int getLength(LinkedList list){
     return list->len;
 }
 
-void startIterator(LinkedList list) {
+void startIterator(LinkedList list){
     if(list == NULL) return;
 
     list->current = list->first;
 }
 
-int listHasNext(LinkedList list) {
+int listHasNext(LinkedList list){
     if(list == NULL) return 0;
 
     return list->current != NULL;
@@ -125,7 +127,7 @@ void *listNext(LinkedList list){
 }
 
 
-void freeList(LinkedList list) {
+void freeList(LinkedList list){
     if(list == NULL) return;
 
     while(listHasNext(list)){
@@ -136,4 +138,16 @@ void freeList(LinkedList list) {
     my_free(list);
 }
 
+uint8_t listConcatenate(LinkedList from, LinkedList to){
+    if (from == NULL || to == NULL){
+        return -1;
+    }
+
+    if (isEmpty(from)){
+        to->first = from->first;
+    }
+
+    to->last = from->first;
+    return 0;
+}
 

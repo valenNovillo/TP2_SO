@@ -100,15 +100,15 @@ void keyboardHandler(uint64_t infoRegs){
     REGISTERS * regsPointer = (REGISTERS *) infoRegs;
 
     int key = keyPress();
-    if (key==ALT_SCAN) {
+    if (key==ALT_SCAN){
          // ctrl pressed or realised
-    } else if (key == LEFT_CTRL_PRESSED || key == LEFT_CTRL_RELASED) {
+    } else if (key == LEFT_CTRL_PRESSED || key == LEFT_CTRL_RELASED){
         ctrl_enabled =! ctrl_enabled;
     } else if(key== RIGHT_SHIFT_PRESS || key == RIGHT_SHIFT_RELEASE || key == LEFT_SHIFT_PRESS || key == LEFT_SHIFT_RELEASE){
         shift_enabled=!shift_enabled;
     }else if(key==BLOQ_MAYUSQ){
         bloqMayusq_enabled = !bloqMayusq_enabled;
-    } else if (ctrl_enabled) {
+    } else if (ctrl_enabled){
         if(key == 0x13){ //CTRL+R
              save();
         cleanScreen();
@@ -133,7 +133,7 @@ void keyboardHandler(uint64_t infoRegs){
             putString(STDOUT, "^D\n", 3);
             check_waiting_someone();
         }
-    } else if (reading && key <= 0x53) {
+    } else if (reading && key <= 0x53){
         buffer[writeIdx] = getStringFromCode(key);
         writeIdx = (writeIdx+1)%SIZE_BUFF;
         check_waiting_someone();
@@ -150,7 +150,7 @@ int next(){
 
 
 char hasNext(){
-    if (!(readIdx != writeIdx)) {
+    if (!(readIdx != writeIdx)){
         set_state(get_foreground_pid(), BLOCKED);
     }
     return readIdx != writeIdx;
@@ -159,7 +159,7 @@ char hasNext(){
 
 int fillBuf(char * buf, int count) {
     int i;
-    for(i = 0; (i < count) && hasNext(); i++) { 
+    for(i = 0; (i < count) && hasNext(); i++){ 
         buf[i] = next();
         if(buf[i] == EOF){ 
             break;
@@ -170,8 +170,9 @@ int fillBuf(char * buf, int count) {
 
 
 unsigned char setReading(unsigned char flag) {
-    if (flag != 0 && flag != 1) 
+    if (flag != 0 && flag != 1){ 
         return -1;
+    }
     reading = flag;
     return reading;
 }

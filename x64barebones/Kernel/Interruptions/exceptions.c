@@ -4,7 +4,7 @@
 #include "../Drivers/include/timeDriver.h"
 #include "../Drivers/include/keyBoardDriver.h"
 
-static void zero_division() {
+static void zero_division(){
 	putString(2, "\nZero Division Exception.\nCurrent state of registers:\n\n", 55);
 }
 
@@ -14,7 +14,7 @@ static void invalid_opcode(){
 
 static void (*exception_handlers[])() = {zero_division, invalid_opcode};
 
-void exceptionDispatcher(int exception, uint64_t infoRegs) {
+void exceptionDispatcher(int exception, uint64_t infoRegs){
 	if (exception >= sizeof(exception_handlers) / sizeof(exception_handlers[0])) 
             return;
 	

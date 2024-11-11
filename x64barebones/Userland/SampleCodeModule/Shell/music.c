@@ -1,7 +1,7 @@
 #include "include/music.h"
 #include "../Library/include/unistd1.h"
 
-static void playHimnoArgentino() {
+static void playHimnoArgentino(){
     // Oid
     beep(392, 500);  // G4
     beep(392, 500);  // G4
@@ -35,7 +35,7 @@ static void startUpMusic(){
     beep(880,500);
 }
 
-static void mario() {
+static void mario(){
     // Mario Theme snippet
     beep(660, 100);  // E5
     beep(660, 100);  // E5
@@ -51,7 +51,7 @@ static void mario() {
     // Repeat for a loop
 }
 
-static void playHappyBirthday() {
+static void playHappyBirthday(){
     // Feliz
     beep(264, 250);  // C4
     beep(264, 250);  // C4
@@ -86,7 +86,7 @@ static void playHappyBirthday() {
     beep(352, 1000); // F4
 }
 
-static void playArrorroMiNino() {
+static void playArrorroMiNino(){
     // Arrorró
     beep(262, 500);  // C4
     beep(294, 500);  // D4
@@ -118,7 +118,7 @@ static void playArrorroMiNino() {
     beep(262, 1000); // C4
 }
 
-static void playSmokeOnTheWater() {
+static void playSmokeOnTheWater(){
     int short_duration = 500; // Duración corta en milisegundos
     int long_duration = 1000; // Duración larga en milisegundos
     
@@ -154,7 +154,7 @@ static void playSmokeOnTheWater() {
     beep(392, long_duration);   // G4
 }
 
-static void playSevenNationArmy() {
+static void playSevenNationArmy(){
     int duration = 400; // Duración en milisegundos
 
     // Seven Nation Army riff
@@ -179,7 +179,7 @@ static void playSevenNationArmy() {
 }
 
 
-static void gameMusic() {
+static void gameMusic(){
     beep(523, 250); // C5
     beep(587, 250); // D5
     beep(659, 250); // E5
@@ -209,8 +209,8 @@ static void (*songsArray[])() = {
     gameMusic
     };
 
-void musicDispatcher(int song) {
-    if (song >= sizeof(songsArray) / sizeof(songsArray[0])) {
+void musicDispatcher(int song){
+    if (song >= sizeof(songsArray) / sizeof(songsArray[0])){
             return;
     }
         

@@ -6,24 +6,24 @@
 #include "./include/lib.h"
 #include <stddef.h>
 
-int loop(uint64_t argc, char *argv[]) {
+int loop(uint64_t argc, char *argv[]){
     int pid = get_pid(); 
 
-    while (1) {
+    while (1){
         printf("\nHi! I'm process %d and I'll be looping every %d seconds\n", pid, SLEEP_TIME/1000);
         sleep(SLEEP_TIME);  
     }
 }
 
-void kill(int16_t fds[], char *argv[]) {
-    if (argv[0] == NULL) {
+void kill(int16_t fds[], char *argv[]){
+    if (argv[0] == NULL){
         printf("\nPlease specify a process ID to kill.\n");
         return;
     }
 
     int pid = stringToInt(argv[0]); 
 
-    if(kill_process(pid) < 0) {
+    if(kill_process(pid) < 0){
         printf("\nCould not kill process %d.\n", pid);
         return;
     }
@@ -31,13 +31,13 @@ void kill(int16_t fds[], char *argv[]) {
     printf("\nProcess %d has been killed.\n", pid);
 }
 
-void nice(int16_t fds[], char *argv[]) {
-    if (argv[0] == NULL) {
+void nice(int16_t fds[], char *argv[]){
+    if (argv[0] == NULL){
         printf("\nPlease specify the process ID you want to change its priority.\n");
         return;
     }
 
-    if (argv[1] == NULL) {
+    if (argv[1] == NULL){
         printf("\nPlease specify the new PRIORITY you want to set.\n");
         return;
     }
@@ -45,17 +45,17 @@ void nice(int16_t fds[], char *argv[]) {
     int pid = stringToInt(argv[0]); 
     int priority = stringToInt(argv[1]); 
 
-    if(stringToInt(argv[0]) == SHELL_PID) {
+    if(stringToInt(argv[0]) == SHELL_PID){
         printf("\nCould not change process %d priority to %d.\n", pid , priority);
         return;
     }
 
-     if(stringToInt(argv[0]) == DEFAULT) {
+     if(stringToInt(argv[0]) == DEFAULT){
         printf("\nCould not change process %d priority to %d.\n", pid, priority);
         return;
     }
 
-    if(set_priority(pid, priority) < 0) {
+    if(set_priority(pid, priority) < 0){
         printf("\nCould not change process %d priority to %d.\n", pid, priority);
         return;
     }
@@ -63,7 +63,7 @@ void nice(int16_t fds[], char *argv[]) {
     printf("\nProcess %d now has priority %d.\n", pid, priority);
 }
 
-void block(int16_t fds[],char *argv[]) {
+void block(int16_t fds[],char *argv[]){
     if (argv[0] == NULL) {
         printf("\nPlease specify the process ID you want to change its state\n");
         return;
@@ -71,7 +71,7 @@ void block(int16_t fds[],char *argv[]) {
 
     int pid = stringToInt(argv[0]); 
     
-    if(stringToInt(argv[0]) == SHELL_PID) {
+    if(stringToInt(argv[0]) == SHELL_PID){
         printf("\nCould not change process %d state\n", pid);
         return;
     }
@@ -79,16 +79,16 @@ void block(int16_t fds[],char *argv[]) {
     PState state = get_state(pid);
     int ret = 0;
 
-    if(state == BLOCKED) {
+    if(state == BLOCKED){
         ret = unblock_process(pid);
-    } else if (state == READY || state == RUNNING) {
+    } else if (state == READY || state == RUNNING){
         ret = block_process(pid);
-    } else {
+    } else{
         printf("\nCould not change process %d state\n", pid);
         return;
     } 
 
-    if(ret == -1) {
+    if(ret == -1){
         printf("\nCould not change process %d state\n", pid);
         return;
     }
@@ -98,7 +98,7 @@ void block(int16_t fds[],char *argv[]) {
     printf("\nProcess %d changed to state %s \n", pid, new_state == BLOCKED ? "BLOCKED" : (new_state == READY ? "READY" : "RUNNING"));
 }
 
-int play_song(uint64_t argc, char *argv[]) {
+int play_song(uint64_t argc, char *argv[]){
     printf("\n\n");
     printf("Choose a song by number:\n\n");
 
@@ -123,7 +123,7 @@ int play_song(uint64_t argc, char *argv[]) {
 
     int song;
     scanf1("%d",&song);
-    if(song<0 || song>=MAX_SONGS) {
+    if(song<0 || song>=MAX_SONGS){
         printf("\n\nPlease choose a valid song.\n\n");
         return -1;
     }
@@ -131,20 +131,20 @@ int play_song(uint64_t argc, char *argv[]) {
     return 0;
 }
 
-int play_eliminator(uint64_t argc, char *argv[]) {
+int play_eliminator(uint64_t argc, char *argv[]){
     reading(0);
     eliminator();
     reading(1);
     return 0;
 }
 
-void time(int16_t fds[]) {
+void time(int16_t fds[]){
     char time[10];
     getTime(time);
     fprintf(fds[STDOUT],"\n\n%s\n", time);
 }
 
-void help(int16_t fds[]) {
+void help(int16_t fds[]){
     fprintf(fds[STDOUT],"\n");
     fprintf(fds[STDOUT],"The available commands are:\n");
 
@@ -263,13 +263,18 @@ void help(int16_t fds[]) {
     setColor(255, 255, 255);
     fprintf(fds[STDOUT],"--> Filter vocals of input \n");
 
+    setColor(250, 255, 0);
+    fprintf(fds[STDOUT],"philosophers \n");
+    setColor(255, 255, 255);
+    fprintf(fds[STDOUT],"--> Simulates the philosofers problem \n");
+
     setColor(133, 21, 199);
     fprintf(fds[STDOUT],"registers \n");
     setColor(255, 255, 255);
     fprintf(fds[STDOUT],"--> To see the current state of the processor registers, please press CTRL + R\n"); 
 }
 
-int cat(uint64_t argc, char *argv[]) {
+int cat(uint64_t argc, char *argv[]){
     char buffer[MAX_BUFFER_SIZE] = {0};
     int index = 0;
     int c;
@@ -279,18 +284,15 @@ int cat(uint64_t argc, char *argv[]) {
             buffer[index++] = c;
         }
         printf("%s\n", buffer);
-    } else {
-        while ((c = getChar()) != EOF)
-        {
-            if (c == '\n')
-            {
+    } else{
+        while ((c = getChar()) != EOF){
+            if (c == '\n'){
                 printf("\n");
                 buffer[index] = '\0';
                 printf("%s\n", buffer);
                 index = 0;
             }
-            else if (index < MAX_BUFFER_SIZE - 1)
-            {
+            else if (index < MAX_BUFFER_SIZE - 1){
                 putChar(c);
                 buffer[index++] = c;
             }
@@ -301,18 +303,18 @@ int cat(uint64_t argc, char *argv[]) {
     return 0;
 }
 
-int wc(uint64_t argc, char *argv[]) {
+int wc(uint64_t argc, char *argv[]){
     char c;
     int lines = 0;
     printf("\n");
     
     char pipe_flag = (get_fds()[STDIN] == STDIN);
 
-    while ((c = getChar()) != EOF) {
+    while ((c = getChar()) != EOF){
         if(pipe_flag){
             putChar(c);
         }
-        if (c == '\n') {
+        if (c == '\n'){
             lines++;
         }
     }
@@ -321,7 +323,7 @@ int wc(uint64_t argc, char *argv[]) {
     return 0;
 }
 
-int filter(uint64_t argc, char *argv[]) {
+int filter(uint64_t argc, char *argv[]){
     char buffer[MAX_BUFFER_SIZE] = {0};
     int index = 0;
     int c;
@@ -330,27 +332,27 @@ int filter(uint64_t argc, char *argv[]) {
     if(get_fds()[STDIN] != STDIN){
         while ((c = getChar()) != EOF){
             if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
-                c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U') {
+                c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U'){
                 buffer[index++] = c; 
             }
         }
         printf("%s\n", buffer);
     } else {
-        while ((c = getChar()) != EOF) {
+        while ((c = getChar()) != EOF){
             if (c == '\n') {
                 printf("\n");  
                 buffer[index] = '\0';      
-                for (int i = 0; i < index; i++) {
+                for (int i = 0; i < index; i++){
                     char ch = buffer[i];
                     if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u' &&
-                        ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U') {
+                        ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U'){
                         putChar(ch);  
                     }
                 }
                 printf("\n");  
 
                 index = 0; 
-            } else if (index < MAX_BUFFER_SIZE - 1) {
+            } else if (index < MAX_BUFFER_SIZE - 1){
                 putChar(c);  
                 buffer[index++] = c;  
             }

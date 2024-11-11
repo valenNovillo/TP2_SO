@@ -64,7 +64,7 @@ unsigned char black[] = {0, 0, 0};
 unsigned char green[] = {0, 255, 0};
 unsigned char blue[] = {255, 0, 0};
 
-void eliminator() {
+void eliminator(){
     playing = PLAYING;
     score1 = 0;
     score2 = 0;
@@ -79,7 +79,7 @@ void eliminator() {
     cleanScreen();
     initialIndication();
     cleanScreen();
-    while(playing) {
+    while(playing){
         if(players == 1)
             player1Mode();
         else
@@ -88,27 +88,26 @@ void eliminator() {
     cleanScreen();
 }
 
-void intro() {
+void intro(){
     printf("\n\n\n\n\n\n\n\n\n");
     printf("                     WELCOME TO ELIMINATOR!\n");
     musicDispatcher(MARIO);
     cleanScreen();
 }
 
-void choosePlayerMode() {
+void choosePlayerMode(){
     printf("\nSelect the player mode:\n\n");
     printf("\nPress 1 to enter single player mode\n\n");
     printf("\nPress 2 to enter two player mode\n\n");
     scanf1("%d", &players);
-    while(players != 1 && players != 2) { 
+    while(players != 1 && players != 2){ 
         printf("\n\nPlease press 1 (one player) or 2 (two players)\n\n");
         scanf1("%d", &players);
     }
     printf("\n\n%d player/s mode selected\n\n", players);
 }
 
-void setLevel()
-{
+void setLevel(){
     printf("\nChoose level 1, 2 or 3 (3 is the most difficult level):\n\n");
     scanf1("%d", &level);
     while(level != 1 && level != 2 && level != 3) { 
@@ -118,7 +117,7 @@ void setLevel()
     printf("\n\nlevel %d chosen\n\n", level); 
 }
 
-static void fillMatrix() {
+static void fillMatrix(){
     for(int i = 0; i < MAPHEIGHT; i++)
     {
         for(int j = 0; j < MAPWIDTH; j++)
@@ -130,7 +129,7 @@ static void fillMatrix() {
     return;
 }
 
-void initialIndication() {
+void initialIndication(){
     printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     printf(" \t\t\t\t\tPRESS 'SPACE' TO START\n");
     printf(" \t\t\t\t\tOR PRESS 'ENTER' TO QUIT");
@@ -139,7 +138,7 @@ void initialIndication() {
     return;
 };
 
-void player1Mode() {
+void player1Mode(){
     playing = 1;
     printBorder();
     Direction current1 = DOWN;
@@ -147,7 +146,7 @@ void player1Mode() {
     Position playerPos = {STARTING_1_X, STARTING_1_Y};
     char colision = 0;
     reading(1);
-    while (!colision) {
+    while (!colision){
         speedLoop(speed[level-1]);
         char key;
         read(0, &key, 1);
@@ -158,7 +157,7 @@ void player1Mode() {
     gameOver();
 }
 
-void player2Mode() {
+void player2Mode(){
     playing = 1;
     printBorder();
     Direction current1 = DOWN;
@@ -170,7 +169,7 @@ void player2Mode() {
     char colision1 = 0;
     char colision2 = 0;
     reading(1);
-    while (!colision1 && !colision2) {
+    while (!colision1 && !colision2){
         speedLoop(speed[level-1]);
         char key;
 
@@ -188,10 +187,10 @@ void player2Mode() {
     gameOver();
 }
 
-void updateCurrent1(Direction * current, char key) {
-    switch (key) {
+void updateCurrent1(Direction * current, char key){
+    switch (key){
             case LEFT_ARROW_1: {
-                if (*current != RIGHT) {
+                if (*current != RIGHT){
                     *current = LEFT;
                 }
                 break;
@@ -219,7 +218,7 @@ void updateCurrent1(Direction * current, char key) {
         }
 }
 
-void updateCurrent2(Direction * current, Direction * current2, char key) {
+void updateCurrent2(Direction * current, Direction * current2, char key){
     switch (key) {
             case LEFT_ARROW_1: {
                 if (*current != RIGHT) {
@@ -274,9 +273,8 @@ void updateCurrent2(Direction * current, Direction * current2, char key) {
         }
 }
 
-void updatePosition(Direction * current, Position * playerPos, char * colision, unsigned char color[]) {
-    switch (*current)
-        {
+void updatePosition(Direction * current, Position * playerPos, char * colision, unsigned char color[]){
+    switch (*current){
             case RIGHT: {
                 *colision = gameMap[playerPos->y][playerPos->x +1];
                 playerPos->x += 1;
@@ -303,42 +301,39 @@ void updatePosition(Direction * current, Position * playerPos, char * colision, 
 }
 
 
-void printShape(unsigned char color[3], int x, int y) {
+void printShape(unsigned char color[3], int x, int y){
     gameMap[y][x] = 1;
     printSquare(color, x * SQUARELENGTH, y * SQUARELENGTH, SQUARELENGTH);
 }
 
 
-void printBorder() {
-    for(int i=0; i < MAPWIDTH; i++) {
+void printBorder(){
+    for(int i=0; i < MAPWIDTH; i++){
         speedLoop(speed[level-1]);
         printShape(red, i, 0);
         printShape(red, i, MAPHEIGHT-1);
     }
-    for(int i=0; i<MAPHEIGHT; i++) {
+    for(int i=0; i<MAPHEIGHT; i++){
         speedLoop(speed[level-1]);
         printShape(red, 0, i);
         printShape(red, MAPWIDTH-1, i);
     }
 }
 
-void setPlaying()
-{
+void setPlaying(){
     reading(1);
     int c = getChar(); 
-    while(c != START && c != ENTER) {
+    while(c != START && c != ENTER){
             c = getChar(); 
         }
      
-     if(c == START)
-        {
+     if(c == START){
             cleanScreen();
             fillMatrix();
             playing = 1;
             return;
         }
-        else if(c == ENTER)
-        {
+        else if(c == ENTER){
             playing = 0;
             return;
         }
@@ -350,11 +345,10 @@ void setPlaying()
         return;
 }
 
-void gameOver()
-{
+void gameOver(){
     printf("\n\n\n\n\n\n\n\n\n\n");
     printf("\t\t\t\t\t\t\tGAME OVER\n");
-    if(players == 2) {
+    if(players == 2){
         printf("\t\t\t\t\t\t\tSCORE PLAYER 1: %d\n", score1);
         printf("\t\t\t\t\t\t\tSCORE PLAYER 2: %d\n", score2);
     }
@@ -364,10 +358,9 @@ void gameOver()
     return;
 }
 
-void speedLoop(int speed) {
+void speedLoop(int speed){
     int j = 0;
-    while (j < speed)
-        {
+    while (j < speed){
             j++;
         }
 }

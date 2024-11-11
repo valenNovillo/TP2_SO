@@ -8,7 +8,7 @@
 #define BLOCKSIZE(i) ((unsigned long long)(1 << (i)) * MIN_BLOCK_SIZE) 
 #define GET_BUDDY(b, i) ((((unsigned long long )(b)) ^ (BLOCKSIZE(i))))
 
-typedef struct Block {
+typedef struct Block{
     unsigned long long size;
     struct Block *next; 
 } Block;
@@ -25,11 +25,11 @@ static int get_index(uint64_t size){
     return i;
 }
 
-void my_mb_init(void* ptr, uint64_t size) {
+void my_mb_init(void* ptr, uint64_t size){
     if(size < MIN_BLOCK_SIZE)
         return;
 
-    for(int i=0; i < MAX_2_POW + 1; i++) {
+    for(int i=0; i < MAX_2_POW + 1; i++){
         free_lists[i] = NULL;
     }
     
@@ -37,7 +37,7 @@ void my_mb_init(void* ptr, uint64_t size) {
 
 
 
-    if (i > MAX_2_POW) {
+    if (i > MAX_2_POW){
         i = MAX_2_POW;
     }
 
@@ -54,7 +54,7 @@ void my_mb_init(void* ptr, uint64_t size) {
 static Block* my_malloc_rec(unsigned long size){
     int i = get_index(size);
 
-     if (i > MAX_2_POW) {
+     if (i > MAX_2_POW){
         return NULL;
     }
 
@@ -82,7 +82,7 @@ static Block* my_malloc_rec(unsigned long size){
 }
 
 
-void * my_malloc(unsigned long size) {
+void * my_malloc(unsigned long size){
     if(size == 0) {
         return NULL;
     }
@@ -101,7 +101,7 @@ static void my_free_rec(void* ptr){
     Block* buddy = (Block*)((GET_BUDDY(address_diff_from_base, i)) + (unsigned long long)start_heap);
     Block** current = &free_lists[i];
 
-    while (*current != NULL && *current != buddy) {
+    while (*current != NULL && *current != buddy){
         current = &((*current)->next);
     }
 
@@ -125,9 +125,9 @@ void my_free(void *ptr){
     my_free_rec(((Block*)ptr) - 1);
 }
 
-void print_mem_status(int16_t fds[]) {
+void print_mem_status(int16_t fds[]){
     uint64_t free = 0;
-    for (int i = 0; i < MAX_2_POW; i++) {
+    for (int i = 0; i < MAX_2_POW; i++){
         Block * current = free_lists[i];
         while(current != NULL){
             free += current->size;

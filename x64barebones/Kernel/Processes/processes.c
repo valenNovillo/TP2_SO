@@ -6,27 +6,27 @@
 #include "../include/scheduler.h"
 #include "../Drivers/include/videoDriver.h"
 
-static void main_wraper(int argc, char** argv, Main main ) {
+static void main_wraper(int argc, char** argv, Main main ){
     int32_t return_value = main(argc, argv);
     kill_process(get_running_process()->pid, return_value);
 }
 
 static int initialize_process(PCB* pcb, Main main_func, char** args, char* name, uint8_t priority, int16_t fds[]){
 
-    if((pcb->rbp = create_stack()) == NULL) {
+    if((pcb->rbp = create_stack()) == NULL){
         return -1;
     }
 
     pcb->pid = get_pid_from_stack(pcb->rbp);
 
-    if (pcb->pid != DEFAULT_PID) {
+    if (pcb->pid != DEFAULT_PID){
         PCB* parent_PCB = get_running_process(); 
         pcb->parent_pid = parent_PCB->pid;
         parent_PCB->children[parent_PCB->childrenCount] = pcb->pid;
         parent_PCB->childrenCount++;
 
-        if (fds[STDIN] == STDIN) {
-            if(parent_PCB->run_mode == FOREGROUND) {
+        if (fds[STDIN] == STDIN){
+            if(parent_PCB->run_mode == FOREGROUND){
                 parent_PCB->fds[STDIN] = NO_INPUT;
                 parent_PCB->run_mode = BACKGROUND;
                 set_foreground(pcb->pid);
@@ -35,21 +35,21 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
                 remove(get_ready_list(), get_process(parent_PCB->pid));
                 pcb->run_mode = FOREGROUND;
                 //yield_no_timer_tick();
-            } else {
+            } else{
                 set_creating(0);
                 return -1;
             }
-        } else {
+        } else{
             pcb->run_mode = BACKGROUND;
         }
-    } else {
+    } else{
         pcb->run_mode = FOREGROUND;
     }
     
     pcb->priority = priority;
 
     int name_len = strlen(name);
-    if ((pcb->name = my_malloc(name_len + 1)) == NULL) {
+    if ((pcb->name = my_malloc(name_len + 1)) == NULL){
         return -1;
     }
     memcpy(pcb->name, name, name_len);
@@ -59,26 +59,26 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
     pcb->p_state = READY;
     pcb->ret = 0;
 
-    for(int i = 0; i<MAX_PROCESSES; i++) {
+    for(int i = 0; i<MAX_PROCESSES; i++){
         pcb->children[i] = 0;
     }
     pcb->childrenCount = 0;
     
-    for(int i = 0; i < FDS; i++) {
+    for(int i = 0; i < FDS; i++){
         pcb->fds[i] = fds[i];
     }
         
     //Arguments configuration
     pcb->argc = count_args((void*)args);
     int args_len[pcb->argc];
-    for (int i = 0; i < pcb->argc; i++) {
+    for (int i = 0; i < pcb->argc; i++){
         args_len[i] = strlen(args[i]);
     }
     
     int size = sizeof(char**) * (pcb->argc + 1);
     char** args_array = (char**)my_malloc(size);
     
-    for (int i = 0; i < pcb->argc; i++) {
+    for (int i = 0; i < pcb->argc; i++){
         args_array[i] = my_malloc(args_len[i]);
         memcpy(args_array[i], args[i], args_len[i]);
     }
@@ -89,41 +89,41 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
     return 0;
 }
 
-int16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]) {
+int16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]){
     PCB *process_pcb;
     set_creating(1);
 
     if(get_processes_count() == MAX_PROCESSES || process_main == NULL || fds == NULL || name == NULL 
-        || priority > MAX_PRIORITY) {
+        || priority > MAX_PRIORITY){
         set_creating(0);
         return -1;
     }
 
-    if((process_pcb = my_malloc(sizeof(PCB))) == NULL) {
+    if((process_pcb = my_malloc(sizeof(PCB))) == NULL){
         return -1;
         set_creating(0);
     }
 
-    if (initialize_process(process_pcb, process_main, args, name, priority, fds) == -1) {
+    if (initialize_process(process_pcb, process_main, args, name, priority, fds) == -1){
         set_creating(0);
         return -1;
     } 
         
     Node* process_node = my_malloc(sizeof(Node));
-    if (process_node == NULL) {
+    if (process_node == NULL){
         set_creating(0);
         return -1;
     }
     process_node->data = (void*) process_pcb;
 
-    if(process_pcb->pid != DEFAULT_PID) {
+    if(process_pcb->pid != DEFAULT_PID){
         process_pcb->p_state = READY;
         queue(get_ready_list(), process_node);
     }
     
     set_pid_on_array(process_pcb->pid, process_node);
     set_creating(0);
-    if(process_pcb->run_mode == FOREGROUND) {
+    if(process_pcb->run_mode == FOREGROUND){
         yield();
     }
     return process_pcb->pid; 
@@ -131,7 +131,7 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
 
 void free_process_memory(PCB * pcb){
     my_free(pcb->name);
-    for(int i = 0; i < pcb->argc; i++) {
+    for(int i = 0; i < pcb->argc; i++){
         my_free(pcb->argv[i]);
     }
     my_free(pcb->argv);
@@ -144,7 +144,7 @@ char is_waiting(PCB* pcb, int16_t pid_to_wait){
 }
 
 
-InfoProcess* process_info_load(PCB* pcb) {
+InfoProcess* process_info_load(PCB* pcb){
     InfoProcess* aux = my_malloc(sizeof(InfoProcess));
     if(aux == NULL)
         return NULL;
@@ -161,11 +161,11 @@ InfoProcess* process_info_load(PCB* pcb) {
     return aux;
 }
 
-int16_t * get_fds() {
+int16_t * get_fds(){
     return get_running_process()->fds;
 }
 
-void ps(int16_t fds[]) {
+void ps(int16_t fds[]){
     char* foreground[2] = {"Background", "foreground"};
     char* state[STATES] = {"RUNNING", "BLOCKED", "READY", "ZOMBIE", "TERMINATED"};
 

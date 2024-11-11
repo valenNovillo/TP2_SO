@@ -12,10 +12,10 @@ static int current_block;
 static void* free_ptrs[BLOCK_COUNT];
 static MemoryStatus mem_status;
 
-void my_mm_init(void* ptr) {
+void my_mm_init(void* ptr){
     current_block = 0;
     memory_size = BLOCK_COUNT * BLOCK_SIZE;
-    for(int i = 0; i < BLOCK_COUNT; i++) {
+    for(int i = 0; i < BLOCK_COUNT; i++){
         free_ptrs[i] = ptr + BLOCK_SIZE * i;
     }
     mem_status.total = memory_size;
@@ -25,12 +25,12 @@ void my_mm_init(void* ptr) {
 
 void* my_malloc(uint64_t size) {
     _cli();
-    if (size <= BLOCK_SIZE && current_block < BLOCK_COUNT) {
+    if (size <= BLOCK_SIZE && current_block < BLOCK_COUNT){
         _sti();
         mem_status.reserved += BLOCK_SIZE;
         mem_status.free -= BLOCK_SIZE;
         return free_ptrs[current_block++];
-    } else {
+    } else{
         _sti();
         return NULL;
     }
@@ -38,7 +38,7 @@ void* my_malloc(uint64_t size) {
 
 void my_free(void * ptr) {
     _cli();
-    if (current_block > 0) {
+    if (current_block > 0){
         free_ptrs[--current_block] = ptr;
         mem_status.reserved -= BLOCK_SIZE;
         mem_status.free += BLOCK_SIZE;
@@ -46,7 +46,7 @@ void my_free(void * ptr) {
     _sti();
 }
 
-void print_mem_status(int16_t fds[]) {
+void print_mem_status(int16_t fds[]){
     int len;
 
     write(fds[STDOUT],"\nMemory status:\n", 16);

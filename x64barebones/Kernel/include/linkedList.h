@@ -1,6 +1,8 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
+#include <stdint.h>
+
 typedef struct LinkedListCDT* LinkedList;
 
 typedef struct Node {
@@ -20,5 +22,6 @@ int getLength(LinkedList list);
 int listHasNext(LinkedList list);
 void *listNext(LinkedList list);
 void freeList(LinkedList list);
+uint8_t listConcatenate(LinkedList from, LinkedList to);
 
 #endif //LINKEDLIST_H

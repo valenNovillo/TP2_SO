@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct MemoryStatus {
+typedef struct MemoryStatus{
     uint64_t total;
     uint64_t reserved;
     uint64_t free;

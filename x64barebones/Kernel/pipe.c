@@ -11,12 +11,10 @@
 #define MAX_PIPES 2048
 #define WRITER 'w'
 #define READER 'r'
-#define SEM_READ 0
-#define SEM_WRITE 1
-#define SEM_MUTEX 2
+#define TRES 3
+#define DOS 2
 
-
-typedef struct PipeCDT {
+typedef struct PipeCDT{
     int16_t id; //cada pipe se identifica por su posición en el array de pipes
     int16_t pipe_idx; 
     int16_t fd_read;
@@ -84,11 +82,11 @@ static Pipe init_pipe(){
     new_pipe->write_idx = 0;
     new_pipe->writer_pid = -1;
     new_pipe->reader_pid = -1;
-    new_pipe->fd_read = (new_pipe_idx + 2) *2; 
-    new_pipe->fd_write = (new_pipe_idx + 2) * 2 + 1;   
-    new_pipe->mutex = my_sem_create(SEM_MUTEX, 1);
-    new_pipe->read = my_sem_create(SEM_READ, 0);
-    new_pipe->write = my_sem_create(SEM_WRITE, BUFF_SIZE);
+    new_pipe->fd_read = (new_pipe_idx + DOS) *DOS; 
+    new_pipe->fd_write = (new_pipe_idx + DOS) * DOS + 1;   
+    new_pipe->mutex = my_sem_create(new_pipe_idx * TRES, 1);
+    new_pipe->read = my_sem_create(new_pipe_idx * TRES + 1, 0);
+    new_pipe->write = my_sem_create(new_pipe_idx * TRES + DOS, BUFF_SIZE);
     new_pipe->has_readed = 0;
     new_pipe->has_written = 0;
 
@@ -194,26 +192,26 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
 }
 
 int write_on_file(int16_t fd, char* buff, unsigned long len){
-    int16_t idx = ((fd -1)/2) - 2; 
+    int16_t idx = ((fd -1)/DOS) - DOS; 
     Pipe pipe = pipes[idx];
     if(pipe == NULL || len == 0){
         return -1;
     }
 
     int16_t running_pid = get_running_process_pid();
-    if (pipe->writer_pid == -1) {
+    if (pipe->writer_pid == -1){
         pipe->writer_pid = running_pid;
-    } else if(pipe->writer_pid != running_pid) {
+    } else if(pipe->writer_pid != running_pid){
         return -1;
     }
 
-    if (!pipe->has_written) {
+    if (!pipe->has_written){
         pipe->has_written = !pipe->has_written;
     }
 
     int bytes_written = 0;
 
-    for (unsigned long i = 0; i < len; i++) {
+    for (unsigned long i = 0; i < len; i++){
         my_sem_wait(pipe->write); 
         my_sem_wait(pipe->mutex);  
         
@@ -231,7 +229,7 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
 
 
 int read_on_file(int16_t fd,char* target, unsigned long len){
-    int16_t idx = (fd/2) - 2;
+    int16_t idx = (fd/DOS) - DOS;
     Pipe pipe = pipes[idx];
 
     if(pipe == NULL || len == 0){
@@ -239,19 +237,19 @@ int read_on_file(int16_t fd,char* target, unsigned long len){
     }
 
     int16_t running_pid = get_running_process_pid();
-    if (pipe->reader_pid == -1) {
+    if (pipe->reader_pid == -1){
         pipe->reader_pid = running_pid;
-    } else if(pipe->reader_pid != running_pid) {
+    } else if(pipe->reader_pid != running_pid){
         return -1;
     }
 
-    if (!pipe->has_readed) {
+    if (!pipe->has_readed){
         pipe->has_readed = !pipe->has_readed;
     }
 
     int bytes_read = 0;
 
-    for (unsigned long i = 0; i < len; i++) {
+    for (unsigned long i = 0; i < len; i++){
         my_sem_wait(pipe->read);  
         my_sem_wait(pipe->mutex); 
 

@@ -18,8 +18,7 @@ static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexc
 
 char buffer[BUFF_SIZE]={0};
 
-void shell()
-{
+void shell(){
     printf("\n\n\n\n\n");
     setColor(150, 112, 150);
     printf("                WELCOME TO THE BEST OS EVER!! <3 <3             \n");
@@ -29,7 +28,7 @@ void shell()
     printf("\n\nWelcome!\n\nType 'help' to show a list with all the functionalities!\n");
     reading(1);
 
-    while(1) {
+    while(1){
         setColor(10, 255, 15);
         printf("\n\n:$> ");
         setColor(255, 255, 255);
@@ -40,14 +39,14 @@ void shell()
 }
 
 
-void resetBuffer() {
-    for(int i=0; i<BUFF_SIZE; i++) {
+void resetBuffer(){
+    for(int i=0; i<BUFF_SIZE; i++){
         buffer[i] = 0;
     }
 }
 
 
-void processCommand(char * input) {
+void processCommand(char * input){
 
     if(my_strchr(input, '|') != NULL){
         char * izq = strtok(input, "|");
@@ -56,13 +55,13 @@ void processCommand(char * input) {
         izq[strlen(izq) - 1] = '\0';
         der += 1;
         
-        if (izq == NULL || der == NULL) {
+        if (izq == NULL || der == NULL){
             printErr("\nInvalid command entered.\n\n");
             return;
         }
 
-        for (int i = 0; i < sizeof(no_pipe_command) / sizeof(char*); i++) {
-            if (strcmp(izq, no_pipe_command[i]) == 0 || strcmp(der, no_pipe_command[i]) == 0) {
+        for (int i = 0; i < sizeof(no_pipe_command) / sizeof(char*); i++){
+            if (strcmp(izq, no_pipe_command[i]) == 0 || strcmp(der, no_pipe_command[i]) == 0){
                 printErr("\nImpossible to pipe one of the commands\n");
                 return;
             }
@@ -71,7 +70,7 @@ void processCommand(char * input) {
         int r_pipe_fd = open_pipe(SHELL_PIPE_ID, 'r');
         int w_pipe_fd = open_pipe(SHELL_PIPE_ID, 'w'); 
 
-        if (r_pipe_fd == -1 || w_pipe_fd == -1) {
+        if (r_pipe_fd == -1 || w_pipe_fd == -1){
             printErr("Error while creating pipe");
             return;
         }
@@ -83,12 +82,12 @@ void processCommand(char * input) {
         
         uint16_t pid_writer = findCommand(izq, fds_writers);
 
-        if (pid_reader == -1) {
+        if (pid_reader == -1){
             kill_process(pid_writer);
             close_pipe_for_pid(SHELL_PIPE_ID, (pid_writer == 0 ? SHELL_PID : pid_writer));
             return;
             
-        } else if (pid_writer == -1) {
+        } else if (pid_writer == -1){
             kill_process(pid_reader);
             close_pipe_for_pid(SHELL_PIPE_ID, pid_reader);
             return;
@@ -101,15 +100,15 @@ void processCommand(char * input) {
 
 
     }
-    else {
+    else{
         int16_t fds[3] = {STDIN, STDOUT, STDERR};
         findCommand(input, fds);
     }
 }
 
 
-uint16_t findCommand(char * input, int16_t fds[]) {
-    if(fds[0] == STDIN && input[0] == '&') {
+uint16_t findCommand(char * input, int16_t fds[]){
+    if(fds[0] == STDIN && input[0] == '&'){
         fds[0] = NO_INPUT;
         input += 1;
     }
@@ -118,18 +117,18 @@ uint16_t findCommand(char * input, int16_t fds[]) {
     char *token = strtok(input, " ");
     int arg_count = 0;
 
-    while (token != NULL && arg_count < 10) {
+    while (token != NULL && arg_count < 10){
         args[arg_count++] = token;
         token = strtok(NULL, " ");
     }
 
-    if (arg_count == 0) {
+    if (arg_count == 0){
         printErr("\nNo command entered.\n\n");
         return -1;
     }
 
-    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++) {
-        if (strcmp(args[0], commands_name[i]) == 0) {
+    for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); i++){
+        if (strcmp(args[0], commands_name[i]) == 0){
             return commands[i](fds, args + 1);
         }
     }
@@ -138,119 +137,119 @@ uint16_t findCommand(char * input, int16_t fds[]) {
 }
 
 
-uint16_t help_command(int16_t fds[]) {
+uint16_t help_command(int16_t fds[]){
     help(fds);
     return 0;
 }
 
-int zoomIn() {
+int zoomIn(){
     sizeInc();
     return 0;
 }
     
-int zoomOut() {
+int zoomOut(){
     sizeDec();
     return 0;
 }
 
-uint16_t time_command(int16_t fds[]) {
+uint16_t time_command(int16_t fds[]){
     time(fds);
     return 0;
 }
 
-int clean() {
+int clean(){
     cleanScreen();
     return 0;
 }
 
-void ioexception() {
+void ioexception(){
     test_io_exception();
 }
 
-void zeroexception() {
+void zeroexception(){
     int i = 5;
     i /= 0;
     return;    
 }
 
-uint16_t playEliminator(int16_t fds[]) {
+uint16_t playEliminator(int16_t fds[]){
   char* argv[] = {0};
   return create_process((Main)play_eliminator, argv, "play_eliminator", 2, fds);
 }
 
-uint16_t playSong(int16_t fds[]) {
+uint16_t playSong(int16_t fds[]){
     char* argv[] = {0};
     return create_process((Main)play_song, argv, "play_song", 2, fds);
 }
 
-uint16_t test_process(int16_t fds[]) {
+uint16_t test_process(int16_t fds[]){
     char* argv[] = {MAX_PROCESSES, 0};
     return create_process((Main)test_processes, argv, "test_process", 2, fds);
 }
 
-uint16_t test_priority(int16_t fds[]) {
+uint16_t test_priority(int16_t fds[]){
     char* argv[] = {0};
     return create_process((Main)test_prio, argv, "test_priority", 2, fds);
 }
 
-uint16_t ps_commmand(int16_t fds[]) {
+uint16_t ps_commmand(int16_t fds[]){
     return ps(fds);
 }
 
-uint16_t testing_sync(int16_t fds[]) {
+uint16_t testing_sync(int16_t fds[]){
     char* argv[] = {"3", "1", 0}; //{n, use_sem, 0}
     return create_process((Main)test_sync, argv, "test_sync", 1, fds);
 }
 
-uint16_t testing_no_sync(int16_t fds[]) {
+uint16_t testing_no_sync(int16_t fds[]){
     char* argv[] = {"3", "0", 0}; //{n, use_sem, 0}
     return create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
 
-uint16_t print_mem_status_command(int16_t fds[]) {
+uint16_t print_mem_status_command(int16_t fds[]){
     return print_mem_status(fds);
 }
 
-uint16_t test_mm_command(int16_t fds[]) {
+uint16_t test_mm_command(int16_t fds[]){
     char* args[] = {MEMORY_SIZE, 0};
     return create_process((Main)test_mm, args, "test_mm", 5, fds);
 }
 
-uint16_t loop_command(int16_t  fds[], char *args[]) {
+uint16_t loop_command(int16_t  fds[], char *args[]){
    return create_process((Main)loop, args, "loop", 3, fds);
 }
 
-uint16_t kill_command(int16_t fds[], char *args[]) {
+uint16_t kill_command(int16_t fds[], char *args[]){
     kill(fds,args);
     return 0;
 }
 
-uint16_t nice_command(int16_t fds[], char *args[]) {
+uint16_t nice_command(int16_t fds[], char *args[]){
    nice(fds,args);
    return 0;
 }
 
-uint16_t block_command(int16_t fds[],char *args[]) {
+uint16_t block_command(int16_t fds[],char *args[]){
     block(fds,args);
     return 0;
 }
 
-uint16_t cat_command(int16_t fds[]) {
+uint16_t cat_command(int16_t fds[]){
     char* argv[] = {0};
     return create_process((Main)cat, argv, "cat", 2, fds);
 }
 
-uint16_t wc_command(int16_t fds[]) {
+uint16_t wc_command(int16_t fds[]){
     char* argv[] = {0};
     return create_process((Main)wc, argv, "wc", 2, fds);
 }
 
-uint16_t filter_command(int16_t fds[]) {
+uint16_t filter_command(int16_t fds[]){
     char* argv[] = {0};
     return create_process((Main)filter, argv, "filter", 2, fds);
 }
 
-uint16_t phylo_command(int16_t fds[]) {
+uint16_t phylo_command(int16_t fds[]){
     char* argv[] = {0};
     return create_process((Main)init_philos_restaurant, argv, "init_philos_restaurant", 2, fds);
 }

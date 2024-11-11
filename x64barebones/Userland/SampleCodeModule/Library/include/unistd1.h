@@ -49,5 +49,6 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode);
 int16_t open_pipe(int16_t id, char mode);
 void close_pipe_for_pid(int16_t id, int16_t pid);
 int16_t* get_fds();
+uint8_t transer_blocked_process_by_sem(sem_ptr from, sem_ptr to);
 
 #endif //UNISTD1_H

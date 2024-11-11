@@ -20,7 +20,7 @@ typedef int (*Main)(int argc, char **args);
 
 typedef void (*Main_wrapper)(Main main, int argc, char **args);
 
-typedef struct PCB {
+typedef struct PCB{
     int16_t waiting_pid; //TODO chequear
     uint16_t parent_pid;
     uint16_t pid;
@@ -42,7 +42,7 @@ typedef struct PCB {
 
 } PCB;
 
-typedef struct InfoProcess {
+typedef struct InfoProcess{
     char *name;
     uint16_t pid;
     uint16_t parent_pid;
