@@ -9,7 +9,7 @@
 
 #Object files
 *.o
-*.vscode
+
 
 #Bash files
 .bashrc
@@ -20,6 +20,8 @@
 
 *.DS_Store
 *:Zone.Identifier
+*.vscode
+*.x64BareBones.png
 
 #GDB
 *.gdb_history

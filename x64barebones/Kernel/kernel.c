@@ -70,8 +70,6 @@ int main() {
 	create_process(sampleCodeModuleAddress, argv, "default", 0, fds);
 	load_idt();
 	call_timer_tick();
-	
-	//((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;
 }
