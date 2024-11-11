@@ -52,7 +52,7 @@ void processCommand(char * input) {
         char * izq = strtok(input, "|");
         char * der = strtok(NULL, "|");
         
-        izq[strlen(izq)-2] = '\0';
+        izq[strlen(izq) - 1] = '\0';
         der += 1;
         
         if (izq == NULL || der == NULL) {

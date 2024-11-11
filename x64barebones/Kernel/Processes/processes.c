@@ -49,13 +49,13 @@ static int initialize_process(PCB* pcb, Main main_func, char** args, char* name,
     pcb->priority = priority;
 
     int name_len = strlen(name);
-    if ((pcb->name = my_malloc(name_len)) == NULL) {
+    if ((pcb->name = my_malloc(name_len + 1)) == NULL) {
         return -1;
     }
-    memcpy(pcb->name, name, name_len + 1);
-    pcb->name[name_len - 1] = '\0';
+    memcpy(pcb->name, name, name_len);
+    pcb->name[name_len] = '\0';
 
-    pcb->waiting_pid = -1; //TO-DO: REVISE!!!!
+    pcb->waiting_pid = -1;
     pcb->p_state = READY;
     pcb->ret = 0;
 
