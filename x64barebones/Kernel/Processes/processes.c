@@ -143,6 +143,7 @@ char is_waiting(PCB* pcb, int16_t pid_to_wait){
     return pcb->waiting_pid == pid_to_wait;
 }
 
+
 InfoProcess* process_info_load(PCB* pcb) {
     InfoProcess* aux = my_malloc(sizeof(InfoProcess));
     if(aux == NULL)

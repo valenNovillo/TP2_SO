@@ -32,5 +32,6 @@ InfoProcess** processes_info();
 PState get_state(int16_t pid);
 int32_t kill_FG();
 Node * get_process(uint16_t pid);
+char is_waiting_someone(int16_t pid);
 
 #endif //SCHEDULER_H

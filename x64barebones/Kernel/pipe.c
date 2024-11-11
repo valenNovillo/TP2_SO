@@ -194,16 +194,17 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
 }
 
 int write_on_file(int16_t fd, char* buff, unsigned long len){
-    int16_t id = ((fd -1)/2) - 2; 
+    int16_t idx = ((fd -1)/2) - 2; 
     //Pipe pipe = find_by_id(id);
-    Pipe pipe = pipes[id];
+    Pipe pipe = pipes[idx];
     if(pipe == NULL || len == 0){
         return -1;
     }
 
     int16_t running_pid = get_running_process_pid();
     if (pipe->writer_pid == -1) {
-        pipe->writer_pid = pipe->writer_pid;
+        //pipe->writer_pid = pipe->writer_pid;
+        pipe->writer_pid = running_pid;
     } else if(pipe->writer_pid != running_pid) {
         return -1;
     }
@@ -228,17 +229,17 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
 
 
 int read_on_file(int16_t fd,char* target, unsigned long len){
-    int16_t id = (fd/2) - 2;
+    int16_t idx = (fd/2) - 2;
     //Pipe pipe = find_by_id(id);
-    Pipe pipe = pipes[id];
+    Pipe pipe = pipes[idx];
 
-    if(pipe == NULL || pipe->reader_pid != get_pid() || len == 0){
+    if(pipe == NULL || len == 0){
         return -1;
     }
 
     int16_t running_pid = get_running_process_pid();
     if (pipe->reader_pid == -1) {
-        pipe->reader_pid = pipe->reader_pid;
+        pipe->reader_pid = running_pid;
     } else if(pipe->reader_pid != running_pid) {
         return -1;
     }

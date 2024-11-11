@@ -87,6 +87,13 @@ static void removeLastFromBuff() {
     writeIdx = writeIdx == 0 ? SIZE_BUFF - 1 : (writeIdx - 1)%SIZE_BUFF;
 }
 
+static void check_waiting_someone()
+{
+    uint16_t fg_pid = get_foreground_pid();
+    if (is_waiting_someone(fg_pid)){
+        set_state(fg_pid, READY);
+    }
+}
 
 void keyboardHandler(uint64_t infoRegs){
     
@@ -118,18 +125,18 @@ void keyboardHandler(uint64_t infoRegs){
             if (kill_FG() == -1) {
                 buffer[writeIdx] = EOF;
                 writeIdx = (writeIdx+1)%SIZE_BUFF;
-                set_state(get_foreground_pid(), READY);
+                check_waiting_someone();
             };
         }else if(key == 0x20){//CTRL+D
             buffer[writeIdx] = EOF;
             writeIdx = (writeIdx+1)%SIZE_BUFF;
             putString(STDOUT, "^D\n", 3);
-            set_state(get_foreground_pid(), READY);
+            check_waiting_someone();
         }
     } else if (reading && key <= 0x53) {
         buffer[writeIdx] = getStringFromCode(key);
         writeIdx = (writeIdx+1)%SIZE_BUFF;
-        set_state(get_foreground_pid(), READY);
+        check_waiting_someone();
     }
 }
 

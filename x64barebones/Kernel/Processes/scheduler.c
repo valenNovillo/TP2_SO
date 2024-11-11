@@ -281,3 +281,7 @@ int32_t kill_FG() {
     }
     return -1;
 }
+
+char is_waiting_someone(int16_t pid){
+    return ((PCB*)scheduler->processes[pid])->waiting_pid != -1;
+}
