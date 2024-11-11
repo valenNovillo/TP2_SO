@@ -3,6 +3,7 @@
 #include "../include/linkedList.h"
 #include "../Drivers/include/timeDriver.h"
 #include "../include/memoryManager.h"
+#include "../include/pipe.h"
 
 typedef struct SchedulerCDT {
     Node* processes[MAX_PROCESSES];
@@ -160,6 +161,7 @@ LinkedList get_ready_list() {
 void set_creating(uint8_t creating) {
     is_creating = creating;
 }
+
 
 uint64_t wait_pid(int16_t pid) {
     if (pid != DEFAULT_PID && pid != SHELL_PID && scheduler->processes[pid] != NULL) {

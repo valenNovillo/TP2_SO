@@ -275,8 +275,10 @@ int cat(uint64_t argc, char *argv[]) {
     int c;
     printf("\n");
     if(get_fds()[STDIN] != STDIN){
-        scanf1("%s", buffer);
-        printf("\n");
+        while ((c = getChar()) != EOF){
+            buffer[index++] = c;
+        }
+        printf("%s\n", buffer);
     } else {
         while ((c = getChar()) != EOF)
         {
@@ -303,8 +305,13 @@ int wc(uint64_t argc, char *argv[]) {
     char c;
     int lines = 0;
     printf("\n");
+    
+    char pipe_flag = (get_fds()[STDIN] == STDIN);
+
     while ((c = getChar()) != EOF) {
-        putChar(c);  // Imprime el carácter en tiempo real
+        if(pipe_flag){
+            putChar(c);
+        }
         if (c == '\n') {
             lines++;
         }
@@ -318,6 +325,9 @@ int filter(uint64_t argc, char *argv[]) {
     char buffer[MAX_BUFFER_SIZE];
     int index = 0;
     int c;
+
+    char pipe_flag = (get_fds()[STDIN] == STDIN);
+
     printf("\n");
     while ((c = getChar()) != EOF) {
         if (c == '\n') {
@@ -334,7 +344,9 @@ int filter(uint64_t argc, char *argv[]) {
 
             index = 0; 
         } else if (index < MAX_BUFFER_SIZE - 1) {
-            putChar(c);  
+            if(pipe_flag){
+                putChar(c); 
+            } 
             buffer[index++] = c;  
         }
     }

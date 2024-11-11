@@ -26,8 +26,7 @@ typedef struct PipeCDT {
     unsigned char write_idx;
     unsigned char used;
     semaphore* read;
-    semaphore* write;
-    //semaphore* characters; 
+    semaphore* write; 
     semaphore* mutex;
     int16_t writer_pid; 
     int16_t reader_pid; 
@@ -36,7 +35,7 @@ typedef struct PipeCDT {
 typedef PipeCDT *Pipe;
 static Pipe pipes[MAX_PIPES] = {0};
 int16_t count_pipes = 0;
-int16_t next_pipe_idx = 0; 
+int16_t next_pipe_idx = 0;
 
 static Pipe find_by_id(int16_t id){
 
@@ -156,15 +155,6 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
     return pipe->pipe_idx;
 }
 
-// static void change_fd_writer(int16_t id, int16_t new_pid){
-//     Pipe obj = find_by_id(id);
-//     if(obj == NULL){
-//         return;
-//     }
-//     obj->writer_pid = new_pid;
-// }
-
-
 static void free_pipe(Pipe pipe){
     my_sem_destroy(pipe->mutex);
     my_sem_destroy(pipe->read);
@@ -195,7 +185,6 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
 
 int write_on_file(int16_t fd, char* buff, unsigned long len){
     int16_t idx = ((fd -1)/2) - 2; 
-    //Pipe pipe = find_by_id(id);
     Pipe pipe = pipes[idx];
     if(pipe == NULL || len == 0){
         return -1;
@@ -203,7 +192,6 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
 
     int16_t running_pid = get_running_process_pid();
     if (pipe->writer_pid == -1) {
-        //pipe->writer_pid = pipe->writer_pid;
         pipe->writer_pid = running_pid;
     } else if(pipe->writer_pid != running_pid) {
         return -1;
@@ -214,8 +202,12 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
     for (unsigned long i = 0; i < len; i++) {
         my_sem_wait(pipe->write); 
         my_sem_wait(pipe->mutex);  
-
-        pipe->buff[pipe->write_idx] = buff[i];
+        
+        if(buff[i] == '\0'){
+            pipe->buff[pipe->write_idx] = EOF;   
+        }else{
+            pipe->buff[pipe->write_idx] = buff[i];
+        }
         pipe->write_idx = (pipe->write_idx + 1) % BUFF_SIZE;
 
         my_sem_post(pipe->mutex);  

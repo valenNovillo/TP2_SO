@@ -115,6 +115,7 @@ void fprintf(int16_t fd, char *string, ...) {
     va_start(argPointer, string);
     vfprintf(fd, string, argPointer);
     va_end(argPointer);
+    put_char_fd(fd, '\0');
 }
 
 void printf(char *string, ...) {
@@ -122,6 +123,7 @@ void printf(char *string, ...) {
     va_start(argPointer, string);
     vfprintf(get_fds()[STDOUT], string, argPointer);
     va_end(argPointer);
+    put_char_fd(get_fds()[STDOUT], '\0');
 }
 
 
@@ -130,6 +132,7 @@ void printErr(char * buff, ...) {
     va_start(argPointer, buff);
     vfprintf(get_fds()[STDERR], buff, argPointer);
     va_end(argPointer);
+    put_char_fd(get_fds()[STDERR], '\0');
 }
 
 

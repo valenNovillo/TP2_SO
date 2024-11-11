@@ -79,6 +79,7 @@ void processCommand(char * input) {
         int16_t fds_writers[3] = {STDIN, w_pipe_fd, STDERR};
 
         uint16_t pid_writer = findCommand(izq, fds_writers);
+        
         uint16_t pid_reader = findCommand(der, fds_readers);
 
         if (pid_reader == -1) {
@@ -96,6 +97,8 @@ void processCommand(char * input) {
         close_pipe_for_pid(SHELL_PIPE_ID, pid_writer);
         wait_pid(pid_reader);
         close_pipe_for_pid(SHELL_PIPE_ID, pid_reader);
+
+
     }
     else {
         int16_t fds[3] = {STDIN, STDOUT, STDERR};

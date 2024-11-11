@@ -155,3 +155,4 @@ void close_pipe_for_pid(int16_t id, int16_t pid) {
 int16_t* get_fds() {
     return (int16_t*)sysCall(37, 0, 0, 0, 0, 0);
 }
+
