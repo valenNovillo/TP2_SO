@@ -54,12 +54,12 @@ static void add_philo() {
     args[1] = 0;
     my_sem_wait(forks[0]);
     forks[cant_philos] = my_sem_create(cant_philos, 1);
-    my_sem_wait(forks[cant_philos]);
+    //my_sem_wait(forks[cant_philos]);
     cant_philos++;
     philos_states[cant_philos-1] = THINKING;
     philos_pids[cant_philos-1] = create_process((Main)philosopher, args, philos[cant_philos-1] , 0, philo_fds);
     my_sem_post(forks[0]);
-    my_sem_post(forks[cant_philos-1]);
+    //my_sem_post(forks[cant_philos-1]);
     my_sem_post(modifing);
 }
 
