@@ -53,7 +53,7 @@ uint16_t testing_no_sync(int16_t fds[]);
 
 uint16_t test_mm_command(int16_t  fds[]) ;
 
-uint16_t print_mem_status_command();
+uint16_t print_mem_status_command(int16_t fds[]);
 
 uint16_t loop_command(int16_t fds[], char *args[]);
 

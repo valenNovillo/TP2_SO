@@ -41,7 +41,7 @@ void my_sem_destroy(sem_ptr ptr);
 sem_ptr my_sem_open(uint8_t id);
 uint8_t my_sem_post(sem_ptr ptr);
 uint8_t my_sem_wait(sem_ptr ptr);
-int print_mem_status();
+int print_mem_status(int16_t fds[]);
 void* my_malloc(uint64_t size);
 void my_free(void * ptr);
 uint16_t get_state(uint16_t pid);

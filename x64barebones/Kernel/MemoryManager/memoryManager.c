@@ -2,6 +2,7 @@
 #include "../include/lib.h"
 #include "../Drivers/include/videoDriver.h"
 #include "../Drivers/include/fileDescriptors.h"
+#include "../include/lib.h"
 
 #define BLOCK_COUNT 8192
 #define BLOCK_SIZE 2048
@@ -45,27 +46,27 @@ void my_free(void * ptr) {
     _sti();
 }
 
-void print_mem_status() {
+void print_mem_status(int16_t fds[]) {
     int len;
 
-    putString(STDOUT, "\nMemory status:\n", 16);
+    write(fds[STDOUT],"\nMemory status:\n", 16);
     
-    putString(STDOUT, "TOTAL: ", 7);
+    write(fds[STDOUT],"TOTAL: ", 7);
     char string_total[10];
     len = intToString(mem_status.total, string_total);
-    putString(STDOUT, string_total, len);
+    write(fds[STDOUT], string_total, len);
 
-    putString(STDOUT, "\nRESERVED: ", 11);
+    write(fds[STDOUT], "\nRESERVED: ", 11);
     char string_reserved[10];
     len = intToString(mem_status.reserved, string_reserved);
-    putString(STDOUT, string_reserved, len);
+    write(fds[STDOUT], string_reserved, len);
 
-    putString(STDOUT, "\nFREE: ", 7);
+    write(fds[STDOUT], "\nFREE: ", 7);
     char string_free[10];
     len = intToString(mem_status.free, string_free);
-    putString(STDOUT, string_free, len);
+    write(fds[STDOUT], string_free, len);
 
-    putString(STDOUT, "\n", 1);
+    write(fds[STDOUT], "\n", 1);
 }
 
 

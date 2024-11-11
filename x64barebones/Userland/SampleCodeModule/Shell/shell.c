@@ -206,8 +206,8 @@ uint16_t testing_no_sync(int16_t fds[]) {
     return create_process((Main)test_sync, argv, "test_no_sync", 1, fds);
 }
 
-uint16_t print_mem_status_command() {
-    return print_mem_status();
+uint16_t print_mem_status_command(int16_t fds[]) {
+    return print_mem_status(fds);
 }
 
 uint16_t test_mm_command(int16_t fds[]) {
