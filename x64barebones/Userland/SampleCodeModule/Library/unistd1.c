@@ -124,8 +124,8 @@ uint8_t my_sem_wait(sem_ptr ptr) {
     return sysCall(29, (uint64_t)ptr, 0, 0, 0, 0);
 }
 
-int print_mem_status() {
-    return sysCall(30, 0, 0, 0, 0, 0);
+int print_mem_status(int16_t fds[]) {
+    return sysCall(30, (uint64_t)fds, 0, 0, 0, 0);
 }
 
 void* my_malloc(uint64_t size) {

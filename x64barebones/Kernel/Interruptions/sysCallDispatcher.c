@@ -154,8 +154,8 @@ static ssize_t sys_call_sem_wait(semaphore* semaphore_ptr) {
     return (ssize_t) my_sem_wait(semaphore_ptr);
 }
 
-static ssize_t sys_call_print_mem_status(){
-    print_mem_status();
+static ssize_t sys_call_print_mem_status(int16_t fds[]){
+    print_mem_status(fds);
     return 0;
 }
 

@@ -18,7 +18,7 @@ typedef struct MemoryStatus {
 
 void* my_malloc(uint64_t size);
 void my_free(void * ptr);
-void print_mem_status();
+void print_mem_status(int16_t fds[]);
 
 extern void _cli(void);
 extern void _sti(void);
