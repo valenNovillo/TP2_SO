@@ -24,7 +24,7 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 static void * const stacks = (void*)0x600000;// 4KB stacks, 128 total stacks, 80000 adresses
-static void * const semaphores = (void*)0x690000; // 16 semaphores, 32 bytes each
+static void * const semaphores = (void*)0x690000; // 1024 semaphores
 static void * const startFreeMemoryAddress = (void*)0x700000; 
 
 typedef int (*EntryPoint)();
