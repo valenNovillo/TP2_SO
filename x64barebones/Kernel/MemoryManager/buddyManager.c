@@ -17,14 +17,6 @@ static Block* free_lists[MAX_2_POW +1];
 static MemoryStatus mem_status;
 static void* start_heap;
 
-/*static uint64_t block_size(int i) {
-    return (uint64_t) ((1 << i) * MIN_BLOCK_SIZE);
-}
-
-static uint64_t get_buddy(uint64_t b, int i) {
-    return (uint64_t) (b ^ block_size(i)); 
-}*/
-
 static int get_index(uint64_t size){
     int i = 0;
     while (BLOCKSIZE(i) < size) {
@@ -137,27 +129,27 @@ void my_free(void *ptr){
     my_free_rec(((Block*)ptr) - 1);
 }
 
-void print_mem_status() {
+void print_mem_status(int16_t fds[]) {
     int len;
 
-    putString(STDOUT, "\nMemory status:\n", 16);
+    write(fds[STDOUT],"\nMemory status:\n", 16);
     
-    putString(STDOUT, "TOTAL: ", 7);
+    write(fds[STDOUT],"TOTAL: ", 7);
     char string_total[10];
     len = intToString(mem_status.total, string_total);
-    putString(STDOUT, string_total, len);
+    write(fds[STDOUT], string_total, len);
 
-    putString(STDOUT, "\nRESERVED: ", 11);
+    write(fds[STDOUT], "\nRESERVED: ", 11);
     char string_reserved[10];
     len = intToString(mem_status.reserved, string_reserved);
-    putString(STDOUT, string_reserved, len);
+    write(fds[STDOUT], string_reserved, len);
 
-    putString(STDOUT, "\nFREE: ", 7);
+    write(fds[STDOUT], "\nFREE: ", 7);
     char string_free[10];
     len = intToString(mem_status.free, string_free);
-    putString(STDOUT, string_free, len);
+    write(fds[STDOUT], string_free, len);
 
-    putString(STDOUT, "\n", 1);
+    write(fds[STDOUT], "\n", 1);
 }
 
 
