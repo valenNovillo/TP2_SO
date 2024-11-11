@@ -39,10 +39,12 @@ static void destroy_all() {
 }
 
 static void add_philo() {
+    my_sem_wait(modifing);
     if (cant_philos == MAX_PHILOS) {
         my_sem_wait(printing);
         printErr("\nMax quantity of philosophers reached\n");
         my_sem_post(printing);
+        my_sem_post(modifing);
         return;
     }
     char* args[2];   
@@ -51,23 +53,30 @@ static void add_philo() {
     args[0] = id;
     args[1] = 0;
     my_sem_wait(forks[0]);
+    forks[cant_philos] = my_sem_create(cant_philos, 1);
+    my_sem_wait(forks[cant_philos]);
     cant_philos++;
-    forks[cant_philos-1] = my_sem_create(cant_philos-1, 1);
     philos_states[cant_philos-1] = THINKING;
     philos_pids[cant_philos-1] = create_process((Main)philosopher, args, philos[cant_philos-1] , 0, philo_fds);
     my_sem_post(forks[0]);
+    my_sem_post(forks[cant_philos-1]);
+    my_sem_post(modifing);
 }
 
 static void remove_philo() {
+    my_sem_wait(modifing);
     if (cant_philos == MIN_PHILOS) {
         my_sem_wait(printing);
         printErr("\nMin quantity of philosophers reached\n");
         my_sem_post(printing);
+        my_sem_post(modifing);
         return;
     }
+    my_sem_wait(forks[cant_philos-1]);
     my_sem_destroy(forks[cant_philos-1]);
     kill_process(philos_pids[cant_philos-1]);
     cant_philos--;
+    my_sem_post(modifing);
 }
 
 int init_philos_restaurant(uint64_t argc, char *argv[]) {
