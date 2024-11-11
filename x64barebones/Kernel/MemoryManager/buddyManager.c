@@ -62,8 +62,6 @@ static Block* my_malloc_rec(unsigned long size){
         Block* block = free_lists[i];
         free_lists[i] = free_lists[i]->next;
         block->size = BLOCKSIZE(i);
-        mem_status.reserved += block->size;
-        mem_status.free -= block->size;
         return block;
     }
 
@@ -110,8 +108,6 @@ static void my_free_rec(void* ptr){
     if(*current != buddy){
         ((Block *)ptr)->next = free_lists[i];
         free_lists[i] = ptr;
-        mem_status.reserved -= BLOCKSIZE(i);
-        mem_status.free += BLOCKSIZE(i);
     }else{
         *current = buddy->next;
 
@@ -130,6 +126,18 @@ void my_free(void *ptr){
 }
 
 void print_mem_status(int16_t fds[]) {
+    uint64_t free = 0;
+    for (int i = 0; i < MAX_2_POW; i++) {
+        Block * current = free_lists[i];
+        while(current != NULL){
+            free += current->size;
+            current = current->next;
+        }
+    }
+
+    mem_status.reserved = mem_status.total - free;
+    mem_status.free = free;
+
     int len;
 
     write(fds[STDOUT],"\nMemory status:\n", 16);

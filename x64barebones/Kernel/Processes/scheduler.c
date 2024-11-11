@@ -103,9 +103,6 @@ void* schedule(void* last_rsp){
 
     
     if (running != NULL && running_pcb->p_state == RUNNING && scheduler->running_pid != DEFAULT_PID) {
-        /*if (((PCB*)running->data)->priority > 0) {
-            ((PCB*)running->data)->priority--; //TO-DO revise
-        }*/
         ((PCB*)running->data)->p_state = READY;
         remove(scheduler->ready_processes, running);
         queue(scheduler->ready_processes, running);
@@ -250,9 +247,8 @@ int32_t kill_process(uint16_t pid, int32_t ret){
     }
 
     free_process_memory(pcb_to_kill);
-    //mem_free(process_to_kill);//Para qué?? ¿Qué mas tenemos que liberar?
     scheduler->process_count--;
-    my_free(scheduler->processes[pid]); //TO-DO: revise
+    my_free(scheduler->processes[pid]);
     scheduler->processes[pid] = NULL;
     
     if(pid == scheduler->running_pid){

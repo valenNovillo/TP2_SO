@@ -9,7 +9,7 @@
 
 #Object files
 *.o
-mem
+*.vscode
 
 #Bash files
 .bashrc
@@ -23,4 +23,5 @@ mem
 
 #GDB
 *.gdb_history
+*.gdbinit
 *.elf

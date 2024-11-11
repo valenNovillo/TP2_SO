@@ -76,20 +76,6 @@ uint8_t my_sem_wait(semaphore* ptr){
     if(ptr == NULL){
         return -1;
     }
-
-    /*aquire(&(ptr->lock));
-
-    if(ptr->value == 0){
-        uint16_t pid = get_running_process_pid();
-        Node* node = my_malloc(sizeof(Node));
-        node->data = (void*) ((uint64_t) pid);
-        queue(ptr->blocked_proeccesses, node);
-        release(&(ptr->lock));
-        set_state(pid, BLOCKED);
-        aquire(&(ptr->lock));
-    }*/
-
-    
 	while (1) {
 		aquire(&(ptr->lock));
 		if (ptr->value) {
@@ -105,11 +91,6 @@ uint8_t my_sem_wait(semaphore* ptr){
 		set_state(pid, BLOCKED);
 	}
     
-
-    //ptr->value--;
-
-    //release(&(ptr->lock));
-
     return 0;
 }
 
