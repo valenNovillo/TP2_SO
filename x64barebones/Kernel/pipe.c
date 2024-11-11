@@ -21,7 +21,7 @@ typedef struct PipeCDT {
     int16_t pipe_idx; 
     int16_t fd_read;
     int16_t fd_write; 
-    unsigned char buff[BUFF_SIZE];
+    char buff[BUFF_SIZE];
     unsigned char read_idx;
     unsigned char write_idx;
     unsigned char used;
@@ -29,7 +29,9 @@ typedef struct PipeCDT {
     semaphore* write; 
     semaphore* mutex;
     int16_t writer_pid; 
-    int16_t reader_pid; 
+    int16_t reader_pid;
+    uint8_t has_readed;
+    uint8_t has_written;
 } PipeCDT;
 
 typedef PipeCDT *Pipe;
@@ -87,7 +89,8 @@ static Pipe init_pipe(){
     new_pipe->mutex = my_sem_create(SEM_MUTEX, 1);
     new_pipe->read = my_sem_create(SEM_READ, 0);
     new_pipe->write = my_sem_create(SEM_WRITE, BUFF_SIZE);
-
+    new_pipe->has_readed = 0;
+    new_pipe->has_written = 0;
 
 
     return new_pipe;
@@ -138,6 +141,8 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
         if((idx = create_pipe(id, pipe)) == -1){
             return -1;
         }
+
+        pipe = pipes[idx];
     }
 
     if((pipe->writer_pid != -1 && mode==WRITER) || (pipe->reader_pid != -1 && mode==READER)){
@@ -146,13 +151,13 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
 
     if(mode == WRITER){
         pipe->writer_pid = pid;
+        return pipe->fd_write;
     }else if(mode == READER){
         pipe->reader_pid = pid;
+        return pipe->fd_read;
     }else{
         return -1;
     }
-
-    return pipe->pipe_idx;
 }
 
 static void free_pipe(Pipe pipe){
@@ -171,6 +176,11 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
     }
 
     if(pipe->writer_pid == pid){
+        my_sem_wait(pipe->write); 
+        my_sem_wait(pipe->mutex); 
+        pipe->buff[pipe->write_idx] = EOF;
+        my_sem_post(pipe->mutex);  
+        my_sem_post(pipe->read); 
         pipe->writer_pid = -1;
     }
 
@@ -178,7 +188,7 @@ void close_pipe_for_pid(int16_t id, int16_t pid){
         pipe->reader_pid = -1;
     }
 
-    if(pipe->reader_pid == -1 && pipe->writer_pid == -1){
+    if(pipe->reader_pid == -1 && pipe->writer_pid == -1 && pipe->has_readed && pipe->has_written){
         free_pipe(pipe);
     }
 }
@@ -197,17 +207,17 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
         return -1;
     }
 
+    if (!pipe->has_written) {
+        pipe->has_written = !pipe->has_written;
+    }
+
     int bytes_written = 0;
 
     for (unsigned long i = 0; i < len; i++) {
         my_sem_wait(pipe->write); 
         my_sem_wait(pipe->mutex);  
         
-        if(buff[i] == '\0'){
-            pipe->buff[pipe->write_idx] = EOF;   
-        }else{
-            pipe->buff[pipe->write_idx] = buff[i];
-        }
+        pipe->buff[pipe->write_idx] = buff[i];
         pipe->write_idx = (pipe->write_idx + 1) % BUFF_SIZE;
 
         my_sem_post(pipe->mutex);  
@@ -222,7 +232,6 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
 
 int read_on_file(int16_t fd,char* target, unsigned long len){
     int16_t idx = (fd/2) - 2;
-    //Pipe pipe = find_by_id(id);
     Pipe pipe = pipes[idx];
 
     if(pipe == NULL || len == 0){
@@ -234,6 +243,10 @@ int read_on_file(int16_t fd,char* target, unsigned long len){
         pipe->reader_pid = running_pid;
     } else if(pipe->reader_pid != running_pid) {
         return -1;
+    }
+
+    if (!pipe->has_readed) {
+        pipe->has_readed = !pipe->has_readed;
     }
 
     int bytes_read = 0;

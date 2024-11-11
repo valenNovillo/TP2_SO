@@ -181,7 +181,8 @@ static ssize_t sys_call_open_pipe(int16_t id, char mode){
 }
 
 static ssize_t sys_call_close_pipe_for_pid(int16_t id, int16_t pid){
-    return open_pipe(id, pid);
+    close_pipe_for_pid(id, pid);
+    return 0;
 }
 
 static ssize_t sys_call_get_fds(){

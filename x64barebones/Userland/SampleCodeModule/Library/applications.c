@@ -326,28 +326,34 @@ int filter(uint64_t argc, char *argv[]) {
     int index = 0;
     int c;
 
-    char pipe_flag = (get_fds()[STDIN] == STDIN);
-
     printf("\n");
-    while ((c = getChar()) != EOF) {
-        if (c == '\n') {
-            printf("\n");  
-            buffer[index] = '\0';      
-            for (int i = 0; i < index; i++) {
-                char ch = buffer[i];
-                if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u' &&
-                    ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U') {
-                    putChar(ch);  
-                }
+    if(get_fds()[STDIN] != STDIN){
+        while ((c = getChar()) != EOF){
+            if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
+                c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U') {
+                buffer[index++] = c; 
             }
-            printf("\n");  
+        }
+        printf("%s\n", buffer);
+    } else {
+        while ((c = getChar()) != EOF) {
+            if (c == '\n') {
+                printf("\n");  
+                buffer[index] = '\0';      
+                for (int i = 0; i < index; i++) {
+                    char ch = buffer[i];
+                    if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u' &&
+                        ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U') {
+                        putChar(ch);  
+                    }
+                }
+                printf("\n");  
 
-            index = 0; 
-        } else if (index < MAX_BUFFER_SIZE - 1) {
-            if(pipe_flag){
-                putChar(c); 
-            } 
-            buffer[index++] = c;  
+                index = 0; 
+            } else if (index < MAX_BUFFER_SIZE - 1) {
+                putChar(c);  
+                buffer[index++] = c;  
+            }
         }
     }
 

@@ -52,7 +52,7 @@ void processCommand(char * input) {
         char * izq = strtok(input, "|");
         char * der = strtok(NULL, "|");
         
-        izq[strlen(izq)-1] = '\0';
+        izq[strlen(izq)-2] = '\0';
         der += 1;
         
         if (izq == NULL || der == NULL) {
@@ -78,13 +78,13 @@ void processCommand(char * input) {
         int16_t fds_readers[3] = {r_pipe_fd, STDOUT, STDERR};
         int16_t fds_writers[3] = {STDIN, w_pipe_fd, STDERR};
 
-        uint16_t pid_writer = findCommand(izq, fds_writers);
-        
         uint16_t pid_reader = findCommand(der, fds_readers);
+        
+        uint16_t pid_writer = findCommand(izq, fds_writers);
 
         if (pid_reader == -1) {
             kill_process(pid_writer);
-            close_pipe_for_pid(SHELL_PIPE_ID, pid_writer);
+            close_pipe_for_pid(SHELL_PIPE_ID, (pid_writer == 0 ? SHELL_PID : pid_writer));
             return;
             
         } else if (pid_writer == -1) {
@@ -94,7 +94,7 @@ void processCommand(char * input) {
         }
 
         wait_pid(pid_writer);
-        close_pipe_for_pid(SHELL_PIPE_ID, pid_writer);
+        close_pipe_for_pid(SHELL_PIPE_ID, (pid_writer == 0 ? SHELL_PID : pid_writer));
         wait_pid(pid_reader);
         close_pipe_for_pid(SHELL_PIPE_ID, pid_reader);
 
@@ -108,7 +108,7 @@ void processCommand(char * input) {
 
 
 uint16_t findCommand(char * input, int16_t fds[]) {
-    if(input[0] == '&') {
+    if(fds[0] == STDIN && input[0] == '&') {
         fds[0] = NO_INPUT;
         input += 1;
     }
