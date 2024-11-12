@@ -306,7 +306,7 @@ int cat(uint64_t argc, char *argv[]){
 }
 
 int wc(uint64_t argc, char *argv[]){
-    char c;
+    int c;
     int lines = 0;
     printf("\n");
     

@@ -64,7 +64,7 @@ int reading(unsigned char flag){
     return sysCall(14, flag, 0, 0, 0, 0);
 }
 
-uint16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]){
+int16_t create_process(Main process_main, char** args, char* name, uint8_t priority, int16_t fds[]){
     return sysCall(15, (uint64_t)process_main, (uint64_t)args, (uint64_t)name, priority, (uint64_t)fds);
 }
 

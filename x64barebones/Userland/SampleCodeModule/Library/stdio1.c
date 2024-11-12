@@ -138,7 +138,7 @@ void printErr(char * buff, ...){
 int readByDelim(int16_t* fd, char * buff, int count, char delim){
 
     int i = 0; //para contabilizar los caracteres leidos
-    char c; //para almacenar el caracter leido
+    int c; //para almacenar el caracter leido
 
 
     while((c = get_char_fd(fd[STDIN])) != delim && c != EOF){ //mientras que el caracter sea distinto del delimitador, seguimos 
