@@ -16,7 +16,8 @@ static Commands commands[] = {(Commands)help_command, (Commands)zoomIn, (Command
 static char* commands_name[] = {"help", "inc", "dec", "time", "clean", "ioexception", "zeroexception",
      "eliminator", "playsong", "test_processes", "test_priority", "ps", "test_sync", "test_no_sync", "mem", "test_mm", "loop", "kill", "nice", "block", "cat", "wc", "filter", "phylo"};
 
-static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexception", "eliminator", "playSong"};
+static char* no_pipe_command[] = {"inc", "dec", "clean", "ioexception", "zeroexception", "eliminator", "playSong", "loop"};
+
 
 char buffer[BUFF_SIZE]={0};
 

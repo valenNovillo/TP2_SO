@@ -7,7 +7,7 @@
 
 #define MIN_BLOCK_SIZE 1024
 #define MAX_2_POW 19
-#define BLOCKSIZE(i) ((unsigned long long)(1 << (i)) * MIN_BLOCK_SIZE) 
+#define BLOCKSIZE(i) ((unsigned long long)(1ULL << (i)) * MIN_BLOCK_SIZE) 
 #define GET_BUDDY(b, i) ((((unsigned long long )(b)) ^ (BLOCKSIZE(i))))
 
 typedef struct Block{

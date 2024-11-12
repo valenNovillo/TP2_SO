@@ -9,9 +9,9 @@
 #define SEM_ID 15
 #define TOTAL_PAIR_PROCESSES 5
 
-int64_t global;
+int32_t global;
 
-void slowInc(int64_t *p, int64_t inc) {
+void slowInc(int32_t *p, int64_t inc) {
   int64_t aux = *p;
   yield(); // This makes the race condition highly probable
   aux += inc;

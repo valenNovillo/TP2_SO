@@ -25,9 +25,11 @@
 #define CAPS 4
 #define ALT 5
 
+#include <stdint.h>
+
 //Manejo de interrupciones del teclado que lee un código de tecla presionada, actualiza el estado de las teclas 
 //especiales y avanza el índice de escritura en el búfer circular.
-void keyboardHandler();
+void keyboardHandler(uint64_t infoRegs);
 
 //LLena el buffer con count caracteres o hasta que se se vacie el buffer.
 //Retorna la cantidade de carcteres cergados en el buffer

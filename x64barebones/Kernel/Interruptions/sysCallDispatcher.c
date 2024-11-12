@@ -96,7 +96,7 @@ static ssize_t sys_call_create_process(Main process_main, char** args, char* nam
 }
 
 static ssize_t sys_call_get_pid(){
-    return get_pid();
+    return get_running_process_pid();
 }
 
 static ssize_t sys_call_kill_process(uint16_t pid){

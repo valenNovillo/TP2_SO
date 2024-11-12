@@ -22,7 +22,6 @@ int get_processes_count();
 LinkedList get_ready_list();
 void set_pid_on_array(uint16_t pid, Node * process_node);
 uint64_t wait_pid(int16_t pid);
-uint16_t get_pid();
 void* schedule(void* last_rsp);
 int block_process(uint16_t pid);
 int unblock_process(uint16_t pid);

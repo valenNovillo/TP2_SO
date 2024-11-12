@@ -92,7 +92,7 @@ static void removeLastFromBuff() {
 static void check_waiting_someone()
 {
     uint16_t fg_pid = get_foreground_pid();
-    if (is_waiting_someone(fg_pid)){
+    if (!is_waiting_someone(fg_pid)){
         set_state(fg_pid, READY);
     }
 }

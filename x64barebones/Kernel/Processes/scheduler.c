@@ -81,7 +81,7 @@ PState get_state(int16_t pid)
 }
 
 int32_t set_priority(uint16_t pid, uint8_t new_p){
-     if (pid == DEFAULT_PID || pid >= MAX_PROCESSES || new_p < MIN_PRIORITY || new_p > MAX_PRIORITY){
+     if (pid == DEFAULT_PID || pid >= MAX_PROCESSES || new_p > MAX_PRIORITY){
         return -1;
     }
     Node* node = scheduler->processes[pid];
@@ -177,10 +177,6 @@ uint64_t wait_pid(int16_t pid){
         return ((PCB*)scheduler->processes[scheduler->running_pid]->data)->ret;
     }
     return 0;
-}
-
-uint16_t get_pid(){
-    return scheduler->running_pid;
 }
 
 InfoProcess** processes_info(){
@@ -292,5 +288,5 @@ int32_t kill_FG() {
 }
 
 char is_waiting_someone(int16_t pid){
-    return ((PCB*)scheduler->processes[pid])->waiting_pid != -1;
+    return ((PCB*)scheduler->processes[pid]->data)->waiting_pid != -1;
 }

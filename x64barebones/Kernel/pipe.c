@@ -208,7 +208,7 @@ int write_on_file(int16_t fd, char* buff, unsigned long len){
     }
 
     if (!pipe->has_written){
-        pipe->has_written = !pipe->has_written;
+        pipe->has_written = 1;
     }
 
     int bytes_written = 0;
@@ -246,7 +246,7 @@ int read_on_file(int16_t fd,char* target, unsigned long len){
     }
 
     if (!pipe->has_readed){
-        pipe->has_readed = !pipe->has_readed;
+        pipe->has_readed = 1;
     }
 
     int bytes_read = 0;
