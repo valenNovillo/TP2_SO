@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/syscalls.h"
 #include "../Drivers/include/keyBoardDriver.h"
 #include "../Drivers/include/audioDriver.h"
@@ -132,7 +134,7 @@ static ssize_t sys_call_hlt(){
     return 0;
 }
 
-static ssize_t sys_call_sem_create(uint8_t id, uint64_t value){
+static ssize_t sys_call_sem_create(uint64_t id, uint64_t value){
     return (ssize_t) my_sem_create(id, value);
 }
 

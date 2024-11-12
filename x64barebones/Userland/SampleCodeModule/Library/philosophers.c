@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include "../Library/include/unistd1.h"
 #include "../Library/include/stdio1.h"
@@ -31,7 +33,7 @@ int16_t philo_fds[3] = {NO_INPUT, STDOUT, STDERR};
 static void destroy_all(){
     my_sem_destroy(modifing);
     my_sem_destroy(printing);
-    for(int i=0; i < cant_philos; i++){
+    for(int i=0; i < MAX_PHILOS; i++){
         my_sem_destroy(forks[i]);
         kill_process(philos_pids[i]);
     }

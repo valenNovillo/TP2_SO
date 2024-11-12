@@ -1,0 +1,47 @@
+pvs-studio.com/en/docs/warnings/	1	err	Help: The documentation for all analyzer warnings is available here: https://pvs-studio.com/en/docs/warnings/.
+/root/Bootloader/BMFS/bmfs.c	552	err	V595 The 'disk' pointer was utilized before it was verified against nullptr. Check lines: 552, 575.
+/root/Bootloader/BMFS/bmfs.c	638	warn	V1032 The pointer 'dir_copy' is cast to a more strictly aligned pointer type.
+/root/Bootloader/BMFS/bmfs.c	694	warn	V1032 The pointer 'Directory' is cast to a more strictly aligned pointer type.
+/root/Bootloader/BMFS/bmfs.c	452	note	V575 The potential null pointer is passed into 'memset' function. Inspect the first argument.
+/root/Bootloader/BMFS/bmfs.c	482	note	V575 The potential null pointer is passed into 'rewind' function. Inspect the first argument.
+/root/Bootloader/BMFS/bmfs.c	238	note	V576 Incorrect format. Consider checking the third actual argument of the 'printf' function. The SIGNED integer type argument is expected.
+/root/Bootloader/BMFS/bmfs.c	254	note	V576 Incorrect format. Consider checking the fourth actual argument of the 'printf' function. The SIGNED integer type argument is expected.
+/root/Bootloader/BMFS/bmfs.c	254	note	V576 Incorrect format. Consider checking the third actual argument of the 'printf' function. The SIGNED integer type argument is expected.
+/root/Bootloader/BMFS/bmfs.c	408	note	V576 Incorrect format. Consider checking the second actual argument of the 'printf' function. Under certain conditions the pointer can be null.
+/root/Bootloader/BMFS/bmfs.c	689	note	V576 Incorrect format. Consider checking the second actual argument of the 'printf' function. The SIGNED integer type argument is expected.
+/root/Bootloader/BMFS/bmfs.c	369	note	V584 The 'diskSize' value is present on both sides of the '>' operator. The expression is incorrect or it can be simplified.
+/root/Bootloader/BMFS/bmfs.c	501	note	V1004 The 'mbr' pointer was used unsafely after it was verified against nullptr. Check lines: 392, 501.
+/root/Kernel/Interruptions/irqDispatcher.c	25	note	V1107 Function declared as accepting unspecified number of parameters is called with '1' arguments. Consider explicitly specifying the function parameters list.
+/root/Kernel/Processes/processes.c	106	warn	V779 Unreachable code detected. It is possible that an error is present.
+/root/Kernel/Processes/scheduler.c	182	note	V524 It is odd that the body of 'get_pid' function is fully equivalent to the body of 'get_running_process_pid' function.
+/root/Kernel/Processes/scheduler.c	84	note	V560 A part of conditional expression is always false: new_p < 0. Unsigned type value is never < 0.
+/root/Kernel/Processes/scheduler.c	295	note	V1027 Pointer to an object of the 'Node' class is cast to unrelated 'PCB' class.
+/root/Kernel/Semaphore/semaphore.c	42	warn	V560 A part of conditional expression is always true: id < 1024. The value range of unsigned char type: [0, 255].
+/root/Kernel/include/lib.h	8	warn	V677 Custom declaration of a standard 'size_t' type. The declaration from system header files should be used instead.
+/root/Kernel/kernel.c	26	note	V566 The integer constant is converted to pointer. Possibly an error or a bad coding style: (void *) 0x400000
+/root/Kernel/kernel.c	27	note	V566 The integer constant is converted to pointer. Possibly an error or a bad coding style: (void *) 0x500000
+/root/Kernel/kernel.c	28	note	V566 The integer constant is converted to pointer. Possibly an error or a bad coding style: (void *) 0x600000
+/root/Kernel/kernel.c	29	note	V566 The integer constant is converted to pointer. Possibly an error or a bad coding style: (void *) 0x690000
+/root/Kernel/kernel.c	30	note	V566 The integer constant is converted to pointer. Possibly an error or a bad coding style: (void *) 0x700000
+/root/Kernel/linkedList.c	137	note	V522 There might be dereferencing of a potential null pointer 'current'.
+/root/Kernel/pipe.c	104	err	V763 Parameter 'pipe' is always rewritten in function body before being used.
+/root/Kernel/pipe.c	211	note	V547 The 'A = !pipe->has_written' expression is equivalent to the 'A = 1' expression.
+/root/Kernel/pipe.c	249	note	V547 The 'A = !pipe->has_readed' expression is equivalent to the 'A = 1' expression.
+/root/Userland/SampleCodeModule/Library/applications.c	315	err	V739 EOF should not be compared with a value of the 'char' type. The '(c = getChar())' should be of the 'int' type.
+/root/Userland/SampleCodeModule/Library/stdio1.c	144	err	V739 EOF should not be compared with a value of the 'char' type. The 'c' should be of the 'int' type.
+/root/Userland/SampleCodeModule/Shell/eliminator.c	342	err	V779 Unreachable code detected. It is possible that an error is present.
+/root/Userland/SampleCodeModule/Shell/eliminator.c	338	note	V547 Expression 'c == '\\n'' is always true.
+/root/Userland/SampleCodeModule/Shell/include/eliminator.h	48	note	V1003 The macro 'STARTING_2_Y' is a dangerous expression. The expression must be surrounded by parentheses.
+/root/Userland/SampleCodeModule/Shell/music.c	29	note	V760 Two identical blocks of text were found. The second block begins from line 31.
+/root/Userland/SampleCodeModule/Shell/music.c	93	note	V760 Two identical blocks of text were found. The second block begins from line 99.
+/root/Userland/SampleCodeModule/Shell/music.c	105	note	V760 Two identical blocks of text were found. The second block begins from line 111.
+/root/Userland/SampleCodeModule/Shell/shell.c	57	err	V595 The 'izq' pointer was utilized before it was verified against nullptr. Check lines: 57, 60.
+/root/Userland/SampleCodeModule/Shell/shell.c	173	err	V609 Divide by zero.
+/root/Userland/SampleCodeModule/Shell/shell.c	87	warn	V547 Expression 'pid_reader == - 1' is always false.
+/root/Userland/SampleCodeModule/Shell/shell.c	92	warn	V547 Expression 'pid_writer == - 1' is always false.
+/root/Userland/SampleCodeModule/Shell/shell.c	57	note	V575 The potential null pointer is passed into 'strlen' function. Inspect the first argument.
+/root/Userland/SampleCodeModule/Shell/shell.c	58	note	V769 The 'der' pointer in the 'der += 1' expression could be nullptr. In such case, resulting value will be senseless and it should not be used.
+/root/Userland/SampleCodeModule/Shell/shell.c	33	note	V776 Potentially infinite loop.
+/root/Userland/SampleCodeModule/Test/test_sync.c	89	note	V576 Incorrect format. Consider checking the second actual argument of the 'printf' function. The integer argument of 32-bit size is expected.
+/root/Userland/SampleCodeModule/Test/test_util.c	72	note	V576 Incorrect format. Consider checking the second actual argument of the 'printf' function. The argument is expected to be not greater than 32-bit.
+/root/Userland/include/types.h	4	warn	V677 Custom declaration of a standard 'size_t' type. The declaration from system header files should be used instead.

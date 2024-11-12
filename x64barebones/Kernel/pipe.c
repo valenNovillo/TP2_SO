@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/pipe.h"
 #include "../include/semaphore.h"
 #include "../include/processes.h"
@@ -94,12 +96,12 @@ static Pipe init_pipe(){
     return new_pipe;
 } 
 
-int16_t create_pipe(int16_t id, Pipe pipe){
+static int16_t create_pipe(int16_t id){
     if(count_pipes >= MAX_PIPES || id >= MAX_PIPES){
         return -1;
     }
     
-    pipe = init_pipe();
+    Pipe pipe = init_pipe(); 
     if(pipe == NULL){
         return -1;
     }
@@ -115,7 +117,7 @@ int16_t open_pipe(int16_t id, char mode){
     Pipe pipe = find_by_id(id);
     if(pipe == NULL){
         int16_t idx;
-        if((idx = create_pipe(id, pipe)) == -1){
+        if((idx = create_pipe(id)) == -1){
             return -1;
         }
 
@@ -136,7 +138,7 @@ int16_t open_pipe_for_pid(int16_t id, int16_t pid, char mode){
     Pipe pipe = find_by_id(id);
     if(pipe == NULL){
         int16_t idx;
-        if((idx = create_pipe(id, pipe)) == -1){
+        if((idx = create_pipe(id)) == -1){
             return -1;
         }
 

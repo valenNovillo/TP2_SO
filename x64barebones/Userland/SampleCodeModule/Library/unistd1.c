@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/unistd1.h"
 
 extern ssize_t sysCall(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8);
@@ -102,7 +104,7 @@ void _hlt(){
     sysCall(24, 0, 0, 0, 0, 0);
 }
 
-sem_ptr my_sem_create(uint8_t id, uint64_t value){
+sem_ptr my_sem_create(uint64_t id, uint64_t value){
     return (sem_ptr)sysCall(25, id, value, 0, 0, 0);
 }
 

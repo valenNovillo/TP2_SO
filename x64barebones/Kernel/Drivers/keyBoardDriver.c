@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/keyBoardDriver.h"
 
 #include <stdint.h>
@@ -161,7 +163,7 @@ int fillBuf(char * buf, int count) {
     int i;
     for(i = 0; (i < count) && hasNext(); i++){ 
         buf[i] = next();
-        if(buf[i] == EOF){ 
+        if((int)buf[i] == EOF){ 
             break;
         }
     }

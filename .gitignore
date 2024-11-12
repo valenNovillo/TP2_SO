@@ -27,3 +27,8 @@
 *.gdb_history
 *.gdbinit
 *.elf
+
+#PVS
+*.PVS-Studio.log
+*.report.tasks
+*.strace_out

@@ -36,7 +36,7 @@ void yield();
 uint64_t wait_pid(int16_t pid);
 int ps(int16_t fds[]);
 void _hlt();
-sem_ptr my_sem_create(uint8_t id, uint64_t value);
+sem_ptr my_sem_create(uint64_t id, uint64_t value);
 void my_sem_destroy(sem_ptr ptr);
 sem_ptr my_sem_open(uint8_t id);
 uint8_t my_sem_post(sem_ptr ptr);

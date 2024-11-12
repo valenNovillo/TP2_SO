@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include "../include/lib.h"
 #include "../include/memoryManager.h"
@@ -100,8 +102,8 @@ int16_t create_process(Main process_main, char** args, char* name, uint8_t prior
     }
 
     if((process_pcb = my_malloc(sizeof(PCB))) == NULL){
-        return -1;
         set_creating(0);
+        return -1;
     }
 
     if (initialize_process(process_pcb, process_main, args, name, priority, fds) == -1){

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/scheduler.h"
 #include "../include/processes.h"
 #include "../include/linkedList.h"
@@ -79,8 +81,11 @@ PState get_state(int16_t pid)
 }
 
 int32_t set_priority(uint16_t pid, uint8_t new_p){
+     if (pid == DEFAULT_PID || pid >= MAX_PROCESSES || new_p < MIN_PRIORITY || new_p > MAX_PRIORITY){
+        return -1;
+    }
     Node* node = scheduler->processes[pid];
-    if (node == NULL || pid == DEFAULT_PID || pid >= MAX_PROCESSES || new_p < MIN_PRIORITY || new_p > MAX_PRIORITY){
+    if (node == NULL){
         return -1;
     }
     PCB* pcb = (PCB*)node->data;
@@ -95,12 +100,17 @@ void* schedule(void* last_rsp){
    
     static int first_round = 1;
     Node* running = scheduler->processes[scheduler->running_pid];
-    PCB * running_pcb = ((PCB*)running->data);
+    
     if (scheduler->pending_rounds > 0 && running != NULL){
         scheduler->pending_rounds--;
         return last_rsp;
     }
 
+    PCB * running_pcb;
+    if (running != NULL) {
+        running_pcb = ((PCB*)running->data);
+    }
+     
     
     if (running != NULL && running_pcb->p_state == RUNNING && scheduler->running_pid != DEFAULT_PID){
         ((PCB*)running->data)->p_state = READY;

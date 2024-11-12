@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "include/videoDriver.h"
 
 #include "include/fileDescriptors.h"
@@ -129,7 +131,7 @@ void putChar(char letter, Color fontColor, Color fontBackColor)
 
 void putLetter(unsigned char letter, int posX, int posY, Color fontColor, Color fontBackColor){
 	char * letterBitmap = font8x8_basic[letter];
-	char mask[BITMAP_SIZE] = {1,2,4,8,16,32,64,128}; 
+	unsigned char mask[BITMAP_SIZE] = {1,2,4,8,16,32,64,128}; 
 	for(int row=0; row<BITMAP_SIZE; row++){
 		for(int col=0; col<BITMAP_SIZE; col++){ // recorro los bits de cada hexa para hacer masks distintas
 			char current = (letterBitmap[row] & mask[col]); // aplico la mascara para cada bit

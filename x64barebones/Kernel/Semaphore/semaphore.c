@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include "../include/semaphore.h"
 #include "../include/memoryManager.h"
@@ -36,7 +38,7 @@ void semaphore_init(void* ptr){
     }
 }
 
-semaphore* my_sem_create(uint8_t id, uint64_t value){
+semaphore* my_sem_create(uint64_t id, uint64_t value){
     if (id < MAX_SEMAPHORES && !in_use[id]){
         semaphore * aux = semaphore_ptrs[id];
         in_use[aux->id] = 1;
