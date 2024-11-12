@@ -9,7 +9,7 @@ extern char endOfBinary;
 
 int main();
 
-int _start() {
+int _start(){
 	//Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
 
