@@ -24,11 +24,13 @@ uint64_t test_mm(uint64_t argc, char *argv[]){
   uint32_t total;
   uint64_t max_memory;
 
-  if (argc != 1)
+  if (argc != 1){
     return -1;
+  }
 
-  if ((max_memory = satoi(argv[0])) <= 0)
+  if ((max_memory = satoi(argv[0])) <= 0){
     return -1;
+  }
 
   while (1){
     rq = 0;
@@ -36,21 +38,21 @@ uint64_t test_mm(uint64_t argc, char *argv[]){
 
     // Request as many blocks as we can
     #ifdef BUDDY_MODE 
-      while (rq < MAX_BLOCKS && total < max_memory) {
+      while (rq < MAX_BLOCKS && total < max_memory){
         mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
         mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
 
-        if (mm_rqs[rq].address) {
+        if (mm_rqs[rq].address){
           total += mm_rqs[rq].size;
           rq++;
         }
       }
     #else
-      while (rq < MAX_BLOCKS) {
+      while (rq < MAX_BLOCKS){
         mm_rqs[rq].size = GetUniform(BLOCK_SIZE - 1) + 1;
         mm_rqs[rq].address = my_malloc(mm_rqs[rq].size);
 
-        if (mm_rqs[rq].address) {
+        if (mm_rqs[rq].address){
           total += mm_rqs[rq].size;
           rq++;
         }
@@ -67,7 +69,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]){
     // Check
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
-        if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
+        if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)){
           printf("test_mm ERROR\n");
           return -1;
         }

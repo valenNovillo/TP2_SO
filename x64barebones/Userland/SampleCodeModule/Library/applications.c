@@ -264,7 +264,7 @@ void help(int16_t fds[]){
     fprintf(fds[STDOUT],"--> Filter vocals of input \n");
 
     setColor(250, 255, 0);
-    fprintf(fds[STDOUT],"philosophers \n");
+    fprintf(fds[STDOUT],"phylo \n");
     setColor(255, 255, 255);
     fprintf(fds[STDOUT],"--> Simulates the philosofers problem \n");
 
