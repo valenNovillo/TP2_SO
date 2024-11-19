@@ -34,6 +34,8 @@ uint64_t test_mm(uint64_t argc, char *argv[]){
     return -1;
   }
 
+  int j = 0;
+
   while (1){
     rq = 0;
     total = 0;
@@ -62,7 +64,12 @@ uint64_t test_mm(uint64_t argc, char *argv[]){
     #endif
     
     // Set
-    printf("Sali\n");
+    //printf("Sali\n");
+    if((j % 5) == 0) {
+      printf("\nReserva\n");
+      print_mem_status(get_fds());
+    }
+    
     uint32_t i;
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
@@ -80,5 +87,14 @@ uint64_t test_mm(uint64_t argc, char *argv[]){
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         my_free(mm_rqs[i].address);
+
+    
+
+    if((j % 5) == 0) {
+      printf("\nLiberacion\n");
+      print_mem_status(get_fds());
+    }
+
+    j++;
   }
 }
